@@ -1,0 +1,103 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'barbershop_tag.dart';
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+_BarbershopTag _$BarbershopTagFromJson(Map<String, dynamic> json) =>
+    _BarbershopTag(
+      id: (json['id'] as num).toInt(),
+      title: json['title'] as String,
+      altTitle: json['altTitle'] as String?,
+      version: json['version'] as String?,
+      keyMode: json['keyMode'] as String?,
+      keyTonic: json['keyTonic'] as String?,
+      parts: (json['parts'] as num?)?.toInt(),
+      type: json['type'] as String?,
+      recording: json['recording'] as String?,
+      teachVidUrl: json['teachVidUrl'] as String?,
+      lyrics: json['lyrics'] as String?,
+      notes: json['notes'] as String?,
+      arranger: json['arranger'] as String?,
+      arrWebsite: json['arrWebsite'] as String?,
+      arrangedYear: (json['arrangedYear'] as num?)?.toInt(),
+      sungBy: json['sungBy'] as String?,
+      sungWebsite: json['sungWebsite'] as String?,
+      sungYear: (json['sungYear'] as num?)?.toInt(),
+      quartet: json['quartet'] as String?,
+      quartetWebsite: json['quartetWebsite'] as String?,
+      teacher: json['teacher'] as String?,
+      teacherWebsite: json['teacherWebsite'] as String?,
+      provider: json['provider'] as String?,
+      providerWebsite: json['providerWebsite'] as String?,
+      posted: json['posted'] as String?,
+      isClassic: json['isClassic'] as bool? ?? false,
+      collection: json['collection'] as String?,
+      rating: (json['rating'] as num?)?.toDouble(),
+      ratingCount: (json['ratingCount'] as num?)?.toInt(),
+      downloaded: (json['downloaded'] as num?)?.toInt(),
+      lastUpdated: json['lastUpdated'] as String?,
+      sheetMusicUrl: json['sheetMusicUrl'] as String?,
+      sheetMusicType: json['sheetMusicType'] as String?,
+      notationUrl: json['notationUrl'] as String?,
+      notationType: json['notationType'] as String?,
+      allPartsUrl: json['allPartsUrl'] as String?,
+      bassUrl: json['bassUrl'] as String?,
+      bariUrl: json['bariUrl'] as String?,
+      leadUrl: json['leadUrl'] as String?,
+      tenorUrl: json['tenorUrl'] as String?,
+      videos:
+          (json['videos'] as List<dynamic>?)
+              ?.map(
+                (e) => BarbershopTagVideo.fromJson(e as Map<String, dynamic>),
+              )
+              .toList() ??
+          const [],
+    );
+
+Map<String, dynamic> _$BarbershopTagToJson(_BarbershopTag instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'title': instance.title,
+      'altTitle': instance.altTitle,
+      'version': instance.version,
+      'keyMode': instance.keyMode,
+      'keyTonic': instance.keyTonic,
+      'parts': instance.parts,
+      'type': instance.type,
+      'recording': instance.recording,
+      'teachVidUrl': instance.teachVidUrl,
+      'lyrics': instance.lyrics,
+      'notes': instance.notes,
+      'arranger': instance.arranger,
+      'arrWebsite': instance.arrWebsite,
+      'arrangedYear': instance.arrangedYear,
+      'sungBy': instance.sungBy,
+      'sungWebsite': instance.sungWebsite,
+      'sungYear': instance.sungYear,
+      'quartet': instance.quartet,
+      'quartetWebsite': instance.quartetWebsite,
+      'teacher': instance.teacher,
+      'teacherWebsite': instance.teacherWebsite,
+      'provider': instance.provider,
+      'providerWebsite': instance.providerWebsite,
+      'posted': instance.posted,
+      'isClassic': instance.isClassic,
+      'collection': instance.collection,
+      'rating': instance.rating,
+      'ratingCount': instance.ratingCount,
+      'downloaded': instance.downloaded,
+      'lastUpdated': instance.lastUpdated,
+      'sheetMusicUrl': instance.sheetMusicUrl,
+      'sheetMusicType': instance.sheetMusicType,
+      'notationUrl': instance.notationUrl,
+      'notationType': instance.notationType,
+      'allPartsUrl': instance.allPartsUrl,
+      'bassUrl': instance.bassUrl,
+      'bariUrl': instance.bariUrl,
+      'leadUrl': instance.leadUrl,
+      'tenorUrl': instance.tenorUrl,
+      'videos': instance.videos,
+    };

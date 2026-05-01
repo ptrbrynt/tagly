@@ -1,0 +1,161 @@
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+import 'barbershop_tag_video.dart';
+
+part 'barbershop_tag.freezed.dart';
+part 'barbershop_tag.g.dart';
+
+@freezed
+abstract class BarbershopTag with _$BarbershopTag {
+  const BarbershopTag._();
+
+  const factory BarbershopTag({
+    required int id,
+    required String title,
+    String? altTitle,
+    String? version,
+    String? keyMode,
+    String? keyTonic,
+    int? parts,
+    String? type,
+    String? recording,
+    String? teachVidUrl,
+    String? lyrics,
+    String? notes,
+    String? arranger,
+    String? arrWebsite,
+    int? arrangedYear,
+    String? sungBy,
+    String? sungWebsite,
+    int? sungYear,
+    String? quartet,
+    String? quartetWebsite,
+    String? teacher,
+    String? teacherWebsite,
+    String? provider,
+    String? providerWebsite,
+    String? posted,
+    @Default(false) bool isClassic,
+    String? collection,
+    double? rating,
+    int? ratingCount,
+    int? downloaded,
+    String? lastUpdated,
+    String? sheetMusicUrl,
+    String? sheetMusicType,
+    String? notationUrl,
+    String? notationType,
+    String? allPartsUrl,
+    String? bassUrl,
+    String? bariUrl,
+    String? leadUrl,
+    String? tenorUrl,
+    // Not a column in the tags table — populated by the repository
+    // when fetching a single tag with its related videos.
+    @Default([]) List<BarbershopTagVideo> videos,
+  }) = _BarbershopTag;
+
+  factory BarbershopTag.fromJson(Map<String, dynamic> json) =>
+      _$BarbershopTagFromJson(json);
+
+  /// Construct from a sqflite row.
+  ///
+  /// [videos] must be populated separately by the repository, as they
+  /// live in the [tag_videos] table and are not included in a plain
+  /// [tags] row.
+  factory BarbershopTag.fromMap(
+    Map<String, dynamic> map, {
+    List<BarbershopTagVideo> videos = const [],
+  }) => BarbershopTag(
+    id: map['id'] as int,
+    title: map['title'] as String,
+    altTitle: map['alt_title'] as String?,
+    version: map['version'] as String?,
+    keyMode: map['key_mode'] as String?,
+    keyTonic: map['key_tonic'] as String?,
+    // Defensive num cast — SQLite's flexible type system means an
+    // INTEGER column can occasionally surface as num in Dart.
+    parts: (map['parts'] as num?)?.toInt(),
+    type: map['type'] as String?,
+    recording: map['recording'] as String?,
+    teachVidUrl: map['teach_vid_url'] as String?,
+    lyrics: map['lyrics'] as String?,
+    notes: map['notes'] as String?,
+    arranger: map['arranger'] as String?,
+    arrWebsite: map['arr_website'] as String?,
+    arrangedYear: (map['arranged_year'] as num?)?.toInt(),
+    sungBy: map['sung_by'] as String?,
+    sungWebsite: map['sung_website'] as String?,
+    sungYear: (map['sung_year'] as num?)?.toInt(),
+    quartet: map['quartet'] as String?,
+    quartetWebsite: map['quartet_website'] as String?,
+    teacher: map['teacher'] as String?,
+    teacherWebsite: map['teacher_website'] as String?,
+    provider: map['provider'] as String?,
+    providerWebsite: map['provider_website'] as String?,
+    posted: map['posted'] as String?,
+    isClassic: (map['is_classic'] as int? ?? 0) == 1,
+    collection: map['collection'] as String?,
+    rating: (map['rating'] as num?)?.toDouble(),
+    ratingCount: (map['rating_count'] as num?)?.toInt(),
+    downloaded: (map['downloaded'] as num?)?.toInt(),
+    lastUpdated: map['last_updated'] as String?,
+    sheetMusicUrl: map['sheet_music_url'] as String?,
+    sheetMusicType: map['sheet_music_type'] as String?,
+    notationUrl: map['notation_url'] as String?,
+    notationType: map['notation_type'] as String?,
+    allPartsUrl: map['all_parts_url'] as String?,
+    bassUrl: map['bass_url'] as String?,
+    bariUrl: map['bari_url'] as String?,
+    leadUrl: map['lead_url'] as String?,
+    tenorUrl: map['tenor_url'] as String?,
+    videos: videos,
+  );
+
+  /// Serialise to a sqflite row map.
+  ///
+  /// [videos] is intentionally excluded — those rows are managed
+  /// separately in the [tag_videos] table.
+  Map<String, dynamic> toMap() => {
+    'id': id,
+    'title': title,
+    'alt_title': altTitle,
+    'version': version,
+    'key_mode': keyMode,
+    'key_tonic': keyTonic,
+    'parts': parts,
+    'type': type,
+    'recording': recording,
+    'teach_vid_url': teachVidUrl,
+    'lyrics': lyrics,
+    'notes': notes,
+    'arranger': arranger,
+    'arr_website': arrWebsite,
+    'arranged_year': arrangedYear,
+    'sung_by': sungBy,
+    'sung_website': sungWebsite,
+    'sung_year': sungYear,
+    'quartet': quartet,
+    'quartet_website': quartetWebsite,
+    'teacher': teacher,
+    'teacher_website': teacherWebsite,
+    'provider': provider,
+    'provider_website': providerWebsite,
+    'posted': posted,
+    'is_classic': isClassic ? 1 : 0,
+    'collection': collection,
+    'rating': rating,
+    'rating_count': ratingCount,
+    'downloaded': downloaded,
+    'last_updated': lastUpdated,
+    'sheet_music_url': sheetMusicUrl,
+    'sheet_music_type': sheetMusicType,
+    'notation_url': notationUrl,
+    'notation_type': notationType,
+    'all_parts_url': allPartsUrl,
+    'bass_url': bassUrl,
+    'bari_url': bariUrl,
+    'lead_url': leadUrl,
+    'tenor_url': tenorUrl,
+  };
+}
