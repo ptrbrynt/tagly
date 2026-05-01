@@ -1,3 +1,11 @@
+import 'package:tagly/data/tags_xml_parser.dart';
+
+final fakeTagsResponse = TagsXmlParser.parse(fakeTagsXml);
+
+final fakeTags = fakeTagsResponse.tags;
+
+final fakeTag = fakeTags.first;
+
 const fakeTagsXml = '''
 <?xml version="1.0" encoding="UTF-8" ?>
 <tags available="6910" count="10" stamp="2026-05-01 08:39:20">
