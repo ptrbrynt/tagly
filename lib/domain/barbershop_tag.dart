@@ -58,11 +58,44 @@ abstract class BarbershopTag with _$BarbershopTag {
   factory BarbershopTag.fromJson(Map<String, dynamic> json) =>
       _$BarbershopTagFromJson(json);
 
-  /// Construct from a sqflite row.
-  ///
-  /// [videos] must be populated separately by the repository, as they
-  /// live in the [tag_videos] table and are not included in a plain
-  /// [tags] row.
+  /// Collapse a list of joined rows (from a query that LEFT JOINs tag_videos
+  /// using `tv_` prefixed columns) into a list of tags, each with its videos
+  /// populated. Preserves the row order of the first occurrence of each tag.
+  static List<BarbershopTag> groupRows(List<Map<String, dynamic>> rows) {
+    final tagRows = <int, Map<String, dynamic>>{};
+    final videosByTag = <int, List<BarbershopTagVideo>>{};
+
+    for (final row in rows) {
+      final tagId = row['id'] as int;
+      tagRows.putIfAbsent(tagId, () => row);
+
+      final tvId = row['tv_id'];
+      if (tvId != null) {
+        videosByTag.putIfAbsent(tagId, () => []).add(
+          BarbershopTagVideo(
+            id: tvId as int,
+            tagId: tagId,
+            description: row['tv_description'] as String?,
+            sungKeyMode: row['tv_sung_key_mode'] as String?,
+            sungKeyTonic: row['tv_sung_key_tonic'] as String?,
+            isMultitrack: (row['tv_is_multitrack'] as int? ?? 0) == 1,
+            youtubeCode: row['tv_youtube_code'] as String?,
+            facebookUrl: row['tv_facebook_url'] as String?,
+            sungBy: row['tv_sung_by'] as String?,
+            sungWebsite: row['tv_sung_website'] as String?,
+            posted: row['tv_posted'] as String?,
+          ),
+        );
+      }
+    }
+
+    return tagRows.entries
+        .map((e) => BarbershopTag.fromMap(e.value, videos: videosByTag[e.key] ?? []))
+        .toList();
+  }
+
+  /// Construct from a sqflite row. When using a query that JOINs tag_videos,
+  /// use [groupRows] instead — it handles collapsing the duplicated rows.
   factory BarbershopTag.fromMap(
     Map<String, dynamic> map, {
     List<BarbershopTagVideo> videos = const [],

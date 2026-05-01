@@ -1,23 +1,46 @@
 abstract final class TagQueries {
+  // Columns shared by getAll / search / searchByArranger — tags.* plus
+  // all tag_videos columns prefixed tv_ so they survive the JOIN without
+  // clashing with the tags columns of the same name (e.g. sung_by, posted).
+  static const _videoColumns = '''
+    tv.id               AS tv_id,
+    tv.description      AS tv_description,
+    tv.sung_key_mode    AS tv_sung_key_mode,
+    tv.sung_key_tonic   AS tv_sung_key_tonic,
+    tv.is_multitrack    AS tv_is_multitrack,
+    tv.youtube_code     AS tv_youtube_code,
+    tv.facebook_url     AS tv_facebook_url,
+    tv.sung_by          AS tv_sung_by,
+    tv.sung_website     AS tv_sung_website,
+    tv.posted           AS tv_posted
+  ''';
+
+  static const _videoJoin = '''
+    LEFT JOIN tag_videos tv ON tv.tag_id = tags.id
+  ''';
+
   static const getAll = '''
-    SELECT tags.*
+    SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
 ''';
   // --- Full-text search ---
 
   static const search = '''
-    SELECT tags.*
+    SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
     WHERE tags_fts MATCH ?
     ORDER BY rank
   ''';
 
   static const searchByArranger = '''
-    SELECT tags.*
+    SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
     WHERE tags_fts MATCH 'arranger:' || ?
     ORDER BY rank
   ''';
