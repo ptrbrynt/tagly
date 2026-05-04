@@ -10,7 +10,7 @@ class BarbershopTagsApi {
 
   Future<TagsResponse> getTags({int? count}) async {
     final response = await _dio.getUri<String>(
-      _url.replace(queryParameters: {'n': ?count}),
+      _url.replace(query: count != null ? 'n=$count' : null),
     );
 
     return TagsXmlParser.parse(response.data!);

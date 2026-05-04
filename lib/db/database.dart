@@ -1,9 +1,11 @@
+import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/db/schema.dart';
 
 Future<Database> openTaglyDatabase({String? path}) async {
+  final filePath = join(path ?? await getDatabasesPath(), 'tagly.db');
   return openDatabase(
-    path ?? await getDatabasesPath(),
+    filePath,
     version: Schema.version,
     onConfigure: Schema.onConfigure,
     onCreate: Schema.onCreate,

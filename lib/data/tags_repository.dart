@@ -17,13 +17,16 @@ class TagsRepository extends ChangeNotifier {
 
   /// Fetches the latest tags from the API and stores them in the database
   Future<Result<void>> syncTags() async {
+    debugPrint('Syncing tags...');
     try {
       // Calls the API to check how many tags are available.
       final tagsCountResponse = await _api.getTags(count: 1);
 
-      final allTagsResponse = await _api.getTags(
-        count: tagsCountResponse.available,
-      );
+      var available = tagsCountResponse.available;
+
+      debugPrint('$available tags found. Fetching...');
+
+      final allTagsResponse = await _api.getTags(count: available);
 
       final batch = _db.batch();
       for (final tag in allTagsResponse.tags) {
@@ -44,13 +47,41 @@ class TagsRepository extends ChangeNotifier {
   }
 
   Future<Result<List<BarbershopTag>>> searchTags(String query) async {
-    if (query.isEmpty) return .ok([]);
     try {
-      final result = await _db.rawQuery(TagQueries.search, [query]);
+      final result = switch (int.tryParse(query)) {
+        null => switch (_buildFtsQuery(query)) {
+          null => [],
+          final sanitized => await _db.rawQuery(TagQueries.search, [sanitized]),
+        },
+        final id => await _db.rawQuery(TagQueries.getById, [id]),
+      };
 
       return .ok(result.map((row) => BarbershopTag.fromMap(row)).toList());
     } on DatabaseException catch (e) {
       return .failure(e.toString());
     }
+  }
+
+  /// Sanitises a raw user search string into a safe FTS5 MATCH expression.
+  ///
+  /// - Strips characters with special meaning in FTS5 query syntax.
+  /// - Appends `*` to each token for prefix (autocomplete-style) matching.
+  ///
+  /// Returns null if the input is blank after sanitisation, so the caller
+  /// can skip the query entirely and return an empty result set.
+  String? _buildFtsQuery(String input) {
+    // Strip FTS5 special characters
+    final cleaned = input.replaceAll(RegExp(r'["\(\)\^\*:\-]'), ' ');
+
+    final tokens = cleaned
+        .trim()
+        .split(RegExp(r'\s+'))
+        .where((t) => t.isNotEmpty)
+        .toList();
+
+    if (tokens.isEmpty) return null;
+
+    // Each token becomes a prefix query: "barb shop" → "barb* shop*"
+    return tokens.map((t) => '$t*').join(' ');
   }
 }

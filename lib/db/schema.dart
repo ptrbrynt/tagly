@@ -216,9 +216,9 @@ abstract final class Schema {
 
   static Future<void> onConfigure(Database db) async {
     // Enable WAL mode for better concurrent read/write performance
-    await db.execute('PRAGMA journal_mode = WAL');
+    await db.rawQuery('PRAGMA journal_mode = WAL');
     // Enable foreign key enforcement (off by default in SQLite)
-    await db.execute('PRAGMA foreign_keys = ON');
+    await db.rawQuery('PRAGMA foreign_keys = ON');
   }
 
   static Future<void> onCreate(Database db, int version) async {

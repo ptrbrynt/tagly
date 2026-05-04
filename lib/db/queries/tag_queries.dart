@@ -19,15 +19,26 @@ abstract final class TagQueries {
     LEFT JOIN tag_videos tv ON tv.tag_id = tags.id
   ''';
 
-  static const getAll = '''
+  static const getAll =
+      '''
     SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
     $_videoJoin
 ''';
+
+  static const getById =
+      '''
+    SELECT tags.*, $_videoColumns
+    FROM tags
+    WHERE id = ?
+    JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
+''';
   // --- Full-text search ---
 
-  static const search = '''
+  static const search =
+      '''
     SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
@@ -36,7 +47,8 @@ abstract final class TagQueries {
     ORDER BY rank
   ''';
 
-  static const searchByArranger = '''
+  static const searchByArranger =
+      '''
     SELECT tags.*, $_videoColumns
     FROM tags
     JOIN tags_fts ON tags.id = tags_fts.rowid
