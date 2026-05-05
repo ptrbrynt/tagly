@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/router.dart';
+import 'package:tagly/config/theme.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/db/database.dart';
 import 'package:tagly/domain/result.dart';
@@ -66,6 +67,10 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(routerConfig: router);
+    return MaterialApp.router(
+      routerConfig: router,
+      theme: lightTheme,
+      darkTheme: darkTheme,
+    );
   }
 }

@@ -22,33 +22,47 @@ class _SearchScreenState extends State<SearchScreen> {
   late Iterable<Widget> _lastOptions = <Widget>[];
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: SearchAnchor.bar(
-          suggestionsBuilder: (context, controller) async {
-            _searchingWithQuery = controller.text;
-            final result = await widget.repository.searchTags(
-              _searchingWithQuery!,
-            );
+    return ListenableBuilder(
+      listenable: widget.repository,
+      builder: (context, _) {
+        final syncStatus = widget.repository.syncStatus;
+        return syncStatus == .initialSync
+            ? Scaffold(body: InitialSyncWidget())
+            : Scaffold(
+                appBar: AppBar(
+                  title: _searchBar(),
+                  clipBehavior: .none,
+                  toolbarHeight: kToolbarHeight + 16,
+                  scrolledUnderElevation: 0.0,
+                  backgroundColor: Theme.of(context).colorScheme.surface,
+                ),
+                body: ListView(),
+              );
+      },
+    );
+  }
 
-            // If another search happened after this one, throw away these options.
-            // Use the previous options instead and wait for the newer request to
-            // finish.
-            if (_searchingWithQuery != controller.text) {
-              return _lastOptions;
-            }
+  Widget _searchBar() {
+    return SearchAnchor.bar(
+      barHintText: 'Search tags...',
+      suggestionsBuilder: (context, controller) async {
+        _searchingWithQuery = controller.text;
+        final result = await widget.repository.searchTags(_searchingWithQuery!);
 
-            _lastOptions = switch (result) {
-              Failure() => [],
-              Ok(:final value) => [
-                for (final tag in value) TagListTile(tag: tag),
-              ],
-            };
+        // If another search happened after this one, throw away these options.
+        // Use the previous options instead and wait for the newer request to
+        // finish.
+        if (_searchingWithQuery != controller.text) {
+          return _lastOptions;
+        }
 
-            return _lastOptions;
-          },
-        ),
-      ),
+        _lastOptions = switch (result) {
+          Failure() => [],
+          Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
+        };
+
+        return _lastOptions;
+      },
     );
   }
 }
@@ -65,6 +79,29 @@ class TagListTile extends StatelessWidget {
       onTap: () {
         context.go('/tag?id=${tag.id}');
       },
+    );
+  }
+}
+
+class InitialSyncWidget extends StatelessWidget {
+  const InitialSyncWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: .all(24),
+      alignment: .center,
+      child: Column(
+        crossAxisAlignment: .center,
+        mainAxisAlignment: .center,
+        children: [
+          CircularProgressIndicator.adaptive(),
+          SizedBox(height: 40),
+          Text('Tagly is syncing', style: TextStyle(fontSize: 24)),
+          SizedBox(height: 8),
+          Text('Give us a few seconds to get you set up'),
+        ],
+      ),
     );
   }
 }

@@ -7,6 +7,17 @@ import 'package:tagly/db/queries/video_queries.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 
+enum SyncStatus {
+  /// The app is syncing for the first time
+  initialSync,
+
+  /// There is a sync in progress
+  resyncing,
+
+  /// The sync has completed
+  ready,
+}
+
 class TagsRepository extends ChangeNotifier {
   TagsRepository({required Database db, required BarbershopTagsApi api})
     : _api = api,
@@ -15,9 +26,22 @@ class TagsRepository extends ChangeNotifier {
   final Database _db;
   final BarbershopTagsApi _api;
 
+  SyncStatus _syncStatus = .ready;
+  SyncStatus get syncStatus => _syncStatus;
+
   /// Fetches the latest tags from the API and stores them in the database
   Future<Result<void>> syncTags() async {
     debugPrint('Syncing tags...');
+    final countResult = await _db.rawQuery(TagQueries.count);
+    final count = countResult.single['COUNT(DISTINCT id)'] as int;
+
+    _syncStatus = switch (count) {
+      0 => .initialSync,
+      _ => .resyncing,
+    };
+
+    notifyListeners();
+
     try {
       // Calls the API to check how many tags are available.
       final tagsCountResponse = await _api.getTags(count: 1);
@@ -43,6 +67,8 @@ class TagsRepository extends ChangeNotifier {
       return .failure(e.toString());
     } on DioException catch (e) {
       return .failure(e.message ?? 'Something went wrong.');
+    } finally {
+      _syncStatus = .ready;
     }
   }
 

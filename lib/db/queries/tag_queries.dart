@@ -35,6 +35,9 @@ abstract final class TagQueries {
     $_videoJoin
     WHERE tags.id = ?
 ''';
+
+  static const count = 'SELECT COUNT(DISTINCT id) FROM tags;';
+
   // --- Full-text search ---
 
   static const search =
