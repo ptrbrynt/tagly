@@ -80,6 +80,29 @@ void main() {
       );
     });
 
+    test('search by ID correctly searches', () async {
+      // Seed DB
+      final batch = db.batch();
+      for (final tag in fakeTags) {
+        batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
+        for (final video in tag.videos) {
+          batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
+        }
+      }
+      await batch.commit(noResult: true);
+
+      final searchResult = await repository.searchTags('${fakeTags.first.id}');
+
+      expect(
+        searchResult,
+        isA<Ok<List<BarbershopTag>>>().having(
+          (r) => r.value.single,
+          'single result',
+          equals(fakeTags.first),
+        ),
+      );
+    });
+
     test('empty search query returns empty result', () async {
       // Seed DB
       final batch = db.batch();

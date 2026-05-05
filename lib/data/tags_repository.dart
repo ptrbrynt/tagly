@@ -48,15 +48,20 @@ class TagsRepository extends ChangeNotifier {
 
   Future<Result<List<BarbershopTag>>> searchTags(String query) async {
     try {
-      final result = switch (int.tryParse(query)) {
-        null => switch (_buildFtsQuery(query)) {
-          null => [],
-          final sanitized => await _db.rawQuery(TagQueries.search, [sanitized]),
-        },
+      final searchResult = switch (_buildFtsQuery(query)) {
+        null => <Map<String, dynamic>>[],
+        final sanitized => await _db.rawQuery(TagQueries.search, [sanitized]),
+      };
+
+      final idResult = switch (int.tryParse(query)) {
+        null => <Map<String, Object?>>[],
         final id => await _db.rawQuery(TagQueries.getById, [id]),
       };
 
-      return .ok(result.map((row) => BarbershopTag.fromMap(row)).toList());
+      return .ok([
+        ...BarbershopTag.groupRows(idResult),
+        ...BarbershopTag.groupRows(searchResult),
+      ]);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
     }

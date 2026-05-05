@@ -61,6 +61,6 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SearchScreen(viewModel: context.watch()));
+    return MaterialApp(home: SearchScreen(repository: context.watch()));
   }
 }

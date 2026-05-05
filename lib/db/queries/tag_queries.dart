@@ -31,9 +31,9 @@ abstract final class TagQueries {
       '''
     SELECT tags.*, $_videoColumns
     FROM tags
-    WHERE id = ?
     JOIN tags_fts ON tags.id = tags_fts.rowid
     $_videoJoin
+    WHERE tags.id = ?
 ''';
   // --- Full-text search ---
 
