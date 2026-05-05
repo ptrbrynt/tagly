@@ -6,7 +6,7 @@ class BarbershopTagsApi {
 
   final Dio _dio;
 
-  static final Uri _url = Uri.parse('https://barbershoptags.com/api.php');
+  static final Uri _url = Uri.parse('https://www.barbershoptags.com/api.php');
 
   Future<TagsResponse> getTags({int? count}) async {
     final response = await _dio.getUri<String>(

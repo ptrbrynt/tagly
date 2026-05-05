@@ -24,6 +24,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
             final tagId = state.uri.queryParameters['id']!;
             return ViewTagScreen(
               nearby: context.watch(),
+              cacheManager: context.read(),
               viewModel: ViewTagViewModel(
                 repository: context.watch(),
                 tagId: int.parse(tagId),

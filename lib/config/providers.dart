@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
@@ -15,6 +16,7 @@ List<SingleChildWidget> get productionProviders => [
   Provider(create: (_) => TagBroadcaster()),
   Provider(create: (_) => TagScanner()),
   Provider<List<NavigatorObserver>>(create: (_) => [PosthogObserver()]),
+  Provider<CacheManager>(create: (_) => DefaultCacheManager()),
   ...appProviders,
 ];
 
