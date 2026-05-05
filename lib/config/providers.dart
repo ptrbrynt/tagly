@@ -13,10 +13,19 @@ import 'package:tagly/nearby/tag_scanner.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
-  Provider(create: (_) => TagBroadcaster()),
-  Provider(create: (_) => TagScanner()),
+  Provider(
+    create: (_) => TagBroadcaster(),
+    dispose: (context, value) => value.stopBroadcast(),
+  ),
+  Provider(
+    create: (_) => TagScanner(),
+    dispose: (context, value) => value.dispose(),
+  ),
   Provider<List<NavigatorObserver>>(create: (_) => [PosthogObserver()]),
-  Provider<CacheManager>(create: (_) => DefaultCacheManager()),
+  Provider<CacheManager>(
+    create: (_) => DefaultCacheManager(),
+    dispose: (context, value) => value.dispose(),
+  ),
   ...appProviders,
 ];
 

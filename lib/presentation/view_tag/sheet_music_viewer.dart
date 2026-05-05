@@ -22,18 +22,18 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   final controller = WebViewController();
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    unawaited(_load());
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
-  @override
-  void didUpdateWidget(SheetMusicViewer oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.url != widget.url) {
-      unawaited(_load());
-    }
-  }
+  // @override
+  // void didUpdateWidget(SheetMusicViewer oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
+  //   if (oldWidget.url != widget.url) {
+  //     unawaited(_load());
+  //   }
+  // }
 
   Future<void> _load() async {
     final file = await widget.cacheManager.getSingleFile(widget.url);
