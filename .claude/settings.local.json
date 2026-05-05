@@ -3,7 +3,8 @@
     "allow": [
       "Bash(flutter test *)",
       "Bash(xargs cat *)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(flutter analyze *)"
     ]
   }
 }

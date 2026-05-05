@@ -23,8 +23,8 @@ List<SingleChildWidget> get appProviders => [
   ChangeNotifierProvider(
     create: (context) {
       return NearbyNotifier(
-        scanner: context.watch(),
-        broadcaster: context.watch(),
+        scanner: context.read(),
+        broadcaster: context.read(),
       );
     },
   ),

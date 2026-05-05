@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
@@ -20,7 +21,7 @@ class ViewTagScreen extends StatelessWidget {
       listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
-          appBar: AppBar(actions: [_broadcastToggle()]),
+          appBar: AppBar(actions: [_broadcastToggle(), _detailsLink(context)]),
           body: switch (viewModel.result) {
             null => Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
@@ -30,6 +31,15 @@ class ViewTagScreen extends StatelessWidget {
             },
           },
         );
+      },
+    );
+  }
+
+  Widget _detailsLink(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.info_outline_rounded),
+      onPressed: () {
+        context.go('tag/details?id=${viewModel.tagId}');
       },
     );
   }
