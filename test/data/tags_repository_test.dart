@@ -58,15 +58,7 @@ void main() {
     });
 
     test('search correctly searches', () async {
-      // Seed DB
-      final batch = db.batch();
-      for (final tag in fakeTags) {
-        batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
-        for (final video in tag.videos) {
-          batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
-        }
-      }
-      await batch.commit(noResult: true);
+      await _seedDb(db);
 
       final searchResult = await repository.searchTags('hear you sing');
 
@@ -81,15 +73,7 @@ void main() {
     });
 
     test('search by ID correctly searches', () async {
-      // Seed DB
-      final batch = db.batch();
-      for (final tag in fakeTags) {
-        batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
-        for (final video in tag.videos) {
-          batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
-        }
-      }
-      await batch.commit(noResult: true);
+      await _seedDb(db);
 
       final searchResult = await repository.searchTags('${fakeTags.first.id}');
 
@@ -104,15 +88,7 @@ void main() {
     });
 
     test('empty search query returns empty result', () async {
-      // Seed DB
-      final batch = db.batch();
-      for (final tag in fakeTags) {
-        batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
-        for (final video in tag.videos) {
-          batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
-        }
-      }
-      await batch.commit(noResult: true);
+      await _seedDb(db);
 
       final searchResult = await repository.searchTags('');
 
@@ -125,5 +101,32 @@ void main() {
         ),
       );
     });
+
+    test('get by ID returns correct tag', () async {
+      await _seedDb(db);
+
+      final result = await repository.getTagById(fakeTags.first.id);
+
+      expect(result, equals(Ok(fakeTags.first)));
+    });
+
+    test('get by ID returns failure when tag does not exist', () async {
+      await _seedDb(db);
+
+      final result = await repository.getTagById(10987);
+
+      expect(result, isA<Failure>());
+    });
   });
+}
+
+Future<void> _seedDb(Database db) async {
+  final batch = db.batch();
+  for (final tag in fakeTags) {
+    batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
+    for (final video in tag.videos) {
+      batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
+    }
+  }
+  await batch.commit(noResult: true);
 }

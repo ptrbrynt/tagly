@@ -67,6 +67,18 @@ class TagsRepository extends ChangeNotifier {
     }
   }
 
+  Future<Result<BarbershopTag>> getTagById(int id) async {
+    try {
+      final result = await _db.rawQuery(TagQueries.getById, [id]);
+
+      return .ok(BarbershopTag.groupRows(result).single);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    } on StateError {
+      return .failure('Tag $id not found');
+    }
+  }
+
   /// Sanitises a raw user search string into a safe FTS5 MATCH expression.
   ///
   /// - Strips characters with special meaning in FTS5 query syntax.

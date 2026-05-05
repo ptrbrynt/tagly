@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
@@ -58,6 +59,12 @@ class TagListTile extends StatelessWidget {
   final BarbershopTag tag;
   @override
   Widget build(BuildContext context) {
-    return ListTile(title: Text(tag.title), subtitle: Text('#${tag.id}'));
+    return ListTile(
+      title: Text(tag.title),
+      subtitle: Text('#${tag.id}'),
+      onTap: () {
+        context.go('/tag?id=${tag.id}');
+      },
+    );
   }
 }

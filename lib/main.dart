@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
 import 'package:tagly/config/providers.dart';
+import 'package:tagly/config/router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/db/database.dart';
 import 'package:tagly/domain/result.dart';
-import 'package:tagly/presentation/search/search_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +61,6 @@ class _MainAppState extends State<MainApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(home: SearchScreen(repository: context.watch()));
+    return MaterialApp.router(routerConfig: router);
   }
 }
