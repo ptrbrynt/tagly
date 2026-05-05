@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/router.dart';
 import 'package:tagly/data/tags_repository.dart';
@@ -10,11 +12,14 @@ import 'package:tagly/domain/result.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final analyticsService = await AnalyticsService.setUp(Posthog());
+
   final db = await openTaglyDatabase();
 
   runApp(
     MultiProvider(
       providers: [
+        Provider.value(value: analyticsService),
         Provider.value(value: db),
         ...productionProviders,
       ],
