@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tagly/config/theme.dart';
 
 class TestApp extends StatelessWidget {
-  const TestApp({super.key, required this.child});
+  const TestApp({required this.child, super.key});
 
   final Widget child;
 

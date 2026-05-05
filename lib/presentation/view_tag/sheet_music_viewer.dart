@@ -1,8 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class SheetMusicViewer extends StatefulWidget {
-  const SheetMusicViewer({super.key, required this.url});
+  const SheetMusicViewer({required this.url, super.key});
 
   final String url;
 
@@ -28,7 +30,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   void _load() {
-    controller.loadRequest(Uri.parse(widget.url));
+    unawaited(controller.loadRequest(Uri.parse(widget.url)));
   }
 
   @override

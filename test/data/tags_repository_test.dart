@@ -39,7 +39,7 @@ void main() {
         );
       });
 
-      when(() => api.getTags(count: any(named: "count"))).thenAnswer((_) async {
+      when(() => api.getTags(count: any(named: 'count'))).thenAnswer((_) async {
         return TagsResponse(
           available: 6710,
           count: fakeTags.length,
@@ -115,7 +115,7 @@ void main() {
 
       final result = await repository.getTagById(10987);
 
-      expect(result, isA<Failure>());
+      expect(result, isA<Failure<Result<BarbershopTag>>>());
     });
   });
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
@@ -6,7 +8,7 @@ import 'package:tagly/domain/result.dart';
 class ViewTagViewModel extends ChangeNotifier {
   ViewTagViewModel({required TagsRepository repository, required this.tagId})
     : _repository = repository {
-    load();
+    unawaited(load());
   }
 
   final TagsRepository _repository;

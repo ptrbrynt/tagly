@@ -25,10 +25,10 @@ void main() {
     // Even if the scanner fires while we're broadcasting,
     // detectedBroadcast should remain null.
     scanner.simulateBroadcast(
-      NearbyBroadcast(tagId: 42, deviceName: 'Self', rssi: -50),
+      const NearbyBroadcast(tagId: 42, deviceName: 'Self', rssi: -50),
     );
 
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
 
     expect(notifier.detectedBroadcast, isNull);
   });
@@ -36,10 +36,10 @@ void main() {
   test('surfaces detected broadcast when not broadcasting', () async {
     await notifier.init();
     scanner.simulateBroadcast(
-      NearbyBroadcast(tagId: 99, deviceName: 'Pete', rssi: -65),
+      const NearbyBroadcast(tagId: 99, deviceName: 'Pete', rssi: -65),
     );
 
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
 
     expect(notifier.detectedBroadcast?.tagId, 99);
   });
@@ -47,11 +47,11 @@ void main() {
   test('clears broadcast on dismiss', () async {
     await notifier.init();
     scanner.simulateBroadcast(
-      NearbyBroadcast(tagId: 99, deviceName: 'Pete', rssi: -65),
+      const NearbyBroadcast(tagId: 99, deviceName: 'Pete', rssi: -65),
     );
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     notifier.dismissDetectedBroadcast();
-    await Future.delayed(Duration(milliseconds: 10));
+    await Future<void>.delayed(const Duration(milliseconds: 10));
     expect(notifier.detectedBroadcast, isNull);
   });
 }

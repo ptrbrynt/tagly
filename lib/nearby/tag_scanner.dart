@@ -20,7 +20,7 @@ class NearbyBroadcast {
 }
 
 class TagScanner {
-  StreamSubscription? _scanSubscription;
+  StreamSubscription<List<ScanResult>>? _scanSubscription;
   final _broadcastController = StreamController<NearbyBroadcast?>.broadcast();
 
   /// Emits the currently detected broadcast, or null when none is visible.
@@ -66,8 +66,8 @@ class TagScanner {
     _broadcastController.add(null);
   }
 
-  void dispose() {
-    stopScanning();
-    _broadcastController.close();
+  Future<void> dispose() async {
+    await stopScanning();
+    await _broadcastController.close();
   }
 }

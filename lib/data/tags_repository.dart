@@ -33,7 +33,7 @@ class TagsRepository extends ChangeNotifier {
   Future<Result<void>> syncTags() async {
     debugPrint('Syncing tags...');
     final countResult = await _db.rawQuery(TagQueries.count);
-    final count = countResult.single['COUNT(DISTINCT id)'] as int;
+    final count = countResult.single['COUNT(DISTINCT id)']! as int;
 
     _syncStatus = switch (count) {
       0 => .initialSync,
@@ -46,7 +46,7 @@ class TagsRepository extends ChangeNotifier {
       // Calls the API to check how many tags are available.
       final tagsCountResponse = await _api.getTags(count: 1);
 
-      var available = tagsCountResponse.available;
+      final available = tagsCountResponse.available;
 
       debugPrint('$available tags found. Fetching...');
 
@@ -62,7 +62,7 @@ class TagsRepository extends ChangeNotifier {
       await batch.commit(noResult: true);
 
       notifyListeners();
-      return .ok(null);
+      return const .ok(null);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
     } on DioException catch (e) {
@@ -97,11 +97,15 @@ class TagsRepository extends ChangeNotifier {
     try {
       final result = await _db.rawQuery(TagQueries.getById, [id]);
 
+      final grouped = BarbershopTag.groupRows(result);
+
+      if (grouped.length != 1) {
+        return .failure('Tag $id not found');
+      }
+
       return .ok(BarbershopTag.groupRows(result).single);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
-    } on StateError {
-      return .failure('Tag $id not found');
     }
   }
 

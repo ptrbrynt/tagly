@@ -19,7 +19,7 @@ class FakeTagScanner extends Fake implements TagScanner {
   }
 
   @override
-  void dispose() => _controller.close();
+  Future<void> dispose() => _controller.close();
 
   void simulateBroadcast(NearbyBroadcast broadcast) {
     _controller.add(broadcast);

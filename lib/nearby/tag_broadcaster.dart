@@ -15,13 +15,11 @@ class TagBroadcaster {
       serviceUuid: kTaglyServiceUuid,
       serviceData: encodeTagId(tagId),
       localName: 'Tagly',
-      includePowerLevel: false,
     );
 
     final settings = AdvertiseSettings(
       advertiseMode: .advertiseModeBalanced,
       txPowerLevel: .advertiseTxPowerMedium,
-      connectable: false,
       timeout: 0,
     );
 

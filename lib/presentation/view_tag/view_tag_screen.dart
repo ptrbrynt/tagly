@@ -7,9 +7,7 @@ import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class ViewTagScreen extends StatelessWidget {
   const ViewTagScreen({
-    super.key,
-    required this.viewModel,
-    required this.nearby,
+    required this.viewModel, required this.nearby, super.key,
   });
 
   final ViewTagViewModel viewModel;
@@ -23,10 +21,10 @@ class ViewTagScreen extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(actions: [_broadcastToggle(), _detailsLink(context)]),
           body: switch (viewModel.result) {
-            null => Center(child: CircularProgressIndicator.adaptive()),
+            null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
-              null => SizedBox.shrink(),
+              null => const SizedBox.shrink(),
               final url => SheetMusicViewer(url: url),
             },
           },
@@ -37,7 +35,7 @@ class ViewTagScreen extends StatelessWidget {
 
   Widget _detailsLink(BuildContext context) {
     return IconButton(
-      icon: Icon(Icons.info_outline_rounded),
+      icon: const Icon(Icons.info_outline_rounded),
       onPressed: () {
         context.go('tag/details?id=${viewModel.tagId}');
       },
@@ -51,7 +49,7 @@ class ViewTagScreen extends StatelessWidget {
         return IconButton(
           tooltip: 'Share nearby',
           onPressed: nearby.isBroadcasting
-              ? () => nearby.stopBroadcasting()
+              ? nearby.stopBroadcasting
               : () => nearby.startBroadcasting(viewModel.tagId),
           icon: Icon(
             Icons.cell_tower_rounded,

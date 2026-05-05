@@ -55,7 +55,7 @@ void main() {
       );
 
       scanner.simulateBroadcast(
-        NearbyBroadcast(tagId: 42, deviceName: 'Pete', rssi: -60),
+        const NearbyBroadcast(tagId: 42, deviceName: 'Pete', rssi: -60),
       );
       await tester.pump();
 

@@ -1,10 +1,11 @@
 import 'package:tagly/data/tags_xml_parser.dart';
+import 'package:tagly/domain/barbershop_tag.dart';
 
-final fakeTagsResponse = TagsXmlParser.parse(fakeTagsXml);
+final TagsResponse fakeTagsResponse = TagsXmlParser.parse(fakeTagsXml);
 
-final fakeTags = fakeTagsResponse.tags;
+final List<BarbershopTag> fakeTags = fakeTagsResponse.tags;
 
-final fakeTag = fakeTags.first;
+final BarbershopTag fakeTag = fakeTags.first;
 
 const fakeTagsXml = '''
 <?xml version="1.0" encoding="UTF-8" ?>

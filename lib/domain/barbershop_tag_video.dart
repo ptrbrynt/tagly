@@ -5,7 +5,6 @@ part 'barbershop_tag_video.g.dart';
 
 @freezed
 abstract class BarbershopTagVideo with _$BarbershopTagVideo {
-  const BarbershopTagVideo._();
 
   const factory BarbershopTagVideo({
     required int id,
@@ -20,6 +19,7 @@ abstract class BarbershopTagVideo with _$BarbershopTagVideo {
     String? sungWebsite,
     String? posted,
   }) = _BarbershopTagVideo;
+  const BarbershopTagVideo._();
 
   factory BarbershopTagVideo.fromJson(Map<String, dynamic> json) =>
       _$BarbershopTagVideoFromJson(json);

@@ -8,7 +8,7 @@ extension TaglyTheme on ThemeData {
   ThemeData applyTheme() {
     return copyWith(
       searchBarTheme: SearchBarThemeData(elevation: .all(0)),
-      appBarTheme: AppBarThemeData(titleSpacing: 12),
+      appBarTheme: const AppBarThemeData(titleSpacing: 12),
     );
   }
 }

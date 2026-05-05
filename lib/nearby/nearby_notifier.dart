@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:tagly/nearby/tag_broadcaster.dart';
 import 'package:tagly/nearby/tag_scanner.dart';
@@ -47,8 +49,8 @@ class NearbyNotifier extends ChangeNotifier {
 
   @override
   void dispose() {
-    _broadcaster.stopBroadcast();
-    _scanner.dispose();
+    unawaited(_broadcaster.stopBroadcast());
+    unawaited(_scanner.dispose());
     super.dispose();
   }
 }

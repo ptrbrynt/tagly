@@ -23,7 +23,7 @@ Future<List<SingleChildWidget>> getTestProviders({
     Provider<Database>.value(value: db),
     Provider<TagBroadcaster>(create: (_) => FakeTagBroadcaster()),
     Provider<TagScanner>(create: (_) => FakeTagScanner()),
-    Provider<List<NavigatorObserver>>.value(value: []),
+    Provider<List<NavigatorObserver>>.value(value: const []),
     ...appProviders,
     ...overrides,
   ];

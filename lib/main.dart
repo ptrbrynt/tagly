@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
@@ -24,7 +26,7 @@ Future<void> main() async {
         Provider.value(value: db),
         ...productionProviders,
       ],
-      child: MainApp(),
+      child: const MainApp(),
     ),
   );
 }
@@ -44,7 +46,7 @@ class _MainAppState extends State<MainApp> {
     super.initState();
     _listener = AppLifecycleListener(onResume: _onResume);
     if (SchedulerBinding.instance.lifecycleState == .resumed) {
-      _onResume();
+      unawaited(_onResume());
     }
   }
 

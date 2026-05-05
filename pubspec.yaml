@@ -27,15 +27,16 @@ dependencies:
   xml: ^7.0.1
 
 dev_dependencies:
+  build_runner: ^2.15.0
+  charlatan: ^0.5.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^6.0.0
-  sqflite_common_ffi: ^2.4.0+3
-  build_runner: ^2.15.0
   freezed: ^3.2.5
   json_serializable: ^6.13.2
   mocktail: ^1.0.5
-  charlatan: ^0.5.0
+  sqflite_common_ffi: ^2.4.0+3
+  very_good_analysis: ^10.2.0
 
 flutter:
   uses-material-design: true

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
@@ -7,9 +9,9 @@ import 'package:tagly/nearby/nearby_notifier.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({
-    super.key,
     required this.repository,
     required this.nearby,
+    super.key,
   });
 
   final TagsRepository repository;
@@ -25,7 +27,7 @@ class _SearchScreenState extends State<SearchScreen> {
   String? _searchingWithQuery;
 
   // The most recent options received from the API.
-  late Iterable<Widget> _lastOptions = <Widget>[];
+  late final Iterable<Widget> _lastOptions = <Widget>[];
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -33,13 +35,13 @@ class _SearchScreenState extends State<SearchScreen> {
       builder: (context, _) {
         final syncStatus = widget.repository.syncStatus;
         return syncStatus == .initialSync
-            ? Scaffold(body: InitialSyncWidget())
+            ? const Scaffold(body: InitialSyncWidget())
             : Scaffold(
                 appBar: AppBar(
                   title: _searchBar(),
                   clipBehavior: .none,
                   toolbarHeight: kToolbarHeight + 16,
-                  scrolledUnderElevation: 0.0,
+                  scrolledUnderElevation: 0,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                 ),
                 body: ListView(children: [_nearbyBanner()]),
@@ -53,7 +55,7 @@ class _SearchScreenState extends State<SearchScreen> {
       listenable: widget.nearby,
       builder: (context, _) {
         final broadcast = widget.nearby.detectedBroadcast;
-        if (broadcast == null) return SizedBox.shrink();
+        if (broadcast == null) return const SizedBox.shrink();
 
         return MaterialBanner(
           content: Text('${broadcast.deviceName} is sharing a tag'),
@@ -66,7 +68,7 @@ class _SearchScreenState extends State<SearchScreen> {
             FilledButton(
               onPressed: () {
                 widget.nearby.dismissDetectedBroadcast();
-                context.push('/tag?id=${broadcast.tagId}');
+                unawaited(context.push('/tag?id=${broadcast.tagId}'));
               },
               child: const Text('Open'),
             ),
@@ -90,19 +92,17 @@ class _SearchScreenState extends State<SearchScreen> {
           return _lastOptions;
         }
 
-        _lastOptions = switch (result) {
+        return switch (result) {
           Failure() => [],
           Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
         };
-
-        return _lastOptions;
       },
     );
   }
 }
 
 class TagListTile extends StatelessWidget {
-  const TagListTile({super.key, required this.tag});
+  const TagListTile({required this.tag, super.key});
 
   final BarbershopTag tag;
   @override
@@ -123,10 +123,9 @@ class InitialSyncWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: .all(24),
+      padding: const .all(24),
       alignment: .center,
-      child: Column(
-        crossAxisAlignment: .center,
+      child: const Column(
         mainAxisAlignment: .center,
         children: [
           CircularProgressIndicator.adaptive(),
