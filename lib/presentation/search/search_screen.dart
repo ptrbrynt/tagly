@@ -3,11 +3,17 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/nearby/nearby_notifier.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key, required this.repository});
+  const SearchScreen({
+    super.key,
+    required this.repository,
+    required this.nearby,
+  });
 
   final TagsRepository repository;
+  final NearbyNotifier nearby;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -36,8 +42,36 @@ class _SearchScreenState extends State<SearchScreen> {
                   scrolledUnderElevation: 0.0,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                 ),
-                body: ListView(),
+                body: ListView(children: [_nearbyBanner()]),
               );
+      },
+    );
+  }
+
+  Widget _nearbyBanner() {
+    return ListenableBuilder(
+      listenable: widget.nearby,
+      builder: (context, _) {
+        final broadcast = widget.nearby.detectedBroadcast;
+        if (broadcast == null) return SizedBox.shrink();
+
+        return MaterialBanner(
+          content: Text('${broadcast.deviceName} is sharing a tag'),
+          leading: const Icon(Icons.cell_tower),
+          actions: [
+            TextButton(
+              onPressed: widget.nearby.dismissDetectedBroadcast,
+              child: const Text('Dismiss'),
+            ),
+            FilledButton(
+              onPressed: () {
+                widget.nearby.dismissDetectedBroadcast();
+                context.push('/tag?id=${broadcast.tagId}');
+              },
+              child: const Text('Open'),
+            ),
+          ],
+        );
       },
     );
   }

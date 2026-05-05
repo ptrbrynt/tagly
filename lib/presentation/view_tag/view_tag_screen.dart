@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class ViewTagScreen extends StatelessWidget {
-  const ViewTagScreen({super.key, required this.viewModel});
+  const ViewTagScreen({
+    super.key,
+    required this.viewModel,
+    required this.nearby,
+  });
 
   final ViewTagViewModel viewModel;
+  final NearbyNotifier nearby;
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +20,7 @@ class ViewTagScreen extends StatelessWidget {
       listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
-          appBar: AppBar(),
+          appBar: AppBar(actions: [_broadcastToggle()]),
           body: switch (viewModel.result) {
             null => Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
@@ -23,6 +29,26 @@ class ViewTagScreen extends StatelessWidget {
               final url => SheetMusicViewer(url: url),
             },
           },
+        );
+      },
+    );
+  }
+
+  Widget _broadcastToggle() {
+    return ListenableBuilder(
+      listenable: nearby,
+      builder: (context, _) {
+        return IconButton(
+          tooltip: 'Share nearby',
+          onPressed: nearby.isBroadcasting
+              ? () => nearby.stopBroadcasting()
+              : () => nearby.startBroadcasting(viewModel.tagId),
+          icon: Icon(
+            Icons.cell_tower_rounded,
+            color: nearby.isBroadcasting
+                ? Theme.of(context).colorScheme.primary
+                : null,
+          ),
         );
       },
     );

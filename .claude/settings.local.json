@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(flutter test *)",
-      "Bash(xargs cat *)"
+      "Bash(xargs cat *)",
+      "Bash(echo \"EXIT: $?\")"
     ]
   }
 }

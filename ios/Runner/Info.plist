@@ -68,5 +68,7 @@
 	</array>
 	<key>com.posthog.posthog.AUTO_INIT</key>
 	<false/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Tagly uses Bluetooth to share tags with nearby singers.</string>
 </dict>
 </plist>
