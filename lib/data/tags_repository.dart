@@ -74,20 +74,17 @@ class TagsRepository extends ChangeNotifier {
 
   Future<Result<List<BarbershopTag>>> searchTags(String query) async {
     try {
-      final searchResult = switch (_buildFtsQuery(query)) {
-        null => <Map<String, dynamic>>[],
-        final sanitized => await _db.rawQuery(TagQueries.search, [sanitized]),
-      };
+      final id = int.tryParse(query);
+      if (id != null) {
+        final rows = await _db.rawQuery(TagQueries.getById, [id]);
+        return .ok(BarbershopTag.groupRows(rows));
+      }
 
-      final idResult = switch (int.tryParse(query)) {
-        null => <Map<String, Object?>>[],
-        final id => await _db.rawQuery(TagQueries.getById, [id]),
-      };
+      final sanitized = _buildFtsQuery(query);
+      if (sanitized == null) return const .ok([]);
 
-      return .ok([
-        ...BarbershopTag.groupRows(idResult),
-        ...BarbershopTag.groupRows(searchResult),
-      ]);
+      final rows = await _db.rawQuery(TagQueries.search, [sanitized]);
+      return .ok(BarbershopTag.groupRows(rows));
     } on DatabaseException catch (e) {
       return .failure(e.toString());
     }

@@ -24,12 +24,6 @@ class TagsResponse {
 }
 
 /// Parses the barbershoptags.com XML API response into [TagsResponse].
-///
-/// Requires the `xml` package:
-/// ```yaml
-/// dependencies:
-///   xml: ^6.x.x
-/// ```
 abstract final class TagsXmlParser {
   TagsXmlParser._();
 

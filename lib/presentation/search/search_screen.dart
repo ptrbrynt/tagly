@@ -81,16 +81,17 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _searchBar() {
     return SearchAnchor.bar(
       barHintText: 'Search tags...',
+
       suggestionsBuilder: (context, controller) async {
         _searchingWithQuery = controller.text;
         final result = await widget.repository.searchTags(_searchingWithQuery!);
 
-        // If another search happened after this one, throw away these options.
-        // Use the previous options instead and wait for the newer request to
-        // finish.
-        if (_searchingWithQuery != controller.text) {
-          return _lastOptions;
-        }
+        // // If another search happened after this one, throw away these options.
+        // // Use the previous options instead and wait for the newer request to
+        // // finish.
+        // if (_searchingWithQuery != controller.text) {
+        //   return _lastOptions;
+        // }
 
         return switch (result) {
           Failure() => [],

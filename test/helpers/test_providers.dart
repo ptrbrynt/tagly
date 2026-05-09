@@ -14,9 +14,10 @@ import 'fake_analytics_service.dart';
 import 'test_db.dart';
 
 Future<List<SingleChildWidget>> getTestProviders({
+  Database? db,
   List<SingleChildWidget> overrides = const [],
 }) async {
-  final db = await openTestDb();
+  db ??= await openTestDb();
   return [
     Provider<Dio>(create: (_) => Dio()),
     Provider<AnalyticsService>(create: (_) => FakeAnalyticsService()),

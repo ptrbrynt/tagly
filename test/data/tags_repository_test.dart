@@ -5,7 +5,6 @@ import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/data/tags_xml_parser.dart';
 import 'package:tagly/db/queries/tag_queries.dart';
-import 'package:tagly/db/queries/video_queries.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 
@@ -58,7 +57,7 @@ void main() {
     });
 
     test('search correctly searches', () async {
-      await _seedDb(db);
+      await seedTestDb(db);
 
       final searchResult = await repository.searchTags('hear you sing');
 
@@ -73,7 +72,7 @@ void main() {
     });
 
     test('search by ID correctly searches', () async {
-      await _seedDb(db);
+      await seedTestDb(db);
 
       final searchResult = await repository.searchTags('${fakeTags.first.id}');
 
@@ -88,7 +87,7 @@ void main() {
     });
 
     test('empty search query returns empty result', () async {
-      await _seedDb(db);
+      await seedTestDb(db);
 
       final searchResult = await repository.searchTags('');
 
@@ -103,7 +102,7 @@ void main() {
     });
 
     test('get by ID returns correct tag', () async {
-      await _seedDb(db);
+      await seedTestDb(db);
 
       final result = await repository.getTagById(fakeTags.first.id);
 
@@ -111,22 +110,11 @@ void main() {
     });
 
     test('get by ID returns failure when tag does not exist', () async {
-      await _seedDb(db);
+      await seedTestDb(db);
 
       final result = await repository.getTagById(10987);
 
-      expect(result, isA<Failure<Result<BarbershopTag>>>());
+      expect(result, isA<Failure<BarbershopTag>>());
     });
   });
-}
-
-Future<void> _seedDb(Database db) async {
-  final batch = db.batch();
-  for (final tag in fakeTags) {
-    batch.rawInsert(TagQueries.upsert, tag.toMap().values.toList());
-    for (final video in tag.videos) {
-      batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
-    }
-  }
-  await batch.commit(noResult: true);
 }
