@@ -50,6 +50,22 @@ abstract final class TagQueries {
     ORDER BY rank
   ''';
 
+  // Combines FTS search (param 1) with an optional exact ID lookup (param 2,
+  // pass null to skip). A single query avoids the two-await async chain that
+  // breaks Flutter's FakeAsync test environment.
+  static const searchByTextOrId =
+      '''
+    WITH matched_ids AS (
+      SELECT rowid AS tag_id FROM tags_fts WHERE tags_fts MATCH ?
+      UNION
+      SELECT ?
+    )
+    SELECT tags.*, $_videoColumns
+    FROM tags
+    $_videoJoin
+    WHERE tags.id IN (SELECT tag_id FROM matched_ids)
+  ''';
+
   static const searchByArranger =
       '''
     SELECT tags.*, $_videoColumns

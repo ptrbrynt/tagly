@@ -86,12 +86,12 @@ class _SearchScreenState extends State<SearchScreen> {
         _searchingWithQuery = controller.text;
         final result = await widget.repository.searchTags(_searchingWithQuery!);
 
-        // // If another search happened after this one, throw away these options.
-        // // Use the previous options instead and wait for the newer request to
-        // // finish.
-        // if (_searchingWithQuery != controller.text) {
-        //   return _lastOptions;
-        // }
+        // If another search happened after this one, throw away these options.
+        // Use the previous options instead and wait for the newer request to
+        // finish.
+        if (_searchingWithQuery != controller.text) {
+          return _lastOptions;
+        }
 
         return switch (result) {
           Failure() => [],
