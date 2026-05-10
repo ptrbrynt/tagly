@@ -27,6 +27,15 @@ abstract final class TagQueries {
     $_videoJoin
 ''';
 
+  static const getFavorites =
+      '''
+    SELECT tags.*, $_videoColumns
+    FROM tags
+    JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
+    WHERE tags.is_favorite = 1
+''';
+
   static const getById =
       '''
     SELECT tags.*, $_videoColumns
@@ -156,8 +165,7 @@ abstract final class TagQueries {
       other_1_url       = excluded.other_1_url,
       other_2_url       = excluded.other_2_url,
       other_3_url       = excluded.other_3_url,
-      other_4_url       = excluded.other_4_url,
-      is_favorite       = excluded.is_favorite
+      other_4_url       = excluded.other_4_url
   ''';
 
   // --- Filtered listing ---

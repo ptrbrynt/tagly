@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/db/queries/tag_queries.dart';
@@ -19,12 +22,17 @@ enum SyncStatus {
 }
 
 class TagsRepository extends ChangeNotifier {
-  TagsRepository({required Database db, required BarbershopTagsApi api})
-    : _api = api,
-      _db = db;
+  TagsRepository({
+    required Database db,
+    required BarbershopTagsApi api,
+    required CacheManager cacheManager,
+  }) : _api = api,
+       _db = db,
+       _cacheManager = cacheManager;
 
   final Database _db;
   final BarbershopTagsApi _api;
+  final CacheManager _cacheManager;
 
   SyncStatus _syncStatus = .ready;
   SyncStatus get syncStatus => _syncStatus;
@@ -101,6 +109,76 @@ class TagsRepository extends ChangeNotifier {
       return .ok(BarbershopTag.groupRows(result).single);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
+    }
+  }
+
+  Future<Result<List<BarbershopTag>>> getFavorites() async {
+    try {
+      final result = await _db.rawQuery(TagQueries.getFavorites);
+
+      final grouped = BarbershopTag.groupRows(result);
+
+      return .ok(grouped);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
+  Future<Result<void>> addToFavorites(int id) async {
+    try {
+      await _db.update(
+        'tags',
+        {'is_favorite': 1},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      unawaited(cacheTag(id));
+
+      return const .ok(null);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
+  Future<Result<void>> removeFromFavorites(int id) async {
+    try {
+      await _db.update(
+        'tags',
+        {'is_favorite': 0},
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return const .ok(null);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
+  Future<void> cacheTag(int id) async {
+    try {
+      final tag = await getTagById(id);
+
+      if (tag case Ok(:final value)) {
+        final files = [
+          ?value.sheetMusicUrl,
+          ?value.allPartsUrl,
+          ?value.tenorUrl,
+          ?value.leadUrl,
+          ?value.bariUrl,
+          ?value.bassUrl,
+          ?value.other1Url,
+          ?value.other2Url,
+          ?value.other3Url,
+          ?value.other4Url,
+        ];
+        await Future.wait([
+          for (final url in files) _cacheManager.downloadFile(url),
+        ]);
+      }
+    } on Exception {
+      return;
     }
   }
 

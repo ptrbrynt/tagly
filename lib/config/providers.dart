@@ -41,7 +41,10 @@ List<SingleChildWidget> get appProviders => [
   ),
   Provider(create: (context) => BarbershopTagsApi(dio: context.read())),
   ChangeNotifierProvider(
-    create: (context) =>
-        TagsRepository(db: context.read(), api: context.read()),
+    create: (context) => TagsRepository(
+      db: context.read(),
+      api: context.read(),
+      cacheManager: context.read(),
+    ),
   ),
 ];

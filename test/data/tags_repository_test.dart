@@ -1,3 +1,4 @@
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
@@ -9,6 +10,7 @@ import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 
 import '../fakes/fake_barbershop_tags_api.dart';
+import '../helpers/fake_cache_manager.dart';
 import '../helpers/fake_tags.dart';
 import '../helpers/test_db.dart';
 
@@ -17,11 +19,13 @@ void main() {
     late MockBarbershopTagsApi api;
     late Database db;
     late TagsRepository repository;
+    late CacheManager cacheManager;
 
     setUp(() async {
       api = MockBarbershopTagsApi();
       db = await openTestDb();
-      repository = TagsRepository(db: db, api: api);
+      cacheManager = FakeCacheManager();
+      repository = TagsRepository(db: db, api: api, cacheManager: cacheManager);
     });
 
     tearDown(() async {
@@ -115,6 +119,95 @@ void main() {
       final result = await repository.getTagById(10987);
 
       expect(result, isA<Failure<BarbershopTag>>());
+    });
+
+    test('getFavorites returns favorites', () async {
+      await seedTestDb(db);
+
+      await db.update(
+        'tags',
+        {'is_favorite': 1},
+        where: 'id = ?',
+        whereArgs: [fakeTags.first.id],
+      );
+
+      final result = await repository.getFavorites();
+
+      expect(
+        result,
+        isA<Ok<List<BarbershopTag>>>().having(
+          (r) => r.value.single,
+          'single result',
+          equals(fakeTags.first.copyWith(isFavorite: true)),
+        ),
+      );
+    });
+
+    test('addToFavorites marks tag as favorite', () async {
+      await seedTestDb(db);
+
+      await repository.addToFavorites(fakeTags.first.id);
+
+      final tag = await db.query(
+        'tags',
+        where: 'id = ?',
+        whereArgs: [fakeTags.first.id],
+      );
+
+      expect(tag.single['is_favorite'], equals(1));
+    });
+
+    test('syncTags preserves is_favorite through resync', () async {
+      when(() => api.getTags(count: 1)).thenAnswer((_) async {
+        return TagsResponse(
+          available: fakeTags.length,
+          count: 1,
+          stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+          tags: [fakeTag],
+        );
+      });
+
+      when(() => api.getTags(count: any(named: 'count'))).thenAnswer((_) async {
+        return TagsResponse(
+          available: fakeTags.length,
+          count: fakeTags.length,
+          stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+          tags: fakeTags,
+        );
+      });
+
+      await repository.syncTags();
+      await repository.addToFavorites(fakeTags.first.id);
+      await repository.syncTags();
+
+      final tag = await db.query(
+        'tags',
+        where: 'id = ?',
+        whereArgs: [fakeTags.first.id],
+      );
+
+      expect(tag.single['is_favorite'], equals(1));
+    });
+
+    test('removeFromFavorites marks tag as favorite', () async {
+      await seedTestDb(db);
+
+      await db.update(
+        'tags',
+        {'is_favorite': 1},
+        where: 'id = ?',
+        whereArgs: [fakeTags.first.id],
+      );
+
+      await repository.removeFromFavorites(fakeTags.first.id);
+
+      final tag = await db.query(
+        'tags',
+        where: 'id = ?',
+        whereArgs: [fakeTags.first.id],
+      );
+
+      expect(tag.single['is_favorite'], equals(0));
     });
   });
 }

@@ -27,7 +27,13 @@ class ViewTagScreen extends StatelessWidget {
       listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
-          appBar: AppBar(actions: [_broadcastToggle(), _detailsLink(context)]),
+          appBar: AppBar(
+            actions: [
+              _favoriteToggle(context),
+              _broadcastToggle(),
+              _detailsLink(context),
+            ],
+          ),
           body: switch (viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
@@ -92,5 +98,29 @@ class ViewTagScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+  Widget _favoriteToggle(BuildContext context) {
+    return switch (viewModel.result) {
+      Ok(:final value) => IconButton(
+        isSelected: value.isFavorite,
+        icon: const Icon(Icons.favorite_border_rounded),
+        selectedIcon: const Icon(Icons.favorite_rounded),
+        onPressed: () async {
+          final result = await ((value.isFavorite)
+              ? viewModel.removeFromFavorites()
+              : viewModel.addToFavorites());
+
+          if (!context.mounted) return;
+
+          if (result case Failure(:final message)) {
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(message)));
+          }
+        },
+      ),
+      _ => const SizedBox.shrink(),
+    };
   }
 }
