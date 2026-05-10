@@ -45,6 +45,7 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
           child: Align(
             alignment: .topStart,
             child: DropdownButton(
+              icon: const Icon(Icons.keyboard_arrow_down_rounded),
               value: _selectedTrack,
               items: [
                 for (final track in widget.tracks.keys)

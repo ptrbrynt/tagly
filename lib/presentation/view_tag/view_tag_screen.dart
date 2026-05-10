@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
@@ -38,23 +39,29 @@ class ViewTagScreen extends StatelessWidget {
               ),
             },
           },
+
           bottomNavigationBar: switch (viewModel.result) {
-            Ok(:final value) => Container(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainer,
-              ),
-              padding: const .all(16),
-              child: SafeArea(
-                child: LearningTrackPlayer(
-                  tracks: value.learningTracks,
-                  cacheManager: cacheManager,
-                ),
-              ),
-            ),
+            Ok(:final value) => _tracksPlayer(context, value),
             _ => null,
           },
         );
       },
+    );
+  }
+
+  Widget? _tracksPlayer(BuildContext context, BarbershopTag value) {
+    if (value.learningTracks.isEmpty) return null;
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+      ),
+      padding: const .all(16),
+      child: SafeArea(
+        child: LearningTrackPlayer(
+          tracks: value.learningTracks,
+          cacheManager: cacheManager,
+        ),
+      ),
     );
   }
 
