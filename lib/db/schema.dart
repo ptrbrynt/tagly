@@ -57,7 +57,11 @@ abstract final class Schema {
         bass_url            TEXT,
         bari_url            TEXT,
         lead_url            TEXT,
-        tenor_url           TEXT
+        tenor_url           TEXT,
+        other_1_url         TEXT,
+        other_2_url         TEXT,
+        other_3_url         TEXT,
+        other_4_url         TEXT
       )
       ''';
 

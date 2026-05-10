@@ -3,6 +3,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
+import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
@@ -36,6 +37,21 @@ class ViewTagScreen extends StatelessWidget {
                 cacheManager: cacheManager,
               ),
             },
+          },
+          bottomNavigationBar: switch (viewModel.result) {
+            Ok(:final value) => Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceContainer,
+              ),
+              padding: const .all(16),
+              child: SafeArea(
+                child: LearningTrackPlayer(
+                  tracks: value.learningTracks,
+                  cacheManager: cacheManager,
+                ),
+              ),
+            ),
+            _ => null,
           },
         );
       },

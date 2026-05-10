@@ -21,27 +21,39 @@ class SheetMusicViewer extends StatefulWidget {
 class _SheetMusicViewerState extends State<SheetMusicViewer> {
   final controller = WebViewController();
 
+  bool _loading = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
-  // @override
-  // void didUpdateWidget(SheetMusicViewer oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (oldWidget.url != widget.url) {
-  //     unawaited(_load());
-  //   }
-  // }
+  @override
+  void didUpdateWidget(SheetMusicViewer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url != widget.url) {
+      unawaited(_load());
+    }
+  }
 
   Future<void> _load() async {
+    setState(() {
+      _loading = true;
+    });
     final file = await widget.cacheManager.getSingleFile(widget.url);
     await controller.loadFile(file.path);
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WebViewWidget(controller: controller);
+    return _loading
+        ? const Center(child: CircularProgressIndicator.adaptive())
+        : WebViewWidget(controller: controller);
   }
 }

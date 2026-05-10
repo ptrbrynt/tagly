@@ -99,6 +99,10 @@ abstract final class TagsXmlParser {
       bariUrl: _text(el, 'Bari'),
       leadUrl: _text(el, 'Lead'),
       tenorUrl: _text(el, 'Tenor'),
+      other1Url: _text(el, 'Other1'),
+      other2Url: _text(el, 'Other2'),
+      other3Url: _text(el, 'Other3'),
+      other4Url: _text(el, 'Other4'),
       videos: videos,
     );
   }

@@ -47,6 +47,10 @@ abstract class BarbershopTag with _$BarbershopTag {
     String? bariUrl,
     String? leadUrl,
     String? tenorUrl,
+    String? other1Url,
+    String? other2Url,
+    String? other3Url,
+    String? other4Url,
     // Not a column in the tags table — populated by the repository
     // when fetching a single tag with its related videos.
     @Default([]) List<BarbershopTagVideo> videos,
@@ -100,6 +104,10 @@ abstract class BarbershopTag with _$BarbershopTag {
     bariUrl: map['bari_url'] as String?,
     leadUrl: map['lead_url'] as String?,
     tenorUrl: map['tenor_url'] as String?,
+    other1Url: map['other_1_url'] as String?,
+    other2Url: map['other_2_url'] as String?,
+    other3Url: map['other_3_url'] as String?,
+    other4Url: map['other_4_url'] as String?,
     videos: videos,
   );
   const BarbershopTag._();
@@ -192,12 +200,30 @@ abstract class BarbershopTag with _$BarbershopTag {
     'bari_url': bariUrl,
     'lead_url': leadUrl,
     'tenor_url': tenorUrl,
+    'other_1_url': other1Url,
+    'other_2_url': other2Url,
+    'other_3_url': other3Url,
+    'other_4_url': other4Url,
   };
 
   String? get keyName {
     return switch ((keyTonic, keyMode)) {
       (null, _) || (_, null) => null,
       (final String tonic, final String mode) => '$tonic $mode',
+    };
+  }
+
+  Map<String, String> get learningTracks {
+    return {
+      'Full Mix': ?allPartsUrl,
+      'Tenor': ?tenorUrl,
+      'Lead': ?leadUrl,
+      'Baritone': ?bariUrl,
+      'Bass': ?bassUrl,
+      'Other 1': ?other1Url,
+      'Other 2': ?other2Url,
+      'Other 3': ?other3Url,
+      'Other 4': ?other4Url,
     };
   }
 }

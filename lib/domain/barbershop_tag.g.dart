@@ -48,6 +48,10 @@ _BarbershopTag _$BarbershopTagFromJson(Map<String, dynamic> json) =>
       bariUrl: json['bariUrl'] as String?,
       leadUrl: json['leadUrl'] as String?,
       tenorUrl: json['tenorUrl'] as String?,
+      other1Url: json['other1Url'] as String?,
+      other2Url: json['other2Url'] as String?,
+      other3Url: json['other3Url'] as String?,
+      other4Url: json['other4Url'] as String?,
       videos:
           (json['videos'] as List<dynamic>?)
               ?.map(
@@ -99,5 +103,9 @@ Map<String, dynamic> _$BarbershopTagToJson(_BarbershopTag instance) =>
       'bariUrl': instance.bariUrl,
       'leadUrl': instance.leadUrl,
       'tenorUrl': instance.tenorUrl,
+      'other1Url': instance.other1Url,
+      'other2Url': instance.other2Url,
+      'other3Url': instance.other3Url,
+      'other4Url': instance.other4Url,
       'videos': instance.videos,
     };
