@@ -54,6 +54,9 @@ abstract class BarbershopTag with _$BarbershopTag {
     // Not a column in the tags table — populated by the repository
     // when fetching a single tag with its related videos.
     @Default([]) List<BarbershopTagVideo> videos,
+    @JsonKey(toJson: boolToInt, fromJson: boolFromInt)
+    @Default(false)
+    bool isFavorite,
   }) = _BarbershopTag;
 
   /// Construct from a sqflite row. When using a query that JOINs tag_videos,
@@ -109,6 +112,7 @@ abstract class BarbershopTag with _$BarbershopTag {
     other3Url: map['other_3_url'] as String?,
     other4Url: map['other_4_url'] as String?,
     videos: videos,
+    isFavorite: boolFromInt(map['is_favorite'] as int? ?? 0),
   );
   const BarbershopTag._();
 
@@ -204,6 +208,7 @@ abstract class BarbershopTag with _$BarbershopTag {
     'other_2_url': other2Url,
     'other_3_url': other3Url,
     'other_4_url': other4Url,
+    'is_favorite': boolToInt(isFavorite),
   };
 
   String? get keyName {
@@ -227,3 +232,8 @@ abstract class BarbershopTag with _$BarbershopTag {
     };
   }
 }
+
+bool boolFromInt(int value) => value != 0;
+
+// ignore: avoid_positional_boolean_parameters
+int boolToInt(bool value) => value ? 1 : 0;

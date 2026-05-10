@@ -61,7 +61,9 @@ abstract final class Schema {
         other_1_url         TEXT,
         other_2_url         TEXT,
         other_3_url         TEXT,
-        other_4_url         TEXT
+        other_4_url         TEXT,
+        
+        is_favorite         INTEGER NOT NULL DEFAULT 0
       )
       ''';
 

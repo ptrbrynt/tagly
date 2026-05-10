@@ -59,6 +59,9 @@ _BarbershopTag _$BarbershopTagFromJson(Map<String, dynamic> json) =>
               )
               .toList() ??
           const [],
+      isFavorite: json['isFavorite'] == null
+          ? false
+          : boolFromInt((json['isFavorite'] as num).toInt()),
     );
 
 Map<String, dynamic> _$BarbershopTagToJson(_BarbershopTag instance) =>
@@ -108,4 +111,5 @@ Map<String, dynamic> _$BarbershopTagToJson(_BarbershopTag instance) =>
       'other3Url': instance.other3Url,
       'other4Url': instance.other4Url,
       'videos': instance.videos,
+      'isFavorite': boolToInt(instance.isFavorite),
     };
