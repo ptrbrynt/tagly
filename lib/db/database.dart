@@ -6,7 +6,9 @@ Future<Database> openTaglyDatabase({
   String? path,
   bool singleInstance = true,
 }) async {
-  final filePath = join(path ?? await getDatabasesPath(), 'tagly.db');
+  final filePath = (path == inMemoryDatabasePath)
+      ? inMemoryDatabasePath
+      : join(path ?? await getDatabasesPath(), 'tagly.db');
   return openDatabase(
     filePath,
     version: Schema.version,

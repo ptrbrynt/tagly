@@ -93,7 +93,8 @@ abstract final class TagQueries {
       rating, rating_count, downloaded, last_updated,
       sheet_music_url, sheet_music_type,
       notation_url, notation_type,
-      all_parts_url, bass_url, bari_url, lead_url, tenor_url
+      all_parts_url, bass_url, bari_url, lead_url, tenor_url,
+      other_1_url, other_2_url, other_3_url, other_4_url
     ) VALUES (
       ?, ?, ?, ?,
       ?, ?, ?, ?,
@@ -107,7 +108,8 @@ abstract final class TagQueries {
       ?, ?, ?, ?,
       ?, ?,
       ?, ?,
-      ?, ?, ?, ?, ?
+      ?, ?, ?, ?, ?,
+      ?, ?, ?, ?
     )
     ON CONFLICT(id) DO UPDATE SET
       title             = excluded.title,
@@ -148,7 +150,11 @@ abstract final class TagQueries {
       bass_url          = excluded.bass_url,
       bari_url          = excluded.bari_url,
       lead_url          = excluded.lead_url,
-      tenor_url         = excluded.tenor_url
+      tenor_url         = excluded.tenor_url,
+      other_1_url       = excluded.other_1_url,
+      other_2_url       = excluded.other_2_url,
+      other_3_url       = excluded.other_3_url,
+      other_4_url       = excluded.other_4_url
   ''';
 
   // --- Filtered listing ---
