@@ -10,6 +10,7 @@ import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/nearby/tag_broadcaster.dart';
 import 'package:tagly/nearby/tag_scanner.dart';
+import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
@@ -46,5 +47,8 @@ List<SingleChildWidget> get appProviders => [
       api: context.read(),
       cacheManager: context.read(),
     ),
+  ),
+  ChangeNotifierProvider(
+    create: (context) => FavoritesViewModel(repository: context.read()),
   ),
 ];

@@ -44,9 +44,18 @@ class _SearchScreenState extends State<SearchScreen> {
                   scrolledUnderElevation: 0,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                 ),
-                body: ListView(children: [_nearbyBanner()]),
+                body: ListView(children: [_nearbyBanner(), _favoritesTile()]),
               );
       },
+    );
+  }
+
+  Widget _favoritesTile() {
+    return ListTile(
+      title: const Text('Favorites'),
+      leading: const Icon(Icons.favorite_rounded),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () => context.go('/favorites'),
     );
   }
 
@@ -111,8 +120,9 @@ class TagListTile extends StatelessWidget {
     return ListTile(
       title: Text(tag.title),
       subtitle: Text('#${tag.id}'),
+      trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () {
-        context.go('/tag?id=${tag.id}');
+        unawaited(context.push('/tag?id=${tag.id}'));
       },
     );
   }

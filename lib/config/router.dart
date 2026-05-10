@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
 import 'package:tagly/presentation/tag_details/tag_details_screen.dart';
 import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
@@ -46,6 +47,12 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: 'favorites',
+          builder: (context, _) {
+            return FavoritesScreen(viewModel: context.watch());
+          },
         ),
       ],
     ),
