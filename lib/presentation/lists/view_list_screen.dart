@@ -4,6 +4,7 @@ import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 
 class ViewListScreen extends StatelessWidget {
@@ -29,10 +30,16 @@ class ViewListScreen extends StatelessWidget {
               message: message,
               onRetry: viewModel.load,
             ),
-            Ok(:final value) => ListView.builder(
-              itemCount: value.length,
-              itemBuilder: (context, index) => _listTile(context, value[index]),
-            ),
+            Ok(:final value) =>
+              value.isEmpty
+                  ? const EmptyStateCard(
+                      child: Text('No tags added to this list yet'),
+                    )
+                  : ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) =>
+                          _listTile(context, value[index]),
+                    ),
           };
         },
       ),

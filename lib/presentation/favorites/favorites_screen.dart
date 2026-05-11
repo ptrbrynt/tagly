@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -24,10 +25,14 @@ class FavoritesScreen extends StatelessWidget {
               message: message,
               onRetry: viewModel.load,
             ),
-            Ok(:final value) => ListView.builder(
-              itemCount: value.length,
-              itemBuilder: (context, index) => TagListTile(tag: value[index]),
-            ),
+            Ok(:final value) =>
+              value.isEmpty
+                  ? const EmptyStateCard(child: Text('No favorites added yet'))
+                  : ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) =>
+                          TagListTile(tag: value[index]),
+                    ),
           };
         },
       ),

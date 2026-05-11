@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 
 class ListsScreen extends StatelessWidget {
@@ -34,13 +35,16 @@ class ListsScreen extends StatelessWidget {
               message: message,
               onRetry: viewModel.load,
             ),
-            Ok(:final value) => ListView.builder(
-              itemCount: value.length,
-              itemBuilder: (context, index) {
-                final list = value[index];
-                return _listTile(context, list);
-              },
-            ),
+            Ok(:final value) =>
+              value.isEmpty
+                  ? const EmptyStateCard(child: Text('No lists added yet'))
+                  : ListView.builder(
+                      itemCount: value.length,
+                      itemBuilder: (context, index) {
+                        final list = value[index];
+                        return _listTile(context, list);
+                      },
+                    ),
           };
         },
       ),
