@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
-import 'package:tagly/presentation/search/search_screen.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
+import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 import '../../helpers/test_app.dart';
 import '../../helpers/test_db.dart';

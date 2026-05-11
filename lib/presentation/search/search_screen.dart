@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
-import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
+import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({
@@ -179,24 +179,6 @@ class _NavCard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class TagListTile extends StatelessWidget {
-  const TagListTile({required this.tag, super.key});
-
-  final BarbershopTag tag;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(tag.title),
-      subtitle: Text('#${tag.id}'),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () {
-        unawaited(context.push('/tag?id=${tag.id}'));
-      },
     );
   }
 }

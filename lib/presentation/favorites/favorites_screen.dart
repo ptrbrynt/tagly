@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
-import 'package:tagly/presentation/search/search_screen.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({required this.viewModel, super.key});
