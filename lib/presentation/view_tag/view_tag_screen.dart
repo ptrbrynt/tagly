@@ -14,6 +14,7 @@ import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
@@ -182,6 +183,15 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
             );
           },
           child: const Text('Share'),
+        ),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.open_in_browser_rounded),
+          onPressed: () async {
+            if (await canLaunchUrl(tag.tagUri)) {
+              await launchUrl(tag.tagUri);
+            }
+          },
+          child: const Text('Open in browser'),
         ),
       ],
     );
