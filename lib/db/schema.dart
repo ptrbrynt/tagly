@@ -84,6 +84,21 @@ abstract final class Schema {
       )
       ''';
 
+  static const _createLists = '''
+    CREATE TABLE IF NOT EXISTS lists (
+      id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+      name                  TEXT NOT NULL
+    )
+''';
+
+  static const _createListTags = '''
+    CREATE TABLE IF NOT EXISTS list_tags (
+      id                    INTEGER PRIMARY KEY AUTOINCREMENT,
+      list_id               INTEGER NOT NULL REFERENCES lists(id) ON DELETE CASCADE,
+      tag_id                INTEGER NOT NULL REFERENCES tags(id) ON DELETE CASCADE
+    )
+''';
+
   // ----------------------------------------------------------------
   // Indexes
   // ----------------------------------------------------------------
@@ -200,6 +215,8 @@ abstract final class Schema {
     // Tables first
     _createTags,
     _createTagVideos,
+    _createLists,
+    _createListTags,
     // Indexes
     _createIndexType,
     _createIndexKey,
