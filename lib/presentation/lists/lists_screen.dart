@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/failure_card.dart';
 
 class ListsScreen extends StatelessWidget {
   const ListsScreen({required this.viewModel, super.key});
@@ -29,7 +30,10 @@ class ListsScreen extends StatelessWidget {
         builder: (context, _) {
           return switch (viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
-            Failure(:final message) => Center(child: Text(message)),
+            Failure(:final message) => FailureCard(
+              message: message,
+              onRetry: viewModel.load,
+            ),
             Ok(:final value) => ListView.builder(
               itemCount: value.length,
               itemBuilder: (context, index) {

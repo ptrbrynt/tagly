@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/utils/failure_card.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const FavoritesScreen({required this.viewModel, super.key});
@@ -19,7 +20,10 @@ class FavoritesScreen extends StatelessWidget {
             null => const Center(
               child: Center(child: CircularProgressIndicator.adaptive()),
             ),
-            Failure(:final message) => Center(child: Text(message)),
+            Failure(:final message) => FailureCard(
+              message: message,
+              onRetry: viewModel.load,
+            ),
             Ok(:final value) => ListView.builder(
               itemCount: value.length,
               itemBuilder: (context, index) => TagListTile(tag: value[index]),
