@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
@@ -20,6 +22,7 @@ class ViewTagScreen extends StatefulWidget {
     required this.settingsRepository,
     required this.cacheManager,
     required this.nearby,
+    required this.sharePlus,
     super.key,
   });
 
@@ -28,6 +31,7 @@ class ViewTagScreen extends StatefulWidget {
   final SettingsRepository settingsRepository;
   final CacheManager cacheManager;
   final NearbyNotifier nearby;
+  final SharePlus sharePlus;
 
   @override
   State<ViewTagScreen> createState() => _ViewTagScreenState();
@@ -70,9 +74,10 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
         return Scaffold(
           appBar: AppBar(
             actions: [
-              _favoriteToggle(context),
-
-              _tagMenu(),
+              if (widget.viewModel.result case Ok(:final value)) ...[
+                _favoriteToggle(context),
+                _tagMenu(value),
+              ],
             ],
           ),
           body: switch (widget.viewModel.result) {
@@ -135,7 +140,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     };
   }
 
-  Widget _tagMenu() {
+  Widget _tagMenu(BarbershopTag tag) {
     return MenuAnchor(
       builder: (context, controller, child) => IconButton(
         icon: const Icon(Icons.more_vert_rounded),
@@ -145,7 +150,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
         MenuItemButton(
           leadingIcon: const Icon(Icons.info_outline_rounded),
           onPressed: () {
-            context.go('tag/details?id=${widget.viewModel.tagId}');
+            context.go('tag/details?id=${tag.id}');
           },
           child: const Text('Tag Details'),
         ),
@@ -166,6 +171,17 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
               ),
             );
           },
+        ),
+        MenuItemButton(
+          leadingIcon: Platform.isIOS
+              ? const Icon(Icons.ios_share_rounded)
+              : const Icon(Icons.share_rounded),
+          onPressed: () async {
+            await widget.sharePlus.share(
+              ShareParams(uri: tag.tagUri, title: tag.title),
+            );
+          },
+          child: const Text('Share'),
         ),
       ],
     );

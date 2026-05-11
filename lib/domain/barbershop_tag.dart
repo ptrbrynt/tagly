@@ -231,6 +231,18 @@ abstract class BarbershopTag with _$BarbershopTag {
       'Other 4': ?other4Url,
     };
   }
+
+  Uri get tagUri {
+    final path = StringBuffer('tag-$id-$title');
+    if (version != null && version!.isNotEmpty) {
+      path.write('-($version)');
+    }
+    return Uri(
+      scheme: 'https',
+      host: 'www.barbershoptags.com',
+      path: path.toString().replaceAll(' ', '-'),
+    );
+  }
 }
 
 bool boolFromInt(int value) => value != 0;

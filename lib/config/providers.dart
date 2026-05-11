@@ -4,6 +4,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:tagly/config/router.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/data/lists_repository.dart';
@@ -30,6 +31,7 @@ List<SingleChildWidget> get productionProviders => [
     create: (_) => DefaultCacheManager(),
     dispose: (context, value) => value.dispose(),
   ),
+  Provider<SharePlus>(create: (_) => SharePlus.instance),
   ...appProviders,
 ];
 
