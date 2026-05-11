@@ -24,12 +24,11 @@ extension TaglyTheme on ThemeData {
         elevation: 0,
         scrolledUnderElevation: 2,
       ),
-      cardTheme: CardThemeData(
-        elevation: 1,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-      ),
+      // cardTheme: CardThemeData(
+      //   shape: RoundedRectangleBorder(
+      //     borderRadius: BorderRadius.circular(16),
+      //   ),
+      // ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(

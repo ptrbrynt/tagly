@@ -22,51 +22,58 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  // The query currently being searched for. If null, there is no pending
-  // request.
   String? _searchingWithQuery;
-
-  // The most recent options received from the API.
   late final Iterable<Widget> _lastOptions = <Widget>[];
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
       listenable: widget.repository,
       builder: (context, _) {
         final syncStatus = widget.repository.syncStatus;
-        return syncStatus == .initialSync
-            ? const Scaffold(body: InitialSyncWidget())
-            : Scaffold(
-                appBar: AppBar(
-                  title: _searchBar(),
-                  clipBehavior: .none,
-                  toolbarHeight: kToolbarHeight + 16,
-                  scrolledUnderElevation: 0,
-                  backgroundColor: Theme.of(context).colorScheme.surface,
+        if (syncStatus == .initialSync) {
+          return const Scaffold(body: InitialSyncWidget());
+        }
+        return Scaffold(
+          body: CustomScrollView(
+            slivers: [
+              SliverSafeArea(
+                sliver: SliverPadding(
+                  padding: const .fromLTRB(24, 32, 24, 8),
+                  sliver: SliverList.list(
+                    children: [
+                      _nearbyBanner(),
+                      Text(
+                        'Tagly',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      const SizedBox(height: 24),
+                      _searchBar(),
+                      const SizedBox(height: 32),
+                      Text(
+                        'Browse',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      _NavCard(
+                        label: 'Favorites',
+                        icon: Icons.favorite_rounded,
+                        onTap: () => context.go('/favorites'),
+                      ),
+                      const SizedBox(height: 8),
+                      _NavCard(
+                        label: 'Lists',
+                        icon: Icons.list_rounded,
+                        onTap: () => context.go('/lists'),
+                      ),
+                    ],
+                  ),
                 ),
-                body: ListView(
-                  children: [_nearbyBanner(), _favoritesTile(), _listsTile()],
-                ),
-              );
+              ),
+            ],
+          ),
+        );
       },
-    );
-  }
-
-  Widget _favoritesTile() {
-    return ListTile(
-      title: const Text('Favorites'),
-      leading: const Icon(Icons.favorite_rounded),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () => context.go('/favorites'),
-    );
-  }
-
-  Widget _listsTile() {
-    return ListTile(
-      title: const Text('Lists'),
-      leading: const Icon(Icons.list_rounded),
-      trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () => context.go('/lists'),
     );
   }
 
@@ -101,14 +108,10 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget _searchBar() {
     return SearchAnchor.bar(
       barHintText: 'Search tags...',
-
       suggestionsBuilder: (context, controller) async {
         _searchingWithQuery = controller.text;
         final result = await widget.repository.searchTags(_searchingWithQuery!);
 
-        // If another search happened after this one, throw away these options.
-        // Use the previous options instead and wait for the newer request to
-        // finish.
         if (_searchingWithQuery != controller.text) {
           return _lastOptions;
         }
@@ -122,10 +125,53 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 }
 
+class _NavCard extends StatelessWidget {
+  const _NavCard({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Card.outlined(
+      clipBehavior: .antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const .symmetric(horizontal: 20, vertical: 18),
+          child: Row(
+            children: [
+              Icon(icon, color: cs.primary, size: 24),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  label,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+              Icon(
+                Icons.chevron_right_rounded,
+                color: cs.onSurfaceVariant,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class TagListTile extends StatelessWidget {
   const TagListTile({required this.tag, super.key});
 
   final BarbershopTag tag;
+
   @override
   Widget build(BuildContext context) {
     return ListTile(
