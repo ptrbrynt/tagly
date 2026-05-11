@@ -28,5 +28,6 @@ Future<void> seedTestDb(Database db) async {
       batch.rawInsert(VideoQueries.upsert, video.toMap().values.toList());
     }
   }
+
   await batch.commit(noResult: true);
 }

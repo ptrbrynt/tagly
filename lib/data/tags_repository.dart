@@ -156,6 +156,45 @@ class TagsRepository extends ChangeNotifier {
     }
   }
 
+  Future<Result<List<BarbershopTag>>> getTagsForList(int listId) async {
+    try {
+      final result = await _db.rawQuery(TagQueries.getByListId, [listId]);
+
+      return .ok(BarbershopTag.groupRows(result));
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
+  Future<Result<void>> addTagToList({
+    required int tagId,
+    required int listId,
+  }) async {
+    try {
+      await _db.insert('list_tags', {'tag_id': tagId, 'list_id': listId});
+      unawaited(cacheTag(tagId));
+      return const .ok(null);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
+  Future<Result<void>> removeTagFromList({
+    required int tagId,
+    required int listId,
+  }) async {
+    try {
+      await _db.delete(
+        'list_tags',
+        where: 'tag_id = ? AND list_id = ?',
+        whereArgs: [tagId, listId],
+      );
+      return const .ok(null);
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
   Future<void> cacheTag(int id) async {
     try {
       final tag = await getTagById(id);

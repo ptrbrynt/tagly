@@ -209,5 +209,77 @@ void main() {
 
       expect(tag.single['is_favorite'], equals(0));
     });
+
+    test('getTagsFromList returns tags in a list', () async {
+      await seedTestDb(db);
+
+      final listId = await db.insert('lists', {'name': 'My List'});
+
+      await db.insert('list_tags', {
+        'list_id': listId,
+        'tag_id': fakeTags.first.id,
+      });
+
+      await db.insert('list_tags', {
+        'list_id': listId,
+        'tag_id': fakeTags[1].id,
+      });
+
+      final result = await repository.getTagsForList(listId);
+
+      expect(
+        result,
+        isA<Ok<List<BarbershopTag>>>().having(
+          (result) => result.value.map((i) => i.id),
+          'IDs',
+          containsAll([fakeTags.first.id, fakeTags[1].id]),
+        ),
+      );
+    });
+
+    test('removeTagFromList removes tag from list but keeps others', () async {
+      await seedTestDb(db);
+
+      final listId = await db.insert('lists', {'name': 'My List'});
+
+      await db.insert('list_tags', {
+        'list_id': listId,
+        'tag_id': fakeTags.first.id,
+      });
+
+      await db.insert('list_tags', {
+        'list_id': listId,
+        'tag_id': fakeTags[1].id,
+      });
+
+      await repository.removeTagFromList(
+        tagId: fakeTags.first.id,
+        listId: listId,
+      );
+
+      final result = await db.query(
+        'list_tags',
+        where: 'list_id = ?',
+        whereArgs: [listId],
+      );
+
+      expect(result.length, equals(1));
+    });
+
+    test('addTagToList adds tag to list', () async {
+      await seedTestDb(db);
+
+      final listId = await db.insert('lists', {'name': 'My List'});
+
+      await repository.addTagToList(tagId: fakeTags.first.id, listId: listId);
+
+      final result = await db.query(
+        'list_tags',
+        where: 'list_id = ?',
+        whereArgs: [listId],
+      );
+
+      expect(result.first['tag_id'], equals(fakeTags.first.id));
+    });
   });
 }

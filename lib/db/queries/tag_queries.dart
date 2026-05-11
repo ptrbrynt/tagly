@@ -168,6 +168,18 @@ abstract final class TagQueries {
       other_4_url       = excluded.other_4_url
   ''';
 
+  // --- List membership ---
+
+  static const getByListId =
+      '''
+    SELECT tags.*, $_videoColumns
+    FROM tags
+    JOIN tags_fts ON tags.id = tags_fts.rowid
+    $_videoJoin
+    JOIN list_tags lt ON lt.tag_id = tags.id
+    WHERE lt.list_id = ?
+  ''';
+
   // --- Filtered listing ---
 
   static const byType = '''
