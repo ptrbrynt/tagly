@@ -1,9 +1,10 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SettingsRepository {
+class SettingsRepository extends ChangeNotifier {
   SettingsRepository({
     required CacheManager cacheManager,
     required SharedPreferences preferences,
@@ -23,6 +24,7 @@ class SettingsRepository {
       shouldAlwaysBroadcastKey,
       shouldAlwaysBroadcast,
     );
+    notifyListeners();
   }
 
   Future<void> clearCache() async {

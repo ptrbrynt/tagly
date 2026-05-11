@@ -6,6 +6,7 @@ import 'package:tagly/presentation/lists/lists_screen.dart';
 import 'package:tagly/presentation/lists/view_list_screen.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/settings/settings_screen.dart';
 import 'package:tagly/presentation/tag_details/tag_details_screen.dart';
 import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
@@ -79,6 +80,10 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: 'settings',
+          builder: (context, _) => SettingsScreen(repository: context.read()),
         ),
       ],
     ),

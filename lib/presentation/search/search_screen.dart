@@ -38,6 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
           body: CustomScrollView(
             slivers: [
               SliverSafeArea(
+                bottom: false,
                 sliver: SliverPadding(
                   padding: const .fromLTRB(24, 32, 24, 8),
                   sliver: SliverList.list(
@@ -67,6 +68,21 @@ class _SearchScreenState extends State<SearchScreen> {
                         onTap: () => context.go('/lists'),
                       ),
                     ],
+                  ),
+                ),
+              ),
+              SliverFillRemaining(
+                hasScrollBody: false,
+                child: SafeArea(
+                  top: false,
+                  child: Container(
+                    margin: const .all(24),
+                    alignment: .bottomCenter,
+                    child: _NavCard(
+                      label: 'Settings',
+                      icon: Icons.settings_rounded,
+                      onTap: () => context.go('/settings'),
+                    ),
                   ),
                 ),
               ),
