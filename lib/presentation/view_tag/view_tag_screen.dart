@@ -3,23 +3,26 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
+import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
     required this.viewModel,
+    required this.listsRepository,
     required this.cacheManager,
     required this.nearby,
-
     super.key,
   });
 
   final ViewTagViewModel viewModel;
+  final ListsRepository listsRepository;
   final CacheManager cacheManager;
   final NearbyNotifier nearby;
 
@@ -63,7 +66,24 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           appBar: AppBar(
             actions: [
               _favoriteToggle(context),
+              AddToListButton(
+                listsRepository: widget.listsRepository,
+                tagId: widget.viewModel.tagId,
+                onListSelected: (listId) async {
+                  final result = await widget.viewModel.addTagToList(listId);
 
+                  if (!context.mounted) return;
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(switch (result) {
+                        Ok() => 'Tag added to list',
+                        Failure(:final message) => message,
+                      }),
+                    ),
+                  );
+                },
+              ),
               _detailsLink(context),
             ],
           ),
@@ -78,7 +98,6 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
               ),
             },
           },
-
           bottomNavigationBar: switch (widget.viewModel.result) {
             Ok(:final value) => _tracksPlayer(context, value),
             _ => null,

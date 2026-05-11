@@ -29,6 +29,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
             return ViewTagScreen(
               nearby: context.read(),
               cacheManager: context.read(),
+              listsRepository: context.read(),
               viewModel: ViewTagViewModel(
                 repository: context.read(),
                 tagId: int.parse(tagId),

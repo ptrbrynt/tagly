@@ -29,4 +29,8 @@ class ViewTagViewModel extends ChangeNotifier {
   Future<Result<void>> removeFromFavorites() async {
     return _repository.removeFromFavorites(tagId).whenComplete(load);
   }
+
+  Future<Result<void>> addTagToList(int listId) async {
+    return _repository.addTagToList(tagId: tagId, listId: listId);
+  }
 }
