@@ -10,6 +10,8 @@ import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/db/database.dart';
+import 'package:tagly/db/legacy/legacy_db.dart';
+import 'package:tagly/db/legacy/legacy_migration_repository.dart';
 import 'package:tagly/domain/result.dart';
 
 Future<void> main() async {
@@ -18,6 +20,15 @@ Future<void> main() async {
   final analyticsService = await AnalyticsService.setUp(Posthog());
 
   final db = await openTaglyDatabase();
+
+  final legacyDb = await openLegacyDatabase();
+
+  final migrationRepo = LegacyMigrationRepository(
+    legacyDatabase: legacyDb,
+    newDatabase: db,
+  );
+
+  await migrationRepo.migrate();
 
   runApp(
     MultiProvider(

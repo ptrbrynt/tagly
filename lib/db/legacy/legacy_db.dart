@@ -12,5 +12,18 @@ Future<Database> openLegacyDatabase({
   final dbFolder = await getApplicationDocumentsDirectory();
   final dbFile = join(dbFolder.path, 'tagly.sqlite');
 
-  return openDatabase(dbFile, version: 3, singleInstance: singleInstance);
+  return openDatabase(
+    path ?? dbFile,
+    version: 3,
+    singleInstance: singleInstance,
+    onCreate: (db, version) async {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS my_lists (
+          id          INTEGER PRIMARY KEY AUTOINCREMENT,
+          name        TEXT NOT NULL,
+          tags        TEXT NOT NULL
+        )
+''');
+    },
+  );
 }
