@@ -31,6 +31,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               nearby: context.read(),
               cacheManager: context.read(),
               listsRepository: context.read(),
+              settingsRepository: context.read(),
               viewModel: ViewTagViewModel(
                 repository: context.read(),
                 tagId: int.parse(tagId),

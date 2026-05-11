@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/lists_repository.dart';
+import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
@@ -16,6 +17,7 @@ class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
     required this.viewModel,
     required this.listsRepository,
+    required this.settingsRepository,
     required this.cacheManager,
     required this.nearby,
     super.key,
@@ -23,6 +25,7 @@ class ViewTagScreen extends StatefulWidget {
 
   final ViewTagViewModel viewModel;
   final ListsRepository listsRepository;
+  final SettingsRepository settingsRepository;
   final CacheManager cacheManager;
   final NearbyNotifier nearby;
 
@@ -48,7 +51,9 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   }
 
   Future<void> _startBroadcast() async {
-    await widget.nearby.startBroadcasting(widget.viewModel.tagId);
+    if (widget.settingsRepository.shouldAlwaysBroadcast) {
+      await widget.nearby.startBroadcasting(widget.viewModel.tagId);
+    }
   }
 
   @override

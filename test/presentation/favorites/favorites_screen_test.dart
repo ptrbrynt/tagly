@@ -5,6 +5,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/utils/empty_state_card.dart';
 
 import '../../helpers/test_app.dart';
 import '../../helpers/test_db.dart';
@@ -51,7 +52,7 @@ void main() {
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsNothing);
-      expect(find.byType(ListView), findsOneWidget);
+      expect(find.byType(EmptyStateCard), findsOneWidget);
       expect(find.byType(TagListTile), findsNothing);
     });
 
@@ -104,9 +105,8 @@ Future<void> pumpFavoritesScreen(
     MultiProvider(
       providers: providers,
       child: Builder(
-        builder:
-            (context) =>
-                TestApp(child: FavoritesScreen(viewModel: context.read())),
+        builder: (context) =>
+            TestApp(child: FavoritesScreen(viewModel: context.read())),
       ),
     ),
   );
