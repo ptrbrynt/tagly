@@ -4,7 +4,12 @@
       "Bash(flutter test *)",
       "Bash(xargs cat *)",
       "Bash(echo \"EXIT: $?\")",
-      "Bash(flutter analyze *)"
+      "Bash(flutter analyze *)",
+      "Bash(find /Users/peter.bryant/.pub-cache/hosted/pub.dev/flutter_ble_peripheral-2.1.0 -name \"*.kt\" | head -10)",
+      "Read(//Users/peter.bryant/.pub-cache/hosted/pub.dev/flutter_ble_peripheral-2.1.0/**)",
+      "Bash(find /Users/peter.bryant/.pub-cache/hosted/pub.dev/flutter_ble_peripheral-2.1.0 -name \"advertise_data.dart\")",
+      "Bash(grep -r \"manufacturerData\" /Users/peter.bryant/.pub-cache/hosted/pub.dev/flutter_blue_plus-*/lib/src/advertisement_data.dart 2>/dev/null | head -5)",
+      "Read(//Users/peter.bryant/.pub-cache/hosted/pub.dev/**)"
     ]
   }
 }

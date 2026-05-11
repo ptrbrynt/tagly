@@ -1,21 +1,16 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
-import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({
     required this.repository,
-    required this.nearby,
     super.key,
   });
 
   final TagsRepository repository;
-  final NearbyNotifier nearby;
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
@@ -43,7 +38,6 @@ class _SearchScreenState extends State<SearchScreen> {
                   padding: const .fromLTRB(24, 32, 24, 8),
                   sliver: SliverList.list(
                     children: [
-                      _nearbyBanner(),
                       Text(
                         'Tagly',
                         style: Theme.of(context).textTheme.displaySmall,
@@ -88,34 +82,6 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ],
           ),
-        );
-      },
-    );
-  }
-
-  Widget _nearbyBanner() {
-    return ListenableBuilder(
-      listenable: widget.nearby,
-      builder: (context, _) {
-        final broadcast = widget.nearby.detectedBroadcast;
-        if (broadcast == null) return const SizedBox.shrink();
-
-        return MaterialBanner(
-          content: Text('${broadcast.deviceName} is sharing a tag'),
-          leading: const Icon(Icons.cell_tower),
-          actions: [
-            TextButton(
-              onPressed: widget.nearby.dismissDetectedBroadcast,
-              child: const Text('Dismiss'),
-            ),
-            FilledButton(
-              onPressed: () {
-                widget.nearby.dismissDetectedBroadcast();
-                unawaited(context.push('/tag?id=${broadcast.tagId}'));
-              },
-              child: const Text('Open'),
-            ),
-          ],
         );
       },
     );

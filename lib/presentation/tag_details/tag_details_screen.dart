@@ -2,18 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
-import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class TagDetailsScreen extends StatelessWidget {
   const TagDetailsScreen({
     required this.viewModel,
-    required this.nearby,
     super.key,
   });
 
   final ViewTagViewModel viewModel;
-  final NearbyNotifier nearby;
 
   @override
   Widget build(BuildContext context) {

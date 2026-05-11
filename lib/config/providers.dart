@@ -10,22 +10,11 @@ import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
-import 'package:tagly/nearby/nearby_notifier.dart';
-import 'package:tagly/nearby/tag_broadcaster.dart';
-import 'package:tagly/nearby/tag_scanner.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
-  Provider(
-    create: (_) => TagBroadcaster(),
-    dispose: (context, value) => value.stopBroadcast(),
-  ),
-  Provider(
-    create: (_) => TagScanner(),
-    dispose: (context, value) => value.dispose(),
-  ),
   Provider<List<NavigatorObserver>>(create: (_) => [PosthogObserver()]),
   Provider<CacheManager>(
     create: (_) => DefaultCacheManager(),
@@ -37,14 +26,6 @@ List<SingleChildWidget> get productionProviders => [
 
 List<SingleChildWidget> get appProviders => [
   Provider(create: (context) => getRouter(context.read())),
-  ChangeNotifierProvider(
-    create: (context) {
-      return NearbyNotifier(
-        scanner: context.read(),
-        broadcaster: context.read(),
-      );
-    },
-  ),
   Provider(create: (context) => BarbershopTagsApi(dio: context.read())),
   ChangeNotifierProvider(
     create: (context) => TagsRepository(

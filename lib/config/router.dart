@@ -17,10 +17,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
     GoRoute(
       path: '/',
       builder: (context, _) {
-        return SearchScreen(
-          repository: context.watch(),
-          nearby: context.watch(),
-        );
+        return SearchScreen(repository: context.watch());
       },
       routes: [
         GoRoute(
@@ -28,7 +25,6 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
           builder: (context, state) {
             final tagId = state.uri.queryParameters['id']!;
             return ViewTagScreen(
-              nearby: context.read(),
               cacheManager: context.read(),
               listsRepository: context.read(),
               settingsRepository: context.read(),
@@ -45,7 +41,6 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               builder: (context, state) {
                 final tagId = state.uri.queryParameters['id']!;
                 return TagDetailsScreen(
-                  nearby: context.watch(),
                   viewModel: ViewTagViewModel(
                     repository: context.watch(),
                     tagId: int.parse(tagId),

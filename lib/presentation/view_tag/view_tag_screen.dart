@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -9,20 +8,18 @@ import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
-import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ViewTagScreen extends StatefulWidget {
+class ViewTagScreen extends StatelessWidget {
   const ViewTagScreen({
     required this.viewModel,
     required this.listsRepository,
     required this.settingsRepository,
     required this.cacheManager,
-    required this.nearby,
     required this.sharePlus,
     super.key,
   });
@@ -31,68 +28,34 @@ class ViewTagScreen extends StatefulWidget {
   final ListsRepository listsRepository;
   final SettingsRepository settingsRepository;
   final CacheManager cacheManager;
-  final NearbyNotifier nearby;
   final SharePlus sharePlus;
-
-  @override
-  State<ViewTagScreen> createState() => _ViewTagScreenState();
-}
-
-class _ViewTagScreenState extends State<ViewTagScreen> {
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) async => _startBroadcast(),
-    );
-  }
-
-  @override
-  void didUpdateWidget(ViewTagScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (widget.viewModel.tagId != oldWidget.viewModel.tagId) {
-      unawaited(_startBroadcast());
-    }
-  }
-
-  Future<void> _startBroadcast() async {
-    if (widget.settingsRepository.shouldAlwaysBroadcast) {
-      await widget.nearby.startBroadcasting(widget.viewModel.tagId);
-    }
-  }
-
-  @override
-  void dispose() {
-    unawaited(widget.nearby.stopBroadcasting());
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.viewModel,
+      listenable: viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
             actions: [
-              if (widget.viewModel.result case Ok(:final value)) ...[
+              if (viewModel.result case Ok(:final value)) ...[
                 _favoriteToggle(context),
-                _tagMenu(value),
+                _tagMenu(context, value),
               ],
             ],
           ),
-          body: switch (widget.viewModel.result) {
+          body: switch (viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
               null => const SizedBox.shrink(),
               final url => SheetMusicViewer(
                 url: url,
-                cacheManager: widget.cacheManager,
+                cacheManager: cacheManager,
               ),
             },
           },
-          bottomNavigationBar: switch (widget.viewModel.result) {
+          bottomNavigationBar: switch (viewModel.result) {
             Ok(:final value) => _tracksPlayer(context, value),
             _ => null,
           },
@@ -111,22 +74,22 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       child: SafeArea(
         child: LearningTrackPlayer(
           tracks: value.learningTracks,
-          cacheManager: widget.cacheManager,
+          cacheManager: cacheManager,
         ),
       ),
     );
   }
 
   Widget _favoriteToggle(BuildContext context) {
-    return switch (widget.viewModel.result) {
+    return switch (viewModel.result) {
       Ok(:final value) => IconButton(
         isSelected: value.isFavorite,
         icon: const Icon(Icons.favorite_border_rounded),
         selectedIcon: const Icon(Icons.favorite_rounded),
         onPressed: () async {
           final result = await ((value.isFavorite)
-              ? widget.viewModel.removeFromFavorites()
-              : widget.viewModel.addToFavorites());
+              ? viewModel.removeFromFavorites()
+              : viewModel.addToFavorites());
 
           if (!context.mounted) return;
 
@@ -141,7 +104,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     };
   }
 
-  Widget _tagMenu(BarbershopTag tag) {
+  Widget _tagMenu(BuildContext context, BarbershopTag tag) {
     return MenuAnchor(
       builder: (context, controller, child) => IconButton(
         icon: const Icon(Icons.more_vert_rounded),
@@ -156,12 +119,12 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           child: const Text('Tag Details'),
         ),
         AddToListButton(
-          listsRepository: widget.listsRepository,
-          tagId: widget.viewModel.tagId,
+          listsRepository: listsRepository,
+          tagId: viewModel.tagId,
           onListSelected: (listId) async {
-            final result = await widget.viewModel.addTagToList(listId);
+            final result = await viewModel.addTagToList(listId);
 
-            if (!mounted) return;
+            if (!context.mounted) return;
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
@@ -178,7 +141,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
               ? const Icon(Icons.ios_share_rounded)
               : const Icon(Icons.share_rounded),
           onPressed: () async {
-            await widget.sharePlus.share(
+            await sharePlus.share(
               ShareParams(uri: tag.tagUri, title: tag.title),
             );
           },

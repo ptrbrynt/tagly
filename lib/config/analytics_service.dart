@@ -15,6 +15,7 @@ class AnalyticsService {
           ..host = 'https://eu.i.posthog.com'
           ..captureApplicationLifecycleEvents = true
           ..debug = kDebugMode
+          ..optOut = true
           ..sessionReplay = true;
     config.errorTrackingConfig.captureFlutterErrors = kReleaseMode;
     config.errorTrackingConfig.capturePlatformDispatcherErrors = kReleaseMode;
