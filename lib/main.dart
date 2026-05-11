@@ -20,16 +20,14 @@ Future<void> main() async {
 
   final analyticsService = await AnalyticsService.setUp(Posthog());
 
-  final db = await openTaglyDatabase();
+  final db = await openTaglyDatabase(singleInstance: false);
 
-  final legacyDb = await openLegacyDatabase();
+  final legacyDb = await openLegacyDatabase(singleInstance: false);
 
   final migrationRepo = LegacyMigrationRepository(
     legacyDatabase: legacyDb,
     newDatabase: db,
   );
-
-  await migrationRepo.migrate();
 
   final sharedPrefs = await SharedPreferences.getInstance();
 
@@ -39,6 +37,7 @@ Future<void> main() async {
         Provider.value(value: analyticsService),
         Provider.value(value: db),
         Provider.value(value: sharedPrefs),
+        Provider.value(value: migrationRepo),
         ...productionProviders,
       ],
       child: const MainApp(),
@@ -69,6 +68,9 @@ class _MainAppState extends State<MainApp> {
     final result = await context.read<TagsRepository>().syncTags();
 
     if (!mounted) return;
+
+    await context.read<LegacyMigrationRepository>().migrate();
+
     final message = switch (result) {
       Ok() => 'Tags synced successfully',
       Failure(:final message) => message,

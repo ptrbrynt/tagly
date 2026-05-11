@@ -1,6 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/data/settings_repository.dart';
+import 'package:tagly/presentation/settings/analytics_toggle.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({required this.repository, super.key});
@@ -25,6 +26,8 @@ class SettingsScreen extends StatelessWidget {
                 value: repository.shouldAlwaysBroadcast,
                 onChanged: repository.setShouldAlwaysBroadcast,
               ),
+              AnalyticsToggle(repository: repository),
+              const Divider(),
               ListTile(
                 title: const Text('Clear Cache...'),
                 subtitle: const Text(

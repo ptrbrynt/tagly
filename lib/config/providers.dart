@@ -58,6 +58,7 @@ List<SingleChildWidget> get appProviders => [
     create: (context) => SettingsRepository(
       preferences: context.read(),
       cacheManager: context.read(),
+      analyticsService: context.read(),
     ),
   ),
 
