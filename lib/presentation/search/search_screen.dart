@@ -44,7 +44,9 @@ class _SearchScreenState extends State<SearchScreen> {
                   scrolledUnderElevation: 0,
                   backgroundColor: Theme.of(context).colorScheme.surface,
                 ),
-                body: ListView(children: [_nearbyBanner(), _favoritesTile()]),
+                body: ListView(
+                  children: [_nearbyBanner(), _favoritesTile(), _listsTile()],
+                ),
               );
       },
     );
@@ -56,6 +58,15 @@ class _SearchScreenState extends State<SearchScreen> {
       leading: const Icon(Icons.favorite_rounded),
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () => context.go('/favorites'),
+    );
+  }
+
+  Widget _listsTile() {
+    return ListTile(
+      title: const Text('Lists'),
+      leading: const Icon(Icons.list_rounded),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () => context.go('/lists'),
     );
   }
 

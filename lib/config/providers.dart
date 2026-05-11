@@ -6,11 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:tagly/config/router.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
+import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/nearby/tag_broadcaster.dart';
 import 'package:tagly/nearby/tag_scanner.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
+import 'package:tagly/presentation/lists/lists_view_model.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
@@ -48,7 +50,14 @@ List<SingleChildWidget> get appProviders => [
       cacheManager: context.read(),
     ),
   ),
+  Provider(
+    create: (context) => ListsRepository(db: context.read()),
+  ),
+
   ChangeNotifierProvider(
     create: (context) => FavoritesViewModel(repository: context.read()),
+  ),
+  ChangeNotifierProvider(
+    create: (context) => ListsViewModel(repository: context.read()),
   ),
 ];
