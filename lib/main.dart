@@ -1,11 +1,14 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
@@ -20,6 +23,11 @@ Future<void> main() async {
 
   final analyticsService = await AnalyticsService.setUp(Posthog());
 
+  if (Platform.isAndroid || Platform.isIOS) {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  }
+
   final db = await openTaglyDatabase(singleInstance: false);
 
   final legacyDb = await openLegacyDatabase(singleInstance: false);
@@ -31,6 +39,8 @@ Future<void> main() async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
 
+  final pInfo = await PackageInfo.fromPlatform();
+
   runApp(
     MultiProvider(
       providers: [
@@ -38,6 +48,7 @@ Future<void> main() async {
         Provider.value(value: db),
         Provider.value(value: sharedPrefs),
         Provider.value(value: migrationRepo),
+        Provider.value(value: pInfo),
         ...productionProviders,
       ],
       child: const MainApp(),

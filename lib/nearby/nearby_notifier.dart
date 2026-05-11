@@ -9,7 +9,9 @@ class NearbyNotifier extends ChangeNotifier {
     required TagBroadcaster broadcaster,
     required TagScanner scanner,
   }) : _broadcaster = broadcaster,
-       _scanner = scanner;
+       _scanner = scanner {
+    unawaited(init());
+  }
 
   final TagBroadcaster _broadcaster;
   final TagScanner _scanner;

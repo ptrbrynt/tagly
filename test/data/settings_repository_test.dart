@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/data/settings_repository.dart';
 
+import '../fakes/fake_package_info.dart';
 import '../helpers/fake_analytics_service.dart';
 import '../helpers/fake_cache_manager.dart';
 import '../helpers/fake_shared_preferences.dart';
@@ -24,6 +25,7 @@ void main() {
         preferences: preferences,
         cacheManager: cacheManager,
         analyticsService: analyticsService,
+        packageInfo: fakePackageInfo,
       );
     });
 

@@ -33,9 +33,14 @@ class SettingsScreen extends StatelessWidget {
                 subtitle: const Text(
                   '''Free up the storage used by sheet music and learning tracks.''',
                 ),
-                isThreeLine: true,
+
                 trailing: const Icon(Icons.chevron_right_rounded),
                 onTap: () => _clearCache(context),
+              ),
+              const Divider(),
+              AboutListTile(
+                applicationName: repository.packageInfo.appName,
+                applicationVersion: repository.packageInfo.version,
               ),
             ],
           );
@@ -54,9 +59,9 @@ class SettingsScreen extends StatelessWidget {
 
     if (!context.mounted) return;
 
-    if (confirmResult == .ok) {
-      await repository.clearCache();
-    }
+    if (confirmResult != .ok) return;
+
+    await repository.clearCache();
 
     if (!context.mounted) return;
 

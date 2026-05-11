@@ -24,11 +24,6 @@ extension TaglyTheme on ThemeData {
         elevation: 0,
         scrolledUnderElevation: 2,
       ),
-      // cardTheme: CardThemeData(
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(16),
-      //   ),
-      // ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
@@ -74,11 +69,11 @@ TextTheme _buildTextTheme(TextTheme base) {
   final serif = GoogleFonts.playfairDisplayTextTheme(base);
   final sans = GoogleFonts.latoTextTheme(base);
   return sans.copyWith(
-    displayLarge: serif.displayLarge,
-    displayMedium: serif.displayMedium,
-    displaySmall: serif.displaySmall,
-    headlineLarge: serif.headlineLarge,
-    headlineMedium: serif.headlineMedium,
-    headlineSmall: serif.headlineSmall,
+    displayLarge: serif.displayLarge?.copyWith(fontWeight: .w600),
+    displayMedium: serif.displayMedium?.copyWith(fontWeight: .w600),
+    displaySmall: serif.displaySmall?.copyWith(fontWeight: .w600),
+    headlineLarge: serif.headlineLarge?.copyWith(fontWeight: .w600),
+    headlineMedium: serif.headlineMedium?.copyWith(fontWeight: .w600),
+    headlineSmall: serif.headlineSmall?.copyWith(fontWeight: .w600),
   );
 }

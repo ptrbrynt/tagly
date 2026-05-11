@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_ble_peripheral/flutter_ble_peripheral.dart';
 import 'package:tagly/nearby/ble_constants.dart';
 

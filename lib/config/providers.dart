@@ -61,6 +61,7 @@ List<SingleChildWidget> get appProviders => [
       preferences: context.read(),
       cacheManager: context.read(),
       analyticsService: context.read(),
+      packageInfo: context.read(),
     ),
   ),
 

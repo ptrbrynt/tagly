@@ -188,7 +188,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           leadingIcon: const Icon(Icons.open_in_browser_rounded),
           onPressed: () async {
             if (await canLaunchUrl(tag.tagUri)) {
-              await launchUrl(tag.tagUri);
+              await launchUrl(tag.tagUri, mode: .externalApplication);
             }
           },
           child: const Text('Open in browser'),

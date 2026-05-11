@@ -14,7 +14,7 @@ Future<Database> openTestDb() async {
     _ffiInitialized = true;
   }
   final db = await openTaglyDatabase(
-    path: inMemoryDatabasePath,
+    inMemory: true,
     singleInstance: false,
   );
   return db;
