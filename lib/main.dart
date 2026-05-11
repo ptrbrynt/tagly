@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:go_router/go_router.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
@@ -30,11 +31,14 @@ Future<void> main() async {
 
   await migrationRepo.migrate();
 
+  final sharedPrefs = await SharedPreferences.getInstance();
+
   runApp(
     MultiProvider(
       providers: [
         Provider.value(value: analyticsService),
         Provider.value(value: db),
+        Provider.value(value: sharedPrefs),
         ...productionProviders,
       ],
       child: const MainApp(),

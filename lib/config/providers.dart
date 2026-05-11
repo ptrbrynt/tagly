@@ -7,6 +7,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:tagly/config/router.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/data/lists_repository.dart';
+import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/nearby/nearby_notifier.dart';
 import 'package:tagly/nearby/tag_broadcaster.dart';
@@ -52,6 +53,9 @@ List<SingleChildWidget> get appProviders => [
   ),
   Provider(
     create: (context) => ListsRepository(db: context.read()),
+  ),
+  Provider(
+    create: (context) => SettingsRepository(preferences: context.read()),
   ),
 
   ChangeNotifierProvider(
