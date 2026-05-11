@@ -32,6 +32,7 @@ List<SingleChildWidget> get appProviders => [
       db: context.read(),
       api: context.read(),
       cacheManager: context.read(),
+      preferences: context.read(),
     ),
   ),
   Provider(

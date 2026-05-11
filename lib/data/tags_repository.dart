@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/db/queries/tag_queries.dart';
@@ -23,25 +24,48 @@ enum SyncStatus {
 
 class TagsRepository extends ChangeNotifier {
   TagsRepository({
+    required SharedPreferences preferences,
     required Database db,
     required BarbershopTagsApi api,
     required CacheManager cacheManager,
-  }) : _api = api,
+  }) : _preferences = preferences,
+       _api = api,
        _db = db,
        _cacheManager = cacheManager;
 
   final Database _db;
   final BarbershopTagsApi _api;
   final CacheManager _cacheManager;
+  final SharedPreferences _preferences;
 
   SyncStatus _syncStatus = .ready;
   SyncStatus get syncStatus => _syncStatus;
 
+  static const lastSyncedKey = 'last_synced_timestamp';
+  static const maxSyncFrequency = Duration(days: 1);
+
   /// Fetches the latest tags from the API and stores them in the database
   Future<Result<void>> syncTags() async {
-    debugPrint('Syncing tags...');
     final countResult = await _db.rawQuery(TagQueries.count);
     final count = countResult.single['COUNT(DISTINCT id)']! as int;
+
+    final lastSynced = switch (_preferences.getInt(lastSyncedKey)) {
+      null => null,
+      final value => DateTime.fromMillisecondsSinceEpoch(value),
+    };
+
+    final shouldSync =
+        count == 0 ||
+        lastSynced == null ||
+        lastSynced.difference(DateTime.now()) > maxSyncFrequency;
+
+    if (!shouldSync) {
+      debugPrint('Skipping sync.');
+      _syncStatus = .ready;
+      return const .ok(null);
+    }
+
+    debugPrint('Syncing tags...');
 
     _syncStatus = switch (count) {
       0 => .initialSync,
@@ -68,6 +92,11 @@ class TagsRepository extends ChangeNotifier {
         }
       }
       await batch.commit(noResult: true);
+
+      await _preferences.setInt(
+        lastSyncedKey,
+        DateTime.now().millisecondsSinceEpoch,
+      );
 
       notifyListeners();
       return const .ok(null);

@@ -2,6 +2,7 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/intl.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/data/tags_xml_parser.dart';
@@ -11,6 +12,7 @@ import 'package:tagly/domain/result.dart';
 
 import '../fakes/fake_barbershop_tags_api.dart';
 import '../helpers/fake_cache_manager.dart';
+import '../helpers/fake_shared_preferences.dart';
 import '../helpers/fake_tags.dart';
 import '../helpers/test_db.dart';
 
@@ -20,12 +22,19 @@ void main() {
     late Database db;
     late TagsRepository repository;
     late CacheManager cacheManager;
+    late SharedPreferences preferences;
 
     setUp(() async {
       api = MockBarbershopTagsApi();
       db = await openTestDb();
       cacheManager = FakeCacheManager();
-      repository = TagsRepository(db: db, api: api, cacheManager: cacheManager);
+      preferences = FakeSharedPreferences();
+      repository = TagsRepository(
+        db: db,
+        api: api,
+        cacheManager: cacheManager,
+        preferences: preferences,
+      );
     });
 
     tearDown(() async {
@@ -59,6 +68,94 @@ void main() {
 
       expect(dbTags, unorderedEquals(fakeTags));
     });
+
+    test(
+      '''syncTags does not sync when tags exist and lastSynced is within last 24 hours''',
+      () async {
+        await seedTestDb(db);
+
+        await preferences.setInt(
+          TagsRepository.lastSyncedKey,
+          DateTime.now()
+              .subtract(
+                TagsRepository.maxSyncFrequency - const Duration(seconds: 1),
+              )
+              .millisecondsSinceEpoch,
+        );
+
+        when(() => api.getTags(count: 1)).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: 1,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: [fakeTag],
+            );
+          },
+        );
+
+        when(() => api.getTags(count: any(named: 'count'))).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: fakeTags.length,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: fakeTags,
+            );
+          },
+        );
+
+        await repository.syncTags();
+
+        final dbTags = await db
+            .rawQuery(TagQueries.getAll)
+            .then(BarbershopTag.groupRows);
+
+        expect(dbTags.length, equals(fakeTags.length));
+      },
+    );
+
+    test(
+      '''syncTags does sync when tags is empty and lastSynced is within last 24 hours''',
+      () async {
+        await preferences.setInt(
+          TagsRepository.lastSyncedKey,
+          DateTime.now()
+              .subtract(const Duration(hours: 2))
+              .millisecondsSinceEpoch,
+        );
+
+        when(() => api.getTags(count: 1)).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: 1,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: [fakeTag],
+            );
+          },
+        );
+
+        when(() => api.getTags(count: any(named: 'count'))).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: fakeTags.length,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: fakeTags,
+            );
+          },
+        );
+
+        await repository.syncTags();
+
+        final dbTags = await db
+            .rawQuery(TagQueries.getAll)
+            .then(BarbershopTag.groupRows);
+
+        expect(dbTags, unorderedEquals(fakeTags));
+      },
+    );
 
     test('search correctly searches', () async {
       await seedTestDb(db);
