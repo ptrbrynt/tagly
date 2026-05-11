@@ -4,6 +4,8 @@ import 'package:mocktail/mocktail.dart';
 
 class MockFile extends Mock implements File {}
 
+class MockCacheManager extends Mock implements CacheManager {}
+
 class FakeCacheManager extends Fake implements CacheManager {
   @override
   Future<FileInfo> downloadFile(
@@ -28,4 +30,7 @@ class FakeCacheManager extends Fake implements CacheManager {
   }) async {
     return MockFile();
   }
+
+  @override
+  Future<void> emptyCache() => Future.value();
 }

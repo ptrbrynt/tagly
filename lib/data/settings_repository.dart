@@ -1,12 +1,17 @@
 // ignore_for_file: avoid_positional_boolean_parameters
 
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsRepository {
-  SettingsRepository({required SharedPreferences preferences})
-    : _preferences = preferences;
+  SettingsRepository({
+    required CacheManager cacheManager,
+    required SharedPreferences preferences,
+  }) : _cacheManager = cacheManager,
+       _preferences = preferences;
 
   final SharedPreferences _preferences;
+  final CacheManager _cacheManager;
 
   static const shouldAlwaysBroadcastKey = 'should_always_broadcast';
 
@@ -18,5 +23,9 @@ class SettingsRepository {
       shouldAlwaysBroadcastKey,
       shouldAlwaysBroadcast,
     );
+  }
+
+  Future<void> clearCache() async {
+    await _cacheManager.emptyCache();
   }
 }
