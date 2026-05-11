@@ -78,7 +78,7 @@ class ListsScreen extends StatelessWidget {
     );
   }
 
-  Container _dismissibleBackground(
+  Widget _dismissibleBackground(
     BuildContext context,
     Alignment iconAlignment,
   ) {

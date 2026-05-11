@@ -1,4 +1,6 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
@@ -25,10 +27,53 @@ class ViewListScreen extends StatelessWidget {
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => ListView.builder(
               itemCount: value.length,
-              itemBuilder: (context, index) => TagListTile(tag: value[index]),
+              itemBuilder: (context, index) => _listTile(context, value[index]),
             ),
           };
         },
+      ),
+    );
+  }
+
+  Widget _listTile(BuildContext context, BarbershopTag tag) {
+    return Dismissible(
+      key: ValueKey(tag.id),
+      background: _dismissibleBackground(context, .centerLeft),
+      secondaryBackground: _dismissibleBackground(context, .centerRight),
+      confirmDismiss: (_) async {
+        final dialogResult = await showOkCancelAlertDialog(
+          context: context,
+          title: 'Remove tag from list?',
+          isDestructiveAction: true,
+        );
+        return dialogResult == .ok;
+      },
+      onDismissed: (_) async {
+        final result = await viewModel.removeTagFromList(tag.id);
+        if (!context.mounted) return;
+        if (result case Failure(:final message)) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(message)));
+        }
+      },
+      child: TagListTile(tag: tag),
+    );
+  }
+
+  Widget _dismissibleBackground(
+    BuildContext context,
+    Alignment iconAlignment,
+  ) {
+    return Container(
+      color: Theme.of(context).colorScheme.tertiaryContainer,
+      padding: const .symmetric(horizontal: 16),
+      child: Align(
+        alignment: iconAlignment,
+        child: Icon(
+          Icons.remove_rounded,
+          color: Theme.of(context).colorScheme.onTertiaryContainer,
+        ),
       ),
     );
   }
