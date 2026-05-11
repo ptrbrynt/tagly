@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
@@ -68,6 +71,9 @@ class ListsScreen extends StatelessWidget {
       child: ListTile(
         title: Text(list.name),
         trailing: const Icon(Icons.chevron_right_rounded),
+        onTap: () {
+          unawaited(context.push('/lists/${list.id}?name=${list.name}'));
+        },
       ),
     );
   }

@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/lists/lists_screen.dart';
+import 'package:tagly/presentation/lists/view_list_screen.dart';
+import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
 import 'package:tagly/presentation/tag_details/tag_details_screen.dart';
 import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
@@ -60,6 +62,22 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
           builder: (context, _) {
             return ListsScreen(viewModel: context.watch());
           },
+          routes: [
+            GoRoute(
+              path: ':id',
+              builder: (context, state) {
+                final id = int.parse(state.pathParameters['id']!);
+                final name = state.uri.queryParameters['name']!;
+                return ViewListScreen(
+                  listName: name,
+                  viewModel: ViewListViewModel(
+                    listId: id,
+                    repository: context.read(),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ],
     ),
