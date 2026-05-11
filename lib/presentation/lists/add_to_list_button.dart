@@ -28,15 +28,23 @@ class _AddToListButtonState extends State<AddToListButton> {
   Widget build(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.playlist_add),
-      onPressed: _loading ? null : _onPressed,
+      onPressed: _loading
+          ? null
+          : () async {
+              setState(() {
+                _loading = true;
+              });
+              await _onPressed();
+              if (mounted) {
+                setState(() {
+                  _loading = false;
+                });
+              }
+            },
     );
   }
 
   Future<void> _onPressed() async {
-    setState(() {
-      _loading = true;
-    });
-
     final listsResult = await widget.listsRepository.getLists();
 
     if (!mounted) return;
@@ -80,9 +88,5 @@ class _AddToListButtonState extends State<AddToListButton> {
       ).showSnackBar(SnackBar(content: Text(message)));
       return;
     }
-
-    setState(() {
-      _loading = false;
-    });
   }
 }
