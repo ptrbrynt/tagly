@@ -71,25 +71,8 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           appBar: AppBar(
             actions: [
               _favoriteToggle(context),
-              AddToListButton(
-                listsRepository: widget.listsRepository,
-                tagId: widget.viewModel.tagId,
-                onListSelected: (listId) async {
-                  final result = await widget.viewModel.addTagToList(listId);
 
-                  if (!context.mounted) return;
-
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(switch (result) {
-                        Ok() => 'Tag added to list',
-                        Failure(:final message) => message,
-                      }),
-                    ),
-                  );
-                },
-              ),
-              _detailsLink(context),
+              _tagMenu(),
             ],
           ),
           body: switch (widget.viewModel.result) {
@@ -128,15 +111,6 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     );
   }
 
-  Widget _detailsLink(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.info_outline_rounded),
-      onPressed: () {
-        context.go('tag/details?id=${widget.viewModel.tagId}');
-      },
-    );
-  }
-
   Widget _favoriteToggle(BuildContext context) {
     return switch (widget.viewModel.result) {
       Ok(:final value) => IconButton(
@@ -159,5 +133,41 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       ),
       _ => const SizedBox.shrink(),
     };
+  }
+
+  Widget _tagMenu() {
+    return MenuAnchor(
+      builder: (context, controller, child) => IconButton(
+        icon: const Icon(Icons.more_vert_rounded),
+        onPressed: controller.open,
+      ),
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.info_outline_rounded),
+          onPressed: () {
+            context.go('tag/details?id=${widget.viewModel.tagId}');
+          },
+          child: const Text('Tag Details'),
+        ),
+        AddToListButton(
+          listsRepository: widget.listsRepository,
+          tagId: widget.viewModel.tagId,
+          onListSelected: (listId) async {
+            final result = await widget.viewModel.addTagToList(listId);
+
+            if (!mounted) return;
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(switch (result) {
+                  Ok() => 'Tag added to list',
+                  Failure(:final message) => message,
+                }),
+              ),
+            );
+          },
+        ),
+      ],
+    );
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/domain/result.dart';
@@ -23,70 +22,42 @@ class AddToListButton extends StatefulWidget {
 }
 
 class _AddToListButtonState extends State<AddToListButton> {
-  bool _loading = false;
+  List<TagList>? _lists;
+
   @override
-  Widget build(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.playlist_add),
-      onPressed: _loading
-          ? null
-          : () async {
-              setState(() {
-                _loading = true;
-              });
-              await _onPressed();
-              if (mounted) {
-                setState(() {
-                  _loading = false;
-                });
-              }
-            },
-    );
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadLists());
   }
 
-  Future<void> _onPressed() async {
-    final listsResult = await widget.listsRepository.getLists();
-
+  Future<void> _loadLists() async {
+    final result = await widget.listsRepository.getLists();
     if (!mounted) return;
-
-    if (listsResult case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-      return;
+    if (result case Ok(:final value)) {
+      setState(() {
+        _lists = value;
+      });
     }
+  }
 
-    final lists = (listsResult as Ok<List<TagList>>).value;
-
-    if (lists.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("You haven't created any lists yet.")),
-      );
-      return;
-    }
-
-    final dialogResult = await showConfirmationDialog(
-      context: context,
-      title: 'Add Tag to List',
-      style: .material,
-      actions: [
-        for (final list in lists)
-          AlertDialogAction(key: list.id, label: list.name),
-      ],
-    );
-
-    if (dialogResult == null) return;
-    if (!mounted) return;
-
-    final result = await widget.onListSelected(dialogResult);
-
-    if (!mounted) return;
-
-    if (result case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
-      return;
-    }
+  @override
+  Widget build(BuildContext context) {
+    return switch (_lists) {
+      null || [] => const MenuItemButton(
+        leadingIcon: Icon(Icons.playlist_add_rounded),
+        child: Text('Add to List'),
+      ),
+      final lists => SubmenuButton(
+        menuChildren: [
+          for (final list in lists)
+            MenuItemButton(
+              onPressed: () => widget.onListSelected(list.id),
+              child: Text(list.name),
+            ),
+        ],
+        leadingIcon: const Icon(Icons.playlist_add_rounded),
+        child: const Text('Add to List'),
+      ),
+    };
   }
 }
