@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
@@ -8,7 +10,7 @@ import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
-class ViewTagScreen extends StatelessWidget {
+class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
     required this.viewModel,
     required this.cacheManager,
@@ -22,31 +24,62 @@ class ViewTagScreen extends StatelessWidget {
   final NearbyNotifier nearby;
 
   @override
+  State<ViewTagScreen> createState() => _ViewTagScreenState();
+}
+
+class _ViewTagScreenState extends State<ViewTagScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) async => _startBroadcast(),
+    );
+  }
+
+  @override
+  void didUpdateWidget(ViewTagScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.viewModel.tagId != oldWidget.viewModel.tagId) {
+      unawaited(_startBroadcast());
+    }
+  }
+
+  Future<void> _startBroadcast() async {
+    await widget.nearby.startBroadcasting(widget.viewModel.tagId);
+  }
+
+  @override
+  void dispose() {
+    unawaited(widget.nearby.stopBroadcasting());
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: viewModel,
+      listenable: widget.viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
             actions: [
               _favoriteToggle(context),
-              _broadcastToggle(),
+
               _detailsLink(context),
             ],
           ),
-          body: switch (viewModel.result) {
+          body: switch (widget.viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
               null => const SizedBox.shrink(),
               final url => SheetMusicViewer(
                 url: url,
-                cacheManager: cacheManager,
+                cacheManager: widget.cacheManager,
               ),
             },
           },
 
-          bottomNavigationBar: switch (viewModel.result) {
+          bottomNavigationBar: switch (widget.viewModel.result) {
             Ok(:final value) => _tracksPlayer(context, value),
             _ => null,
           },
@@ -65,7 +98,7 @@ class ViewTagScreen extends StatelessWidget {
       child: SafeArea(
         child: LearningTrackPlayer(
           tracks: value.learningTracks,
-          cacheManager: cacheManager,
+          cacheManager: widget.cacheManager,
         ),
       ),
     );
@@ -75,41 +108,21 @@ class ViewTagScreen extends StatelessWidget {
     return IconButton(
       icon: const Icon(Icons.info_outline_rounded),
       onPressed: () {
-        context.go('tag/details?id=${viewModel.tagId}');
-      },
-    );
-  }
-
-  Widget _broadcastToggle() {
-    return ListenableBuilder(
-      listenable: nearby,
-      builder: (context, _) {
-        return IconButton(
-          tooltip: 'Share nearby',
-          onPressed: nearby.isBroadcasting
-              ? nearby.stopBroadcasting
-              : () => nearby.startBroadcasting(viewModel.tagId),
-          icon: Icon(
-            Icons.cell_tower_rounded,
-            color: nearby.isBroadcasting
-                ? Theme.of(context).colorScheme.primary
-                : null,
-          ),
-        );
+        context.go('tag/details?id=${widget.viewModel.tagId}');
       },
     );
   }
 
   Widget _favoriteToggle(BuildContext context) {
-    return switch (viewModel.result) {
+    return switch (widget.viewModel.result) {
       Ok(:final value) => IconButton(
         isSelected: value.isFavorite,
         icon: const Icon(Icons.favorite_border_rounded),
         selectedIcon: const Icon(Icons.favorite_rounded),
         onPressed: () async {
           final result = await ((value.isFavorite)
-              ? viewModel.removeFromFavorites()
-              : viewModel.addToFavorites());
+              ? widget.viewModel.removeFromFavorites()
+              : widget.viewModel.addToFavorites());
 
           if (!context.mounted) return;
 
