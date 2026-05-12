@@ -40,7 +40,6 @@ List<SingleChildWidget> get appProviders => [
   ),
   ChangeNotifierProvider(
     create: (context) => SettingsRepository(
-      preferences: context.read(),
       cacheManager: context.read(),
       analyticsService: context.read(),
       packageInfo: context.read(),

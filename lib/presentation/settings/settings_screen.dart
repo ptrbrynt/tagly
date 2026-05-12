@@ -18,15 +18,6 @@ class SettingsScreen extends StatelessWidget {
         builder: (context, _) {
           return ListView(
             children: [
-              SwitchListTile.adaptive(
-                isThreeLine: true,
-                title: const Text('Nearby Sharing'),
-                subtitle: const Text(
-                  "Broadcast the tag you're viewing to nearby Tagly users",
-                ),
-                value: repository.shouldAlwaysBroadcast,
-                onChanged: repository.setShouldAlwaysBroadcast,
-              ),
               AnalyticsToggle(repository: repository),
               const Divider(),
               ListTile(
