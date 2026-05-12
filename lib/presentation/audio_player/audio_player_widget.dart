@@ -92,8 +92,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         _player.bufferedPositionStream,
       ]),
       builder: (context, _) {
+        if (_player.duration == null) return const SizedBox.shrink();
         return Slider(
-          max: _player.duration?.inMilliseconds.toDouble() ?? 0,
+          max: _player.duration!.inMilliseconds.toDouble(),
           value: _player.position.inMilliseconds.toDouble(),
           secondaryTrackValue: _player.bufferedPosition.inMilliseconds
               .toDouble(),

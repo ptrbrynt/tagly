@@ -49,9 +49,11 @@ class ViewTagScreen extends StatelessWidget {
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
               null => const SizedBox.shrink(),
-              final url => SheetMusicViewer(
-                url: url,
-                cacheManager: cacheManager,
+              final url => SizedBox.expand(
+                child: SheetMusicViewer(
+                  url: url,
+                  cacheManager: cacheManager,
+                ),
               ),
             },
           },

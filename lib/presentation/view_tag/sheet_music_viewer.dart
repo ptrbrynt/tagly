@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:io' as io;
 
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 
 class SheetMusicViewer extends StatefulWidget {
   const SheetMusicViewer({
@@ -19,9 +21,7 @@ class SheetMusicViewer extends StatefulWidget {
 }
 
 class _SheetMusicViewerState extends State<SheetMusicViewer> {
-  final controller = WebViewController();
-
-  bool _loading = false;
+  String? _filePath;
 
   @override
   void initState() {
@@ -38,22 +38,25 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Future<void> _load() async {
-    setState(() {
-      _loading = true;
-    });
     final file = await widget.cacheManager.getSingleFile(widget.url);
-    await controller.loadFile(file.path);
+
     if (mounted) {
       setState(() {
-        _loading = false;
+        _filePath = file.path;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return _loading
-        ? const Center(child: CircularProgressIndicator.adaptive())
-        : WebViewWidget(controller: controller);
+    return switch (_filePath) {
+      null => const Center(child: CircularProgressIndicator.adaptive()),
+      final path when path.endsWith('pdf') => PDFView(filePath: path),
+      final path => ExtendedImage.file(
+        io.File(path),
+        mode: .gesture,
+        fit: .contain,
+      ),
+    };
   }
 }
