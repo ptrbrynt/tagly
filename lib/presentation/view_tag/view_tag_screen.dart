@@ -68,15 +68,15 @@ class ViewTagScreen extends StatelessWidget {
 
   Widget? _tracksPlayer(BuildContext context, BarbershopTag value) {
     if (value.learningTracks.isEmpty) return null;
-    return Container(
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainer,
-      ),
-      padding: const .all(16),
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surfaceContainer,
       child: SafeArea(
-        child: LearningTrackPlayer(
-          tracks: value.learningTracks,
-          cacheManager: cacheManager,
+        child: Padding(
+          padding: const .all(16),
+          child: LearningTrackPlayer(
+            tracks: value.learningTracks,
+            cacheManager: cacheManager,
+          ),
         ),
       ),
     );

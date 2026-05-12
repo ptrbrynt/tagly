@@ -37,34 +37,51 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: .min,
-      crossAxisAlignment: .stretch,
-      children: [
-        DropdownButtonHideUnderline(
-          child: Align(
-            alignment: .topStart,
-            child: DropdownButton(
-              icon: const Icon(Icons.keyboard_arrow_down_rounded),
-              value: _selectedTrack,
-              items: [
-                for (final track in widget.tracks.keys)
-                  DropdownMenuItem(value: track, child: Text(track)),
-              ],
-              onChanged: (value) {
-                setState(() {
-                  _selectedTrack = value!;
-                });
-              },
-            ),
-          ),
+    final orientation = MediaQuery.orientationOf(context);
+    return switch (orientation) {
+      .portrait => Column(
+        mainAxisSize: .min,
+        crossAxisAlignment: .stretch,
+        children: [
+          Align(alignment: .topLeft, child: _trackPicker()),
+          const SizedBox(height: 8),
+          _audioPlayer(),
+        ],
+      ),
+      .landscape => IntrinsicHeight(
+        child: Row(
+          children: [
+            _trackPicker(),
+            const VerticalDivider(width: 40),
+            Expanded(child: _audioPlayer()),
+          ],
         ),
-        const SizedBox(height: 8),
-        AudioPlayerWidget(
-          url: widget.tracks[_selectedTrack]!,
-          cacheManager: widget.cacheManager,
-        ),
-      ],
+      ),
+    };
+  }
+
+  Widget _audioPlayer() {
+    return AudioPlayerWidget(
+      url: widget.tracks[_selectedTrack]!,
+      cacheManager: widget.cacheManager,
+    );
+  }
+
+  Widget _trackPicker() {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton(
+        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+        value: _selectedTrack,
+        items: [
+          for (final track in widget.tracks.keys)
+            DropdownMenuItem(value: track, child: Text(track)),
+        ],
+        onChanged: (value) {
+          setState(() {
+            _selectedTrack = value!;
+          });
+        },
+      ),
     );
   }
 }

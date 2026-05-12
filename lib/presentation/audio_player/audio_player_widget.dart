@@ -79,6 +79,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           icon: (_player.playing)
               ? const Icon(Icons.pause_rounded)
               : const Icon(Icons.play_arrow_rounded),
+          iconSize: 32,
         );
       },
     );
