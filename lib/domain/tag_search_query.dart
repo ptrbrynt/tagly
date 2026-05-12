@@ -8,12 +8,10 @@ abstract class TagSearchQuery with _$TagSearchQuery {
     String? text,
     List<String>? voicings,
     List<int>? numParts,
-    @Default(TagSortOrder.downloadsDesc) TagSortOrder sortOrder,
+    @Default(defaultSortOrder) TagSortOrder sortOrder,
     int? limit,
     bool? isClassic,
   }) = _TagSearchQuery;
-
-  const TagSearchQuery._();
 
   factory TagSearchQuery.fromQueryParameters(Map<String, List<String>> params) {
     return TagSearchQuery(
@@ -34,10 +32,20 @@ abstract class TagSearchQuery with _$TagSearchQuery {
     );
   }
 
+  const TagSearchQuery._();
+
+  static const TagSortOrder defaultSortOrder = TagSortOrder.downloadsDesc;
+
   int? get exactId => switch (text) {
     null => null,
     final value => int.tryParse(value),
   };
+
+  bool get hasFilters {
+    return (voicings?.isNotEmpty ?? false) ||
+        (numParts?.isNotEmpty ?? false) ||
+        sortOrder != defaultSortOrder;
+  }
 
   String asQueryParameters() {
     final params = <String>[

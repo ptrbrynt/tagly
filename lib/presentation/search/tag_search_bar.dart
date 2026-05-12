@@ -15,12 +15,14 @@ class TagSearchBar extends StatefulWidget {
 }
 
 class _TagSearchBarState extends State<TagSearchBar> {
-  TagSearchQuery query = const TagSearchQuery();
+  final ValueNotifier<TagSearchQuery> _queryNotifier =
+      ValueNotifier(const TagSearchQuery());
   final _searchController = SearchController();
 
   @override
   void dispose() {
     _searchController.dispose();
+    _queryNotifier.dispose();
     super.dispose();
   }
 
@@ -30,15 +32,23 @@ class _TagSearchBarState extends State<TagSearchBar> {
       searchController: _searchController,
       barHintText: 'Search tags...',
       viewTrailing: [
-        IconButton(
-          icon: const Icon(Icons.filter_list_rounded),
-          onPressed: _showFilters,
+        ValueListenableBuilder<TagSearchQuery>(
+          valueListenable: _queryNotifier,
+          builder: (context, query, _) => IconButton(
+            icon: Badge(
+              isLabelVisible: query.hasFilters,
+              child: const Icon(Icons.filter_list_rounded),
+            ),
+            onPressed: _showFilters,
+          ),
         ),
       ],
       suggestionsBuilder: (context, controller) async {
-        query = query.copyWith(text: controller.text.trim());
+        _queryNotifier.value =
+            _queryNotifier.value.copyWith(text: controller.text.trim());
 
-        final result = await widget.repository.searchTags(query);
+        final result =
+            await widget.repository.searchTags(_queryNotifier.value);
 
         return switch (result) {
           Failure() => const [],
@@ -54,15 +64,15 @@ class _TagSearchBarState extends State<TagSearchBar> {
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(
-        initialQuery: query,
+        initialQuery: _queryNotifier.value,
         repository: widget.repository,
       ),
     );
     if (result != null) {
-      query = result;
+      _queryNotifier.value = result;
       // Toggle a trailing space to force suggestionsBuilder to re-run.
       // The .trim() in suggestionsBuilder ensures this never affects search.
-      final text = query.text ?? '';
+      final text = result.text ?? '';
       _searchController.text = text.endsWith(' ') ? text.trimRight() : '$text ';
       _searchController.text = text.trimRight();
     }
