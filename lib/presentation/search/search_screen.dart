@@ -31,20 +31,30 @@ class _SearchScreenState extends State<SearchScreen> {
           body: CustomScrollView(
             slivers: [
               SliverSafeArea(
-                bottom: false,
                 sliver: SliverPadding(
                   padding: const .fromLTRB(24, 32, 24, 8),
                   sliver: SliverList.list(
                     children: [
-                      Text(
-                        'Tagly',
-                        style: Theme.of(context).textTheme.displaySmall,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Tagly',
+                              style: Theme.of(context).textTheme.displaySmall,
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.settings_rounded),
+                            onPressed: () => context.go('/settings'),
+                          ),
+                        ],
                       ),
                       const SizedBox(height: 24),
                       _searchBar(),
                       const SizedBox(height: 32),
                       Text(
-                        'Browse',
+                        'My Collections',
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: 12),
@@ -59,22 +69,59 @@ class _SearchScreenState extends State<SearchScreen> {
                         icon: Icons.list_rounded,
                         onTap: () => context.go('/lists'),
                       ),
+                      const SizedBox(height: 32),
+                      Text(
+                        'Browse',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 12),
+                      _NavCard(
+                        label: 'Popular Tags',
+                        icon: Icons.whatshot_rounded,
+                        onTap: () {
+                          const query = TagSearchQuery();
+                          context.go(
+                            '/collection?title=Popular Tags&${query.asQueryParameters()}',
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _NavCard(
+                        label: 'Highest Rated Tags',
+                        icon: Icons.star_rounded,
+                        onTap: () {
+                          const query = TagSearchQuery(sortOrder: .ratingDesc);
+                          context.go(
+                            '/collection?title=Highest Rated Tags&${query.asQueryParameters()}',
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _NavCard(
+                        label: 'New Tags',
+                        icon: Icons.new_releases_rounded,
+                        onTap: () {
+                          const query = TagSearchQuery(sortOrder: .dateDesc);
+                          context.go(
+                            '/collection?title=New Tags&${query.asQueryParameters()}',
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+                      _NavCard(
+                        label: 'Classic Tags',
+                        icon: Icons.book_rounded,
+                        onTap: () {
+                          const query = TagSearchQuery(
+                            isClassic: true,
+                            sortOrder: .id,
+                          );
+                          context.go(
+                            '/collection?title=Classic Tags&${query.asQueryParameters()}',
+                          );
+                        },
+                      ),
                     ],
-                  ),
-                ),
-              ),
-              SliverFillRemaining(
-                hasScrollBody: false,
-                child: SafeArea(
-                  top: false,
-                  child: Container(
-                    margin: const .all(24),
-                    alignment: .bottomCenter,
-                    child: _NavCard(
-                      label: 'Settings',
-                      icon: Icons.settings_rounded,
-                      onTap: () => context.go('/settings'),
-                    ),
                   ),
                 ),
               ),

@@ -54,6 +54,11 @@ abstract final class TagQueryBuilder {
     _addMultiValue(outerWhere, args, 'tags.voicing', q.voicings);
     _addMultiValue(outerWhere, args, 'tags.num_parts', q.numParts);
 
+    if (q.isClassic != null) {
+      outerWhere.add('tags.is_classic = ?');
+      args.add(q.isClassic! ? 1 : 0);
+    }
+
     sql
       ..writeln('SELECT tags.*, $_videoColumns')
       ..writeln('FROM tags')
@@ -90,9 +95,10 @@ abstract final class TagQueryBuilder {
 
   static String _orderBy(TagSortOrder order) => switch (order) {
     .titleAsc => ' ORDER BY tags.title ASC',
-    .dateDesc => ' ORDER BY tags.created_at DESC',
+    .dateDesc => ' ORDER BY tags.posted DESC',
     .downloadsDesc => ' ORDER BY tags.downloaded DESC',
     .ratingDesc => ' ORDER BY tags.rating DESC',
+    .id => ' ORDER BY tags.id ASC',
   };
 
   static String _prepareFtsQuery(String raw) {

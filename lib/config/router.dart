@@ -1,6 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:tagly/domain/tag_search_query.dart';
+import 'package:tagly/presentation/collections/tag_collection_screen.dart';
+import 'package:tagly/presentation/collections/tag_collection_view_model.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/lists/lists_screen.dart';
 import 'package:tagly/presentation/lists/view_list_screen.dart';
@@ -49,6 +52,21 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               },
             ),
           ],
+        ),
+        GoRoute(
+          path: 'collection',
+          builder: (context, state) {
+            final title = state.uri.queryParameters['title']!;
+            return TagCollectionScreen(
+              title: title,
+              viewModel: TagCollectionViewModel(
+                query: TagSearchQuery.fromQueryParameters(
+                  state.uri.queryParametersAll,
+                ),
+                repository: context.read(),
+              ),
+            );
+          },
         ),
         GoRoute(
           path: 'favorites',

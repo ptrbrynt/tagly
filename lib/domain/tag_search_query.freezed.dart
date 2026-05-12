@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$TagSearchQuery {
 
- String? get text; List<String>? get voicings; List<int>? get numParts; TagSortOrder get sortOrder; int? get limit;
+ String? get text; List<String>? get voicings; List<int>? get numParts; TagSortOrder get sortOrder; int? get limit; bool? get isClassic;
 /// Create a copy of TagSearchQuery
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $TagSearchQueryCopyWith<TagSearchQuery> get copyWith => _$TagSearchQueryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.voicings, voicings)&&const DeepCollectionEquality().equals(other.numParts, numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.voicings, voicings)&&const DeepCollectionEquality().equals(other.numParts, numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(voicings),const DeepCollectionEquality().hash(numParts),sortOrder,limit);
+int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(voicings),const DeepCollectionEquality().hash(numParts),sortOrder,limit,isClassic);
 
 @override
 String toString() {
-  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit)';
+  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit, isClassic: $isClassic)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $TagSearchQueryCopyWith<$Res>  {
   factory $TagSearchQueryCopyWith(TagSearchQuery value, $Res Function(TagSearchQuery) _then) = _$TagSearchQueryCopyWithImpl;
 @useResult
 $Res call({
- String? text, List<String>? voicings, List<int>? numParts, TagSortOrder sortOrder, int? limit
+ String? text, List<String>? voicings, List<int>? numParts, TagSortOrder sortOrder, int? limit, bool? isClassic
 });
 
 
@@ -62,14 +62,15 @@ class _$TagSearchQueryCopyWithImpl<$Res>
 
 /// Create a copy of TagSearchQuery
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? text = freezed,Object? voicings = freezed,Object? numParts = freezed,Object? sortOrder = null,Object? limit = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? text = freezed,Object? voicings = freezed,Object? numParts = freezed,Object? sortOrder = null,Object? limit = freezed,Object? isClassic = freezed,}) {
   return _then(_self.copyWith(
 text: freezed == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String?,voicings: freezed == voicings ? _self.voicings : voicings // ignore: cast_nullable_to_non_nullable
 as List<String>?,numParts: freezed == numParts ? _self.numParts : numParts // ignore: cast_nullable_to_non_nullable
 as List<int>?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as TagSortOrder,limit: freezed == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isClassic: freezed == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
@@ -154,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit,  bool? isClassic)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TagSearchQuery() when $default != null:
-return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit);case _:
+return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit,_that.isClassic);case _:
   return orElse();
 
 }
@@ -175,10 +176,10 @@ return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.l
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit,  bool? isClassic)  $default,) {final _that = this;
 switch (_that) {
 case _TagSearchQuery():
-return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit);case _:
+return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit,_that.isClassic);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -195,10 +196,10 @@ return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.l
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String? text,  List<String>? voicings,  List<int>? numParts,  TagSortOrder sortOrder,  int? limit,  bool? isClassic)?  $default,) {final _that = this;
 switch (_that) {
 case _TagSearchQuery() when $default != null:
-return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit);case _:
+return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.limit,_that.isClassic);case _:
   return null;
 
 }
@@ -210,7 +211,7 @@ return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.l
 
 
 class _TagSearchQuery extends TagSearchQuery {
-  const _TagSearchQuery({this.text, final  List<String>? voicings, final  List<int>? numParts, this.sortOrder = TagSortOrder.downloadsDesc, this.limit}): _voicings = voicings,_numParts = numParts,super._();
+  const _TagSearchQuery({this.text, final  List<String>? voicings, final  List<int>? numParts, this.sortOrder = TagSortOrder.downloadsDesc, this.limit, this.isClassic}): _voicings = voicings,_numParts = numParts,super._();
   
 
 @override final  String? text;
@@ -234,6 +235,7 @@ class _TagSearchQuery extends TagSearchQuery {
 
 @override@JsonKey() final  TagSortOrder sortOrder;
 @override final  int? limit;
+@override final  bool? isClassic;
 
 /// Create a copy of TagSearchQuery
 /// with the given fields replaced by the non-null parameter values.
@@ -245,16 +247,16 @@ _$TagSearchQueryCopyWith<_TagSearchQuery> get copyWith => __$TagSearchQueryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other._voicings, _voicings)&&const DeepCollectionEquality().equals(other._numParts, _numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other._voicings, _voicings)&&const DeepCollectionEquality().equals(other._numParts, _numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_voicings),const DeepCollectionEquality().hash(_numParts),sortOrder,limit);
+int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_voicings),const DeepCollectionEquality().hash(_numParts),sortOrder,limit,isClassic);
 
 @override
 String toString() {
-  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit)';
+  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit, isClassic: $isClassic)';
 }
 
 
@@ -265,7 +267,7 @@ abstract mixin class _$TagSearchQueryCopyWith<$Res> implements $TagSearchQueryCo
   factory _$TagSearchQueryCopyWith(_TagSearchQuery value, $Res Function(_TagSearchQuery) _then) = __$TagSearchQueryCopyWithImpl;
 @override @useResult
 $Res call({
- String? text, List<String>? voicings, List<int>? numParts, TagSortOrder sortOrder, int? limit
+ String? text, List<String>? voicings, List<int>? numParts, TagSortOrder sortOrder, int? limit, bool? isClassic
 });
 
 
@@ -282,14 +284,15 @@ class __$TagSearchQueryCopyWithImpl<$Res>
 
 /// Create a copy of TagSearchQuery
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? text = freezed,Object? voicings = freezed,Object? numParts = freezed,Object? sortOrder = null,Object? limit = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? text = freezed,Object? voicings = freezed,Object? numParts = freezed,Object? sortOrder = null,Object? limit = freezed,Object? isClassic = freezed,}) {
   return _then(_TagSearchQuery(
 text: freezed == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String?,voicings: freezed == voicings ? _self._voicings : voicings // ignore: cast_nullable_to_non_nullable
 as List<String>?,numParts: freezed == numParts ? _self._numParts : numParts // ignore: cast_nullable_to_non_nullable
 as List<int>?,sortOrder: null == sortOrder ? _self.sortOrder : sortOrder // ignore: cast_nullable_to_non_nullable
 as TagSortOrder,limit: freezed == limit ? _self.limit : limit // ignore: cast_nullable_to_non_nullable
-as int?,
+as int?,isClassic: freezed == isClassic ? _self.isClassic : isClassic // ignore: cast_nullable_to_non_nullable
+as bool?,
   ));
 }
 
