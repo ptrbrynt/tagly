@@ -10,13 +10,12 @@ class AnalyticsService {
   final Posthog _posthog;
 
   static Future<AnalyticsService> setUp(Posthog posthog) async {
-    final config =
-        PostHogConfig('phc_vaeC2ix7HZjzBbHaLCtFy6LzYU98pQkWP8RnB3xxeRDp')
-          ..host = 'https://eu.i.posthog.com'
-          ..captureApplicationLifecycleEvents = true
-          ..debug = kDebugMode
-          ..optOut = true
-          ..sessionReplay = true;
+    final config = PostHogConfig(const String.fromEnvironment('POSTHOG_TOKEN'))
+      ..host = 'https://eu.i.posthog.com'
+      ..captureApplicationLifecycleEvents = true
+      ..debug = kDebugMode
+      ..optOut = true
+      ..sessionReplay = true;
     config.errorTrackingConfig.captureFlutterErrors = kReleaseMode;
     config.errorTrackingConfig.capturePlatformDispatcherErrors = kReleaseMode;
     config.errorTrackingConfig.captureIsolateErrors = kReleaseMode;
@@ -29,6 +28,7 @@ class AnalyticsService {
   }
 
   void capture({required String eventName, Map<String, Object>? properties}) {
+    if (kDebugMode) return;
     unawaited(
       _posthog.capture(
         eventName: eventName.snakeCase,
@@ -45,7 +45,10 @@ class AnalyticsService {
   Future<bool> get isTrackingEnabled =>
       _posthog.isOptOut().then((isOptOut) => !isOptOut);
 
-  Future<void> enableTracking() => _posthog.enable();
+  Future<void> enableTracking() {
+    if (kDebugMode) return Future.value();
+    return _posthog.enable();
+  }
 
   Future<void> disableTracking() => _posthog.disable();
 }
