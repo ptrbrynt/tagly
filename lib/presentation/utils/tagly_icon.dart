@@ -22,6 +22,10 @@ class TaglyIcon extends StatelessWidget {
             child: SvgPicture.asset(
               'assets/app-icon-foreground.svg',
               height: size * (40 / 48),
+              colorFilter: ColorFilter.mode(
+                Theme.of(context).colorScheme.onSurface,
+                .srcIn,
+              ),
             ),
           ),
         ),
