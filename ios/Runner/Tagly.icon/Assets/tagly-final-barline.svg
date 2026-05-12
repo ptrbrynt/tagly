@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <title>Final barline</title>
+  <!-- Proportions preserved from standard notation: thin:gap:thick = 1:2:3 (4:8:12px) -->
+  <!-- Symbol centred in 100×100 viewBox with 12px vertical padding -->
+  <rect x="38" y="12" width="4"  height="76" fill="currentColor"/>
+  <rect x="50" y="12" width="12" height="76" fill="currentColor"/>
+</svg>

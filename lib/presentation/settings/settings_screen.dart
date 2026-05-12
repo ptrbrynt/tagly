@@ -2,6 +2,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/presentation/settings/analytics_toggle.dart';
+import 'package:tagly/presentation/utils/tagly_icon.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({required this.repository, super.key});
@@ -41,6 +42,9 @@ class SettingsScreen extends StatelessWidget {
               AboutListTile(
                 applicationName: repository.packageInfo.appName,
                 applicationVersion: repository.packageInfo.version,
+                applicationIcon: const TaglyIcon(),
+                applicationLegalese:
+                    'Copyright © ${DateTime.now().year} Peter Bryant',
               ),
             ],
           );
