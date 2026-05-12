@@ -11,13 +11,11 @@ import 'package:tagly/config/providers.dart';
 import 'fake_analytics_service.dart';
 import 'fake_cache_manager.dart';
 import 'fake_shared_preferences.dart';
-import 'test_db.dart';
 
 Future<List<SingleChildWidget>> getTestProviders({
-  Database? db,
+  required Database db,
   List<SingleChildWidget> overrides = const [],
 }) async {
-  db ??= await openTestDb();
   return [
     Provider<CacheManager>(create: (_) => FakeCacheManager()),
     Provider<Dio>(create: (_) => Dio()),

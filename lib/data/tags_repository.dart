@@ -8,8 +8,10 @@ import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
 import 'package:tagly/db/queries/tag_queries.dart';
 import 'package:tagly/db/queries/video_queries.dart';
+import 'package:tagly/db/tag_query_builder.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/domain/tag_search_query.dart';
 
 enum SyncStatus {
   /// The app is syncing for the first time
@@ -109,16 +111,10 @@ class TagsRepository extends ChangeNotifier {
     }
   }
 
-  Future<Result<List<BarbershopTag>>> searchTags(String query) async {
+  Future<Result<List<BarbershopTag>>> searchTags(TagSearchQuery query) async {
     try {
-      final sanitized = _buildFtsQuery(query);
-      if (sanitized == null) return const .ok([]);
-
-      final id = int.tryParse(query);
-      final rows = await _db.rawQuery(
-        TagQueries.searchByTextOrId,
-        [sanitized, id],
-      );
+      final (sql, args) = TagQueryBuilder.build(query);
+      final rows = await _db.rawQuery(sql, args);
       return .ok(BarbershopTag.groupRows(rows));
     } on DatabaseException catch (e) {
       return .failure(e.toString());
@@ -248,28 +244,5 @@ class TagsRepository extends ChangeNotifier {
     } on Exception {
       return;
     }
-  }
-
-  /// Sanitises a raw user search string into a safe FTS5 MATCH expression.
-  ///
-  /// - Strips characters with special meaning in FTS5 query syntax.
-  /// - Appends `*` to each token for prefix (autocomplete-style) matching.
-  ///
-  /// Returns null if the input is blank after sanitisation, so the caller
-  /// can skip the query entirely and return an empty result set.
-  String? _buildFtsQuery(String input) {
-    // Strip FTS5 special characters
-    final cleaned = input.replaceAll(RegExp(r'["\(\)\^\*:\-]'), ' ');
-
-    final tokens = cleaned
-        .trim()
-        .split(RegExp(r'\s+'))
-        .where((t) => t.isNotEmpty)
-        .toList();
-
-    if (tokens.isEmpty) return null;
-
-    // Each token becomes a prefix query: "barb shop" → "barb* shop*"
-    return tokens.map((t) => '$t*').join(' ');
   }
 }

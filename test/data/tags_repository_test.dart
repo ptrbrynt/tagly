@@ -9,6 +9,7 @@ import 'package:tagly/data/tags_xml_parser.dart';
 import 'package:tagly/db/queries/tag_queries.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/domain/tag_search_query.dart';
 
 import '../fakes/fake_barbershop_tags_api.dart';
 import '../helpers/fake_cache_manager.dart';
@@ -160,7 +161,9 @@ void main() {
     test('search correctly searches', () async {
       await seedTestDb(db);
 
-      final searchResult = await repository.searchTags('hear you sing');
+      final searchResult = await repository.searchTags(
+        const TagSearchQuery(text: 'hear you sing'),
+      );
 
       expect(
         searchResult,
@@ -175,7 +178,9 @@ void main() {
     test('search by ID correctly searches', () async {
       await seedTestDb(db);
 
-      final searchResult = await repository.searchTags('${fakeTags.first.id}');
+      final searchResult = await repository.searchTags(
+        TagSearchQuery(text: '${fakeTags.first.id}'),
+      );
 
       expect(
         searchResult,
@@ -183,21 +188,6 @@ void main() {
           (r) => r.value.single,
           'single result',
           equals(fakeTags.first),
-        ),
-      );
-    });
-
-    test('empty search query returns empty result', () async {
-      await seedTestDb(db);
-
-      final searchResult = await repository.searchTags('');
-
-      expect(
-        searchResult,
-        isA<Ok<List<BarbershopTag>>>().having(
-          (r) => r.value,
-          'results',
-          isEmpty,
         ),
       );
     });

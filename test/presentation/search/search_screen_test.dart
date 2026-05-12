@@ -14,14 +14,14 @@ void main() {
     late Database db;
     late List<SingleChildWidget> providers;
 
-    setUp(() async {
+    setUpAll(() async {
       db = await openTestDb();
       await seedTestDb(db);
 
       providers = await getTestProviders(db: db);
     });
 
-    tearDown(() async {
+    tearDownAll(() async {
       await db.close();
     });
 
@@ -38,6 +38,7 @@ void main() {
 
       await tester.runAsync(() async {
         await tester.enterText(find.byType(SearchBar).last, 'i hear you sing');
+        await tester.sendKeyEvent(.enter);
       });
 
       await tester.pumpAndSettle();
@@ -57,6 +58,7 @@ void main() {
 
       await tester.runAsync(() async {
         await tester.enterText(find.byType(SearchBar).last, '4696');
+        await tester.sendKeyEvent(.enter);
       });
 
       await tester.pumpAndSettle();

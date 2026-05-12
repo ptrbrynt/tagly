@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class SearchScreen extends StatefulWidget {
@@ -17,9 +18,6 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  String? _searchingWithQuery;
-  late final Iterable<Widget> _lastOptions = <Widget>[];
-
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -91,15 +89,14 @@ class _SearchScreenState extends State<SearchScreen> {
     return SearchAnchor.bar(
       barHintText: 'Search tags...',
       suggestionsBuilder: (context, controller) async {
-        _searchingWithQuery = controller.text;
-        final result = await widget.repository.searchTags(_searchingWithQuery!);
+        if (controller.text.isEmpty) return [];
 
-        if (_searchingWithQuery != controller.text) {
-          return _lastOptions;
-        }
+        final result = await widget.repository.searchTags(
+          TagSearchQuery(text: controller.text),
+        );
 
         return switch (result) {
-          Failure() => [],
+          Failure() => const [],
           Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
         };
       },

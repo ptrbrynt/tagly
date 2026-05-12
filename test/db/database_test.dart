@@ -8,6 +8,8 @@ void main() {
       final db = await openTestDb();
 
       assert(db.isOpen, isTrue);
+
+      await db.close();
     });
   });
 }
