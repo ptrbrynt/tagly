@@ -220,6 +220,17 @@ class TagsRepository extends ChangeNotifier {
     }
   }
 
+  Future<Result<List<String>>> availableVoicings() async {
+    try {
+      final rows = await _db.rawQuery(
+        '''SELECT DISTINCT type FROM tags WHERE type IS NOT NULL ORDER BY type''',
+      );
+      return .ok(rows.map((r) => r['type']! as String).toList());
+    } on DatabaseException catch (e) {
+      return .failure(e.toString());
+    }
+  }
+
   Future<void> cacheTag(int id) async {
     try {
       final tag = await getTagById(id);

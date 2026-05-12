@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
-import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
-import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/search/tag_search_bar.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends StatelessWidget {
   const SearchScreen({
     required this.repository,
     super.key,
@@ -14,16 +13,11 @@ class SearchScreen extends StatefulWidget {
   final TagsRepository repository;
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
-}
-
-class _SearchScreenState extends State<SearchScreen> {
-  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: widget.repository,
+      listenable: repository,
       builder: (context, _) {
-        final syncStatus = widget.repository.syncStatus;
+        final syncStatus = repository.syncStatus;
         if (syncStatus == .initialSync) {
           return const Scaffold(body: InitialSyncWidget());
         }
@@ -51,7 +45,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ],
                       ),
                       const SizedBox(height: 24),
-                      _searchBar(),
+                      TagSearchBar(repository: repository),
                       const SizedBox(height: 32),
                       Text(
                         'My Collections',
@@ -128,24 +122,6 @@ class _SearchScreenState extends State<SearchScreen> {
             ],
           ),
         );
-      },
-    );
-  }
-
-  Widget _searchBar() {
-    return SearchAnchor.bar(
-      barHintText: 'Search tags...',
-      suggestionsBuilder: (context, controller) async {
-        if (controller.text.isEmpty) return [];
-
-        final result = await widget.repository.searchTags(
-          TagSearchQuery(text: controller.text),
-        );
-
-        return switch (result) {
-          Failure() => const [],
-          Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
-        };
       },
     );
   }

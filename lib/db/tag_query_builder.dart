@@ -51,8 +51,8 @@ abstract final class TagQueryBuilder {
       outerWhere.add('tags.id IN (SELECT tag_id FROM matched_ids)');
     }
 
-    _addMultiValue(outerWhere, args, 'tags.voicing', q.voicings);
-    _addMultiValue(outerWhere, args, 'tags.num_parts', q.numParts);
+    _addMultiValue(outerWhere, args, 'tags.type', q.voicings);
+    _addMultiValue(outerWhere, args, 'tags.parts', q.numParts);
 
     if (q.isClassic != null) {
       outerWhere.add('tags.is_classic = ?');
