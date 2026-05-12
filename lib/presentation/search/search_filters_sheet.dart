@@ -7,11 +7,13 @@ class SearchFiltersSheet extends StatefulWidget {
   const SearchFiltersSheet({
     required this.repository,
     required this.initialQuery,
+    this.resetTo = const TagSearchQuery(),
     super.key,
   });
 
   final TagsRepository repository;
   final TagSearchQuery initialQuery;
+  final TagSearchQuery resetTo;
 
   @override
   State<SearchFiltersSheet> createState() => _SearchFiltersSheetState();
@@ -47,11 +49,11 @@ class _SearchFiltersSheetState extends State<SearchFiltersSheet> {
   }
 
   void _reset() {
-    const defaults = TagSearchQuery();
+    final defaults = widget.resetTo;
     setState(() {
       _sortOrder = defaults.sortOrder;
-      _numParts = {};
-      _voicings = {};
+      _numParts = Set.of(defaults.numParts ?? []);
+      _voicings = Set.of(defaults.voicings ?? []);
     });
   }
 

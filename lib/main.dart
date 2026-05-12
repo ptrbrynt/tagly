@@ -98,9 +98,12 @@ class _MainAppState extends State<MainApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+      title: context.read<PackageInfo>().appName,
+      color: deepBurgundy,
       routerConfig: context.watch<GoRouter>(),
       theme: lightTheme,
       darkTheme: darkTheme,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

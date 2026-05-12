@@ -60,7 +60,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
             return TagCollectionScreen(
               title: title,
               viewModel: TagCollectionViewModel(
-                query: TagSearchQuery.fromQueryParameters(
+                initialQuery: TagSearchQuery.fromQueryParameters(
                   state.uri.queryParametersAll,
                 ),
                 repository: context.read(),

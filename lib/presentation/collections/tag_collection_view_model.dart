@@ -8,20 +8,27 @@ import 'package:tagly/domain/tag_search_query.dart';
 
 class TagCollectionViewModel extends ChangeNotifier {
   TagCollectionViewModel({
-    required this.query,
-    required TagsRepository repository,
-  }) : _repository = repository {
+    required this.initialQuery,
+    required this.repository,
+  }) : query = initialQuery {
     unawaited(load());
   }
 
-  final TagSearchQuery query;
-  final TagsRepository _repository;
+  final TagSearchQuery initialQuery;
+
+  TagSearchQuery query;
+  final TagsRepository repository;
 
   Result<List<BarbershopTag>>? _result;
   Result<List<BarbershopTag>>? get result => _result;
 
   Future<void> load() async {
-    _result = await _repository.searchTags(query);
+    _result = await repository.searchTags(query);
     notifyListeners();
+  }
+
+  void updateQuery(TagSearchQuery newQuery) {
+    query = newQuery;
+    unawaited(load());
   }
 }

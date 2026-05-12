@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // Seed: deep burgundy — the classic barbershop stage curtain / quartet vest
-const _seed = Color(0xFF8B1F3F);
+const deepBurgundy = Color(0xFF8B1F3F);
 
 ThemeData get lightTheme => ThemeData.light(useMaterial3: true).applyTheme();
 ThemeData get darkTheme => ThemeData.dark(useMaterial3: true).applyTheme();
@@ -10,7 +10,7 @@ ThemeData get darkTheme => ThemeData.dark(useMaterial3: true).applyTheme();
 extension TaglyTheme on ThemeData {
   ThemeData applyTheme() {
     final cs = ColorScheme.fromSeed(
-      seedColor: _seed,
+      seedColor: deepBurgundy,
       brightness: brightness,
     );
     final text = _buildTextTheme(textTheme);

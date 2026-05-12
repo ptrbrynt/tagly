@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/collections/tag_collection_view_model.dart';
+import 'package:tagly/presentation/search/search_filters_sheet.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
@@ -18,7 +20,23 @@ class TagCollectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          ListenableBuilder(
+            listenable: viewModel,
+            builder: (context, _) {
+              return IconButton(
+                icon: Badge(
+                  isLabelVisible: viewModel.query != viewModel.initialQuery,
+                  child: const Icon(Icons.filter_list_rounded),
+                ),
+                onPressed: () => _showFilters(context),
+              );
+            },
+          ),
+        ],
+      ),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -37,5 +55,21 @@ class TagCollectionScreen extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Future<void> _showFilters(BuildContext context) async {
+    final result = await showModalBottomSheet<TagSearchQuery>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (_) => SearchFiltersSheet(
+        initialQuery: viewModel.query,
+        repository: viewModel.repository,
+        resetTo: viewModel.initialQuery,
+      ),
+    );
+    if (result != null) {
+      viewModel.updateQuery(result);
+    }
   }
 }
