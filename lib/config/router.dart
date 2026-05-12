@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/collections/tag_collection_screen.dart';
-import 'package:tagly/presentation/collections/tag_collection_view_model.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/lists/lists_screen.dart';
 import 'package:tagly/presentation/lists/view_list_screen.dart';
@@ -45,7 +44,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
                 final tagId = state.uri.queryParameters['id']!;
                 return TagDetailsScreen(
                   viewModel: ViewTagViewModel(
-                    repository: context.watch(),
+                    repository: context.read(),
                     tagId: int.parse(tagId),
                   ),
                 );
@@ -59,12 +58,10 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
             final title = state.uri.queryParameters['title']!;
             return TagCollectionScreen(
               title: title,
-              viewModel: TagCollectionViewModel(
-                initialQuery: TagSearchQuery.fromQueryParameters(
-                  state.uri.queryParametersAll,
-                ),
-                repository: context.read(),
+              initialQuery: TagSearchQuery.fromQueryParameters(
+                state.uri.queryParametersAll,
               ),
+              repository: context.read(),
             );
           },
         ),

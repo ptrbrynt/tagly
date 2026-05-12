@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/collections/tag_collection_view_model.dart';
@@ -7,28 +8,52 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
-class TagCollectionScreen extends StatelessWidget {
+class TagCollectionScreen extends StatefulWidget {
   const TagCollectionScreen({
     required this.title,
-    required this.viewModel,
+    required this.initialQuery,
+    required this.repository,
     super.key,
   });
 
   final String title;
-  final TagCollectionViewModel viewModel;
+  final TagSearchQuery initialQuery;
+  final TagsRepository repository;
+
+  @override
+  State<TagCollectionScreen> createState() => _TagCollectionScreenState();
+}
+
+class _TagCollectionScreenState extends State<TagCollectionScreen> {
+  late final TagCollectionViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = TagCollectionViewModel(
+      initialQuery: widget.initialQuery,
+      repository: widget.repository,
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         actions: [
           ListenableBuilder(
-            listenable: viewModel,
+            listenable: _viewModel,
             builder: (context, _) {
               return IconButton(
                 icon: Badge(
-                  isLabelVisible: viewModel.query != viewModel.initialQuery,
+                  isLabelVisible: _viewModel.query != _viewModel.initialQuery,
                   child: const Icon(Icons.filter_list_rounded),
                 ),
                 onPressed: () => _showFilters(context),
@@ -38,13 +63,13 @@ class TagCollectionScreen extends StatelessWidget {
         ],
       ),
       body: ListenableBuilder(
-        listenable: viewModel,
+        listenable: _viewModel,
         builder: (context, _) {
-          return switch (viewModel.result) {
+          return switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => FailureCard(
               message: message,
-              onRetry: viewModel.load,
+              onRetry: _viewModel.load,
             ),
             Ok(value: []) => const EmptyStateCard(child: Text('No results')),
             Ok(:final value) => ListView.builder(
@@ -63,13 +88,13 @@ class TagCollectionScreen extends StatelessWidget {
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(
-        initialQuery: viewModel.query,
-        repository: viewModel.repository,
-        resetTo: viewModel.initialQuery,
+        initialQuery: _viewModel.query,
+        repository: _viewModel.repository,
+        resetTo: _viewModel.initialQuery,
       ),
     );
     if (result != null) {
-      viewModel.updateQuery(result);
+      _viewModel.updateQuery(result);
     }
   }
 }
