@@ -31,5 +31,22 @@ void main() {
 
       verify(() => cacheManager.emptyCache());
     });
+
+    test('isAnalyticsEnabled reflects analytics service state', () async {
+      expect(await repository.isAnalyticsEnabled, isFalse);
+    });
+
+    test('enableAnalytics delegates to analytics service', () async {
+      await repository.enableAnalytics();
+
+      expect(await repository.isAnalyticsEnabled, isTrue);
+    });
+
+    test('disableAnalytics delegates to analytics service', () async {
+      await repository.enableAnalytics();
+      await repository.disableAnalytics();
+
+      expect(await repository.isAnalyticsEnabled, isFalse);
+    });
   });
 }
