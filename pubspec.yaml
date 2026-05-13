@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   adaptive_dialog: ^2.8.0
+  app_links: ^7.0.0
   async: ^2.13.1
   dio: ^5.9.2
   extended_image: ^10.0.1

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -20,6 +21,7 @@ import 'package:tagly/db/database.dart';
 import 'package:tagly/db/legacy/legacy_db.dart';
 import 'package:tagly/db/legacy/legacy_migration_repository.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/utils/initial_sync_widget.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -80,12 +82,30 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
   late final AppLifecycleListener _listener;
 
+  final _appLinks = AppLinks();
+
+  late final StreamSubscription<Uri> _appLinksSub;
+
   @override
   void initState() {
     super.initState();
     _listener = AppLifecycleListener(onResume: _onResume);
     if (SchedulerBinding.instance.lifecycleState == .resumed) {
       unawaited(_onResume());
+    }
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await _appLinks.getInitialLink().then(_handleDeepLink);
+      _appLinksSub = _appLinks.uriLinkStream.listen(_handleDeepLink);
+    });
+  }
+
+  void _handleDeepLink(Uri? uri) {
+    if (uri == null) return;
+    final path = uri.replace(scheme: '').toString().substring(1);
+    debugPrint('Deep Link Received: $path');
+    if (mounted) {
+      unawaited(context.read<GoRouter>().push(path));
     }
   }
 
@@ -106,6 +126,7 @@ class _MainAppState extends State<MainApp> {
   @override
   void dispose() {
     _listener.dispose();
+    unawaited(_appLinksSub.cancel());
     super.dispose();
   }
 
@@ -118,6 +139,27 @@ class _MainAppState extends State<MainApp> {
       theme: lightTheme,
       darkTheme: darkTheme,
       debugShowCheckedModeBanner: false,
+      builder: (context, child) {
+        final repository = context.watch<TagsRepository>();
+        return ListenableBuilder(
+          listenable: repository,
+          child: child,
+          builder: (context, child) {
+            final syncStatus = repository.syncStatus;
+            if (syncStatus == .initialSync) {
+              return const Scaffold(body: InitialSyncWidget());
+            }
+            if (syncStatus == .initialSyncFailed) {
+              return Scaffold(
+                body: InitialSyncWidget(
+                  onRetry: () => repository.syncTags().ignore(),
+                ),
+              );
+            }
+            return child!;
+          },
+        );
+      },
     );
   }
 }

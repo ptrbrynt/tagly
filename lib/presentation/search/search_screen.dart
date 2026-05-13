@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
-import 'package:tagly/presentation/utils/initial_sync_widget.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({
@@ -18,17 +17,6 @@ class SearchScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: repository,
       builder: (context, _) {
-        final syncStatus = repository.syncStatus;
-        if (syncStatus == .initialSync) {
-          return const Scaffold(body: InitialSyncWidget());
-        }
-        if (syncStatus == .initialSyncFailed) {
-          return Scaffold(
-            body: InitialSyncWidget(
-              onRetry: () => repository.syncTags().ignore(),
-            ),
-          );
-        }
         return Scaffold(
           body: CustomScrollView(
             slivers: [
