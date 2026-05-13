@@ -53,4 +53,5 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
-    - google_fonts/
+    - google_fonts/Lato/
+    - google_fonts/Playfair_Display/
