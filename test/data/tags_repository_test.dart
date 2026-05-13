@@ -368,5 +368,22 @@ void main() {
 
       expect(result.first['tag_id'], equals(fakeTags.first.id));
     });
+
+    test('availableVoicings returns voicings', () async {
+      await seedTestDb(db);
+
+      final expected = fakeTags.map((i) => i.type).toSet();
+
+      final result = await repository.availableVoicings();
+
+      expect(
+        result,
+        isA<Ok<List<String>>>().having(
+          (r) => r.value,
+          'value',
+          containsAll(expected),
+        ),
+      );
+    });
   });
 }
