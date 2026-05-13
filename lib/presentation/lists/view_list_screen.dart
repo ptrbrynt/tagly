@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
@@ -65,25 +64,33 @@ class ViewListScreen extends StatelessWidget {
       key: ValueKey(tag.id),
       background: _dismissibleBackground(context, .centerLeft),
       secondaryBackground: _dismissibleBackground(context, .centerRight),
-      confirmDismiss: (_) async {
-        final dialogResult = await showOkCancelAlertDialog(
-          context: context,
-          title: 'Remove tag from list?',
-          isDestructiveAction: true,
-        );
-        return dialogResult == .ok;
-      },
       onDismissed: (_) async {
-        final result = await viewModel.removeTagFromList(tag.id);
-        if (!context.mounted) return;
-        if (result case Failure(:final message)) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
-        }
+        await _removeTagFromList(context, tag.id);
       },
       child: TagListTile(tag: tag),
     );
+  }
+
+  Future<void> _removeTagFromList(BuildContext context, int tagId) async {
+    final result = await viewModel.removeTagFromList(tagId);
+    if (!context.mounted) return;
+    if (result case Failure(:final message)) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text('Tag removed from list'),
+          action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () async {
+              await viewModel.addTagToList(tagId);
+            },
+          ),
+        ),
+      );
+    }
   }
 
   void _showHelp(BuildContext context) {

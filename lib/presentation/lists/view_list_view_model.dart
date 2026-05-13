@@ -22,6 +22,9 @@ class ViewListViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  Future<Result<void>> addTagToList(int tagId) =>
+      _repository.addTagToList(tagId: tagId, listId: listId).whenComplete(load);
+
   Future<Result<void>> removeTagFromList(int tagId) => _repository
       .removeTagFromList(tagId: tagId, listId: listId)
       .whenComplete(load);
