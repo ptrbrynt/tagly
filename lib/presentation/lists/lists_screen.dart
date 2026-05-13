@@ -19,12 +19,11 @@ class ListsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Lists'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.add_rounded),
-            onPressed: () => _createList(context),
-          ),
-        ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        label: const Text('Create List'),
+        icon: const Icon(Icons.playlist_add),
+        onPressed: () => _createList(context),
       ),
       body: ListenableBuilder(
         listenable: viewModel,
