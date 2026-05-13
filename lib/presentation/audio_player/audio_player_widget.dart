@@ -21,6 +21,7 @@ class AudioPlayerWidget extends StatefulWidget {
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final _player = AudioPlayer();
+  StreamSubscription<ProcessingState>? _completionSubscription;
 
   /// Used to store the playback status of the player before seeking starts,
   /// so we can restart playback if necessary
@@ -29,6 +30,13 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
+    _completionSubscription =
+        _player.processingStateStream.listen((state) async {
+      if (state == ProcessingState.completed) {
+        await _player.seek(Duration.zero);
+        await _player.pause();
+      }
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) => _load());
   }
 
@@ -48,6 +56,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   @override
   void dispose() {
+    unawaited(_completionSubscription?.cancel());
     unawaited(_player.dispose());
     super.dispose();
   }
