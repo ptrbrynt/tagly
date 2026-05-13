@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
@@ -22,6 +25,17 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final analyticsService = await AnalyticsService.setUp(Posthog());
+
+  GoogleFonts.config.allowRuntimeFetching = false;
+
+  LicenseRegistry.addLicense(() async* {
+    final lato = await rootBundle.loadString('google_fonts/Lato/OFL.txt');
+    final playfairDisplay = await rootBundle.loadString(
+      'google_fonts/Playfair_Display/OFL.txt',
+    );
+    yield LicenseEntryWithLineBreaks(<String>['google_fonts'], lato);
+    yield LicenseEntryWithLineBreaks(<String>['google_fonts'], playfairDisplay);
+  });
 
   if (Platform.isAndroid || Platform.isIOS) {
     sqfliteFfiInit();
