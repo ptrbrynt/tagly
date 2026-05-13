@@ -163,7 +163,7 @@ class _SectionHeader extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
     final tt = Theme.of(context).textTheme;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
       child: Text(
         title.toUpperCase(),
         style: tt.labelSmall?.copyWith(
