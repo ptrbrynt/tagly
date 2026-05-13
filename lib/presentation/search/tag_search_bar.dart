@@ -1,8 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/search_filters_sheet.dart';
+import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class TagSearchBar extends StatefulWidget {
@@ -31,7 +34,7 @@ class _TagSearchBarState extends State<TagSearchBar> {
   Widget build(BuildContext context) {
     return SearchAnchor.bar(
       searchController: _searchController,
-      barHintText: 'Search tags...',
+      barHintText: 'Search or enter an ID...',
 
       viewTrailing: [
         ValueListenableBuilder<TagSearchQuery>(
@@ -54,6 +57,10 @@ class _TagSearchBarState extends State<TagSearchBar> {
             ),
             onPressed: _showFilters,
           ),
+        ),
+        IconButton(
+          icon: const Icon(Icons.help_outline_rounded),
+          onPressed: _showHelp,
         ),
       ],
       suggestionsBuilder: (context, controller) async {
@@ -89,5 +96,37 @@ class _TagSearchBarState extends State<TagSearchBar> {
       _searchController.text = text.endsWith(' ') ? text.trimRight() : '$text ';
       _searchController.text = text.trimRight();
     }
+  }
+
+  Future<void> _showHelp() async {
+    unawaited(
+      HelpSheet.show(
+        context: context,
+        title: 'How to use Search',
+        steps: [
+          const HelpStep(
+            icon: Icons.search_rounded,
+            title: 'Type a query',
+            description:
+                'You can search for tag titles, arrangers, quartets/choruses, '
+                'learning track makers, or lyrics.',
+          ),
+          const HelpStep(
+            icon: Icons.filter_list_rounded,
+            title: 'Use filters',
+            description:
+                'Narrow down your search by voicing or '
+                'number of parts, and choose how to sort your search results.',
+          ),
+          const HelpStep(
+            icon: Icons.numbers_rounded,
+            title: 'Type an ID',
+            description:
+                'If you know the ID of the tag you want, just type it in. '
+                'This works for IDs from any other barbershoptags.com app.',
+          ),
+        ],
+      ),
+    );
   }
 }
