@@ -11,6 +11,8 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/position_origin_provider.dart';
+import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -131,54 +133,81 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   }
 
   Widget _tagMenu(BuildContext context, BarbershopTag tag) {
-    return MenuAnchor(
-      builder: (context, controller, child) => IconButton(
-        icon: const Icon(Icons.more_vert_rounded),
-        onPressed: controller.open,
-      ),
-      menuChildren: [
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.info_outline_rounded),
-          onPressed: () {
-            context.go('tag/details?id=${tag.id}');
-          },
-          child: const Text('Tag Details'),
-        ),
-        ListenableBuilder(
-          listenable: widget.listsViewModel,
-          builder: (context, _) {
-            return AddToListButton(
-              lists: switch (widget.listsViewModel.result) {
-                Ok(:final value) => value,
-                _ => [],
+    return PositionOriginProvider(
+      builder: (context, rect) {
+        return MenuAnchor(
+          builder: (context, controller, child) => IconButton(
+            icon: const Icon(Icons.more_vert_rounded),
+            onPressed: controller.open,
+          ),
+          menuChildren: [
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.info_outline_rounded),
+              onPressed: () {
+                context.go('tag/details?id=${tag.id}');
               },
-              onListSelected: _addTagToList,
-              onCreateListSelected: _createList,
-              tagId: widget.tagId,
-            );
-          },
-        ),
-        MenuItemButton(
-          leadingIcon: Platform.isIOS
-              ? const Icon(Icons.ios_share_rounded)
-              : const Icon(Icons.share_rounded),
-          onPressed: () async {
-            await widget.sharePlus.share(
-              ShareParams(uri: tag.tagUri, title: tag.title),
-            );
-          },
-          child: const Text('Share'),
-        ),
-        MenuItemButton(
-          leadingIcon: const Icon(Icons.open_in_browser_rounded),
-          onPressed: () async {
-            if (await canLaunchUrl(tag.tagUri)) {
-              await launchUrl(tag.tagUri, mode: .externalApplication);
-            }
-          },
-          child: const Text('Open in browser'),
-        ),
-      ],
+              child: const Text('Tag Details'),
+            ),
+            ListenableBuilder(
+              listenable: widget.listsViewModel,
+              builder: (context, _) {
+                return AddToListButton(
+                  lists: switch (widget.listsViewModel.result) {
+                    Ok(:final value) => value,
+                    _ => [],
+                  },
+                  onListSelected: _addTagToList,
+                  onCreateListSelected: _createList,
+                  tagId: widget.tagId,
+                );
+              },
+            ),
+            SubmenuButton(
+              menuChildren: [
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.explore_rounded),
+                  onPressed: () async {
+                    await widget.sharePlus.share(
+                      ShareParams(
+                        uri: tag.tagUri,
+                        title: tag.title,
+                        sharePositionOrigin: rect,
+                      ),
+                    );
+                  },
+                  child: const Text('Link to barbershoptags.com'),
+                ),
+                MenuItemButton(
+                  leadingIcon: const TaglyIcon(size: 24),
+                  onPressed: () async {
+                    await widget.sharePlus.share(
+                      ShareParams(
+                        uri: tag.deepLink,
+                        title: tag.title,
+                        sharePositionOrigin: rect,
+                      ),
+                    );
+                  },
+                  child: const Text('Tagly Link'),
+                ),
+              ],
+              leadingIcon: Platform.isIOS
+                  ? const Icon(Icons.ios_share_rounded)
+                  : const Icon(Icons.share_rounded),
+              child: const Text('Share'),
+            ),
+            MenuItemButton(
+              leadingIcon: const Icon(Icons.open_in_browser_rounded),
+              onPressed: () async {
+                if (await canLaunchUrl(tag.tagUri)) {
+                  await launchUrl(tag.tagUri, mode: .externalApplication);
+                }
+              },
+              child: const Text('Open in browser'),
+            ),
+          ],
+        );
+      },
     );
   }
 

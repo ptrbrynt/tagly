@@ -243,6 +243,10 @@ abstract class BarbershopTag with _$BarbershopTag {
       path: path.toString().replaceAll(' ', '-'),
     );
   }
+
+  Uri get deepLink {
+    return Uri.parse('tagly://tag?id=$id');
+  }
 }
 
 bool boolFromInt(int value) => value != 0;
