@@ -22,6 +22,9 @@ enum SyncStatus {
 
   /// The sync has completed
   ready,
+
+  /// The initial sync failed (e.g. no internet connection on first launch)
+  initialSyncFailed,
 }
 
 class TagsRepository extends ChangeNotifier {
@@ -69,10 +72,9 @@ class TagsRepository extends ChangeNotifier {
 
     debugPrint('Syncing tags...');
 
-    _syncStatus = switch (count) {
-      0 => .initialSync,
-      _ => .resyncing,
-    };
+    final isInitialSync = count == 0;
+
+    _syncStatus = isInitialSync ? .initialSync : .resyncing;
 
     notifyListeners();
 
@@ -100,14 +102,17 @@ class TagsRepository extends ChangeNotifier {
         DateTime.now().millisecondsSinceEpoch,
       );
 
+      _syncStatus = .ready;
       notifyListeners();
       return const .ok(null);
     } on DatabaseException catch (e) {
+      _syncStatus = isInitialSync ? .initialSyncFailed : .ready;
+      notifyListeners();
       return .failure(e.toString());
     } on DioException catch (e) {
+      _syncStatus = isInitialSync ? .initialSyncFailed : .ready;
+      notifyListeners();
       return .failure(e.message ?? 'Something went wrong.');
-    } finally {
-      _syncStatus = .ready;
     }
   }
 

@@ -22,6 +22,7 @@ class SheetMusicViewer extends StatefulWidget {
 
 class _SheetMusicViewerState extends State<SheetMusicViewer> {
   String? _filePath;
+  bool _hasError = false;
 
   @override
   void initState() {
@@ -38,17 +39,23 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
   }
 
   Future<void> _load() async {
-    final file = await widget.cacheManager.getSingleFile(widget.url);
-
     if (mounted) {
       setState(() {
-        _filePath = file.path;
+        _filePath = null;
+        _hasError = false;
       });
+    }
+    try {
+      final file = await widget.cacheManager.getSingleFile(widget.url);
+      if (mounted) setState(() => _filePath = file.path);
+    } on Exception {
+      if (mounted) setState(() => _hasError = true);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_hasError) return _SheetMusicError(onRetry: _load);
     return switch (_filePath) {
       null => const Center(child: CircularProgressIndicator.adaptive()),
       final path when path.endsWith('pdf') => PDFView(filePath: path),
@@ -58,5 +65,43 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
         fit: .contain,
       ),
     };
+  }
+}
+
+class _SheetMusicError extends StatelessWidget {
+  const _SheetMusicError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: .center,
+      padding: const .all(24),
+      child: Column(
+        mainAxisSize: .min,
+        children: [
+          Icon(
+            Icons.wifi_off_rounded,
+            size: 48,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'Sheet music unavailable — check your connection and try again.',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextButton.icon(
+            onPressed: onRetry,
+            label: const Text('Retry'),
+            icon: const Icon(Icons.restart_alt_rounded),
+          ),
+        ],
+      ),
+    );
   }
 }

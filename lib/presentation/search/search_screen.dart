@@ -22,6 +22,13 @@ class SearchScreen extends StatelessWidget {
         if (syncStatus == .initialSync) {
           return const Scaffold(body: InitialSyncWidget());
         }
+        if (syncStatus == .initialSyncFailed) {
+          return Scaffold(
+            body: InitialSyncWidget(
+              onRetry: () => repository.syncTags().ignore(),
+            ),
+          );
+        }
         return Scaffold(
           body: CustomScrollView(
             slivers: [

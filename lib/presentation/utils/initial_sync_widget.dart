@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 
 class InitialSyncWidget extends StatelessWidget {
-  const InitialSyncWidget({super.key});
+  const InitialSyncWidget({this.onRetry, super.key});
+
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -32,17 +34,34 @@ class InitialSyncWidget extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 64),
-            LinearProgressIndicator(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              "Syncing tags. Don't go away...",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: cs.onSurfaceVariant,
+            if (onRetry != null) ...[
+              Text(
+                'An internet connection is required to set up Tagly for '
+                'the first time.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
-            ),
+              const SizedBox(height: 20),
+              FilledButton.tonalIcon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.sync_rounded),
+                label: const Text('Try again'),
+              ),
+            ] else ...[
+              LinearProgressIndicator(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                "Syncing tags. Don't go away...",
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),

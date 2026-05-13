@@ -22,6 +22,7 @@ class AudioPlayerWidget extends StatefulWidget {
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final _player = AudioPlayer();
   StreamSubscription<ProcessingState>? _completionSubscription;
+  bool _loadError = false;
 
   /// Used to store the playback status of the player before seeking starts,
   /// so we can restart playback if necessary
@@ -50,9 +51,10 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   Future<void> _load() async {
+    if (mounted) setState(() => _loadError = false);
     await _player.stop();
-    final file = await widget.cacheManager.getSingleFile(widget.url);
     try {
+      final file = await widget.cacheManager.getSingleFile(widget.url);
       await _player.setAudioSource(AudioSource.file(file.path));
     } on PlayerException {
       if (!mounted) return;
@@ -66,6 +68,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           ),
         ),
       );
+    } on Exception {
+      if (mounted) setState(() => _loadError = true);
     }
   }
 
@@ -78,6 +82,23 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    if (_loadError) {
+      return Row(
+        children: [
+          Icon(
+            Icons.wifi_off_rounded,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Unavailable offline',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      );
+    }
     return Row(
       children: [
         _playPauseButton(),
@@ -117,7 +138,12 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         _player.bufferedPositionStream,
       ]),
       builder: (context, _) {
-        if (_player.duration == null) return const SizedBox.shrink();
+        if (_player.duration == null) {
+          return const Padding(
+            padding: .symmetric(horizontal: 8),
+            child: LinearProgressIndicator(),
+          );
+        }
         return Slider(
           max: _player.duration!.inMilliseconds.toDouble(),
           value: _player.position.inMilliseconds.toDouble(),
