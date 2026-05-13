@@ -30,8 +30,9 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   @override
   void initState() {
     super.initState();
-    _completionSubscription =
-        _player.processingStateStream.listen((state) async {
+    _completionSubscription = _player.processingStateStream.listen((
+      state,
+    ) async {
       if (state == ProcessingState.completed) {
         await _player.seek(Duration.zero);
         await _player.pause();
@@ -51,7 +52,21 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Future<void> _load() async {
     await _player.stop();
     final file = await widget.cacheManager.getSingleFile(widget.url);
-    await _player.setAudioSource(AudioSource.file(file.path));
+    try {
+      await _player.setAudioSource(AudioSource.file(file.path));
+    } on PlayerException {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 10),
+          content: Text(
+            'Sorry — something went wrong loading the learning track.\n'
+            'This often resolves itself after a while, so please try '
+            'again another time, or try a different tag/track.',
+          ),
+        ),
+      );
+    }
   }
 
   @override

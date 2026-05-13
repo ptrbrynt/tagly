@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
+import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
@@ -14,9 +15,10 @@ import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class ViewTagScreen extends StatelessWidget {
+class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
-    required this.viewModel,
+    required this.tagId,
+    required this.tagsRepository,
     required this.listsRepository,
     required this.settingsRepository,
     required this.cacheManager,
@@ -24,27 +26,50 @@ class ViewTagScreen extends StatelessWidget {
     super.key,
   });
 
-  final ViewTagViewModel viewModel;
+  final int tagId;
+  final TagsRepository tagsRepository;
   final ListsRepository listsRepository;
   final SettingsRepository settingsRepository;
   final CacheManager cacheManager;
   final SharePlus sharePlus;
 
   @override
+  State<ViewTagScreen> createState() => _ViewTagScreenState();
+}
+
+class _ViewTagScreenState extends State<ViewTagScreen> {
+  late final ViewTagViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ViewTagViewModel(
+      repository: widget.tagsRepository,
+      tagId: widget.tagId,
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: viewModel,
+      listenable: _viewModel,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
             actions: [
-              if (viewModel.result case Ok(:final value)) ...[
+              if (_viewModel.result case Ok(:final value)) ...[
                 _favoriteToggle(context),
                 _tagMenu(context, value),
               ],
             ],
           ),
-          body: switch (viewModel.result) {
+          body: switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
@@ -52,12 +77,12 @@ class ViewTagScreen extends StatelessWidget {
               final url => SizedBox.expand(
                 child: SheetMusicViewer(
                   url: url,
-                  cacheManager: cacheManager,
+                  cacheManager: widget.cacheManager,
                 ),
               ),
             },
           },
-          bottomNavigationBar: switch (viewModel.result) {
+          bottomNavigationBar: switch (_viewModel.result) {
             Ok(:final value) => _tracksPlayer(context, value),
             _ => null,
           },
@@ -75,7 +100,7 @@ class ViewTagScreen extends StatelessWidget {
           padding: const .all(16),
           child: LearningTrackPlayer(
             tracks: value.learningTracks,
-            cacheManager: cacheManager,
+            cacheManager: widget.cacheManager,
           ),
         ),
       ),
@@ -83,15 +108,15 @@ class ViewTagScreen extends StatelessWidget {
   }
 
   Widget _favoriteToggle(BuildContext context) {
-    return switch (viewModel.result) {
+    return switch (_viewModel.result) {
       Ok(:final value) => IconButton(
         isSelected: value.isFavorite,
         icon: const Icon(Icons.favorite_border_rounded),
         selectedIcon: const Icon(Icons.favorite_rounded),
         onPressed: () async {
           final result = await ((value.isFavorite)
-              ? viewModel.removeFromFavorites()
-              : viewModel.addToFavorites());
+              ? _viewModel.removeFromFavorites()
+              : _viewModel.addToFavorites());
 
           if (!context.mounted) return;
 
@@ -121,10 +146,10 @@ class ViewTagScreen extends StatelessWidget {
           child: const Text('Tag Details'),
         ),
         AddToListButton(
-          listsRepository: listsRepository,
-          tagId: viewModel.tagId,
+          listsRepository: widget.listsRepository,
+          tagId: _viewModel.tagId,
           onListSelected: (listId) async {
-            final result = await viewModel.addTagToList(listId);
+            final result = await _viewModel.addTagToList(listId);
 
             if (!context.mounted) return;
 
@@ -143,7 +168,7 @@ class ViewTagScreen extends StatelessWidget {
               ? const Icon(Icons.ios_share_rounded)
               : const Icon(Icons.share_rounded),
           onPressed: () async {
-            await sharePlus.share(
+            await widget.sharePlus.share(
               ShareParams(uri: tag.tagUri, title: tag.title),
             );
           },

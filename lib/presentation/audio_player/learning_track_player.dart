@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:tagly/presentation/audio_player/audio_player_widget.dart';
@@ -28,7 +29,7 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
   @override
   void didUpdateWidget(LearningTrackPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.tracks != oldWidget.tracks) {
+    if (!mapEquals(widget.tracks, oldWidget.tracks)) {
       setState(() {
         _selectedTrack = widget.tracks.keys.first;
       });

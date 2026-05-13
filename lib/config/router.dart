@@ -27,14 +27,12 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
           builder: (context, state) {
             final tagId = state.uri.queryParameters['id']!;
             return ViewTagScreen(
+              tagId: int.parse(tagId),
+              tagsRepository: context.read(),
               cacheManager: context.read(),
               listsRepository: context.read(),
               settingsRepository: context.read(),
               sharePlus: context.read(),
-              viewModel: ViewTagViewModel(
-                repository: context.read(),
-                tagId: int.parse(tagId),
-              ),
             );
           },
           routes: [
