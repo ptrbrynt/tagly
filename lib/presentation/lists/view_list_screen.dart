@@ -82,6 +82,7 @@ class ViewListScreen extends StatelessWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: const Text('Tag removed from list'),
+          persist: false,
           action: SnackBarAction(
             label: 'Undo',
             onPressed: () async {
