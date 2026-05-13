@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -11,6 +12,7 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
@@ -178,7 +180,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
                   child: const Text('Link to barbershoptags.com'),
                 ),
                 MenuItemButton(
-                  leadingIcon: const TaglyIcon(size: 24),
+                  leadingIcon: TaglyIcon.inverse(context, size: 24),
                   onPressed: () async {
                     await widget.sharePlus.share(
                       ShareParams(
@@ -189,6 +191,14 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
                     );
                   },
                   child: const Text('Tagly Link'),
+                ),
+                const Divider(),
+                MenuItemButton(
+                  leadingIcon: const Icon(Icons.help_outline_rounded),
+                  onPressed: () {
+                    _showShareHelp(context);
+                  },
+                  child: const Text('What do I choose?'),
                 ),
               ],
               leadingIcon: Platform.isIOS
@@ -208,6 +218,42 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           ],
         );
       },
+    );
+  }
+
+  void _showShareHelp(BuildContext context) {
+    unawaited(
+      HelpSheet.show(
+        context: context,
+        title: 'Sharing Tags',
+        steps: [
+          const HelpStep(
+            icon: Icons.link,
+            title: 'Share with Tagly users',
+            description:
+                "Tagly Links work great when you know the person you're "
+                'sharing with uses Tagly. It will open the tag directly '
+                'in the app on their phone.',
+          ),
+          const HelpStep(
+            icon: Icons.explore_rounded,
+            title: 'Share barbershoptags.com link',
+            description:
+                "If you don't know whether the person you're sharing with "
+                "uses Tagly, it's best to share the barbershoptags.com link. "
+                'It will open the tag in their web browser.',
+          ),
+          HelpStep(
+            icon: Icons.search_rounded,
+            title: 'Try searching instead',
+            description:
+                'Search by ID is a great alternative to link sharing. '
+                "You can give someone the Tag ID (for this tag, it's "
+                '${widget.tagId}) and they can look for '
+                'it themselves in their favorite tag app.',
+          ),
+        ],
+      ),
     );
   }
 

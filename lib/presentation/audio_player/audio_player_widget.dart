@@ -23,6 +23,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   final _player = AudioPlayer();
   StreamSubscription<ProcessingState>? _completionSubscription;
   bool _loadError = false;
+  bool _playbackError = false;
 
   /// Used to store the playback status of the player before seeking starts,
   /// so we can restart playback if necessary
@@ -58,16 +59,22 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       await _player.setAudioSource(AudioSource.file(file.path));
     } on PlayerException {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          duration: Duration(seconds: 10),
-          content: Text(
-            'Sorry — something went wrong loading the learning track.\n'
-            'This often resolves itself after a while, so please try '
-            'again another time, or try a different tag/track.',
+      try {
+        await _player.setAudioSource(AudioSource.uri(Uri.parse(widget.url)));
+      } on PlayerException {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            duration: Duration(seconds: 10),
+            content: Text(
+              'Sorry — something went wrong loading the learning track.\n'
+              'This often resolves itself after a while, so please try '
+              'again another time, or try a different tag/track.',
+            ),
           ),
-        ),
-      );
+        );
+        setState(() => _playbackError = true);
+      }
     } on Exception {
       if (mounted) setState(() => _loadError = true);
     }
@@ -131,6 +138,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   }
 
   Widget _progressSlider() {
+    if (_playbackError) return const SizedBox.shrink();
     return StreamBuilder(
       stream: StreamGroup.merge([
         _player.durationStream,
@@ -138,16 +146,21 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
         _player.bufferedPositionStream,
       ]),
       builder: (context, _) {
-        if (_player.duration == null) {
+        final duration = _player.duration?.inMilliseconds.toDouble();
+        if (duration == null) {
           return const Padding(
             padding: .symmetric(horizontal: 8),
             child: LinearProgressIndicator(),
           );
         }
+
+        // TODO: Show "Streaming" when duration == 0
+
         return Slider(
-          max: _player.duration!.inMilliseconds.toDouble(),
-          value: _player.position.inMilliseconds.toDouble(),
+          max: duration,
+          value: _player.position.inMilliseconds.clamp(0, duration).toDouble(),
           secondaryTrackValue: _player.bufferedPosition.inMilliseconds
+              .clamp(0, duration)
               .toDouble(),
           onChanged: (value) async {
             await _player.seek(Duration(milliseconds: value.toInt()));

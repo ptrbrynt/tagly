@@ -2,8 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class TaglyIcon extends StatelessWidget {
-  const TaglyIcon({super.key, this.size = 48});
+  const TaglyIcon({
+    super.key,
+    this.size = 48,
+    this.backgroundColor,
+    this.iconColor,
+  });
 
+  TaglyIcon.inverse(BuildContext context, {this.size = 48, super.key})
+    : backgroundColor = Theme.of(context).colorScheme.onSurface,
+      iconColor = Theme.of(context).colorScheme.surfaceContainer;
+
+  final Color? backgroundColor;
+  final Color? iconColor;
   final double size;
 
   @override
@@ -16,14 +27,16 @@ class TaglyIcon extends StatelessWidget {
         child: DecoratedBox(
           decoration: BoxDecoration(
             borderRadius: .circular(16),
-            color: Theme.of(context).colorScheme.surfaceContainer,
+            color:
+                backgroundColor ??
+                Theme.of(context).colorScheme.surfaceContainer,
           ),
           child: Center(
             child: SvgPicture.asset(
               'assets/app-icon-foreground.svg',
               height: size * (40 / 48),
               colorFilter: ColorFilter.mode(
-                Theme.of(context).colorScheme.onSurface,
+                iconColor ?? Theme.of(context).colorScheme.onSurface,
                 .srcIn,
               ),
             ),

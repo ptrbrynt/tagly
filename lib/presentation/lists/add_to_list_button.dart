@@ -31,7 +31,7 @@ class _AddToListButtonState extends State<AddToListButton> {
             onPressed: () => widget.onListSelected(list.id),
             child: Text(list.name),
           ),
-
+        if (widget.lists.isNotEmpty) const Divider(),
         MenuItemButton(
           onPressed: widget.onCreateListSelected,
           leadingIcon: const Icon(Icons.add_rounded),
