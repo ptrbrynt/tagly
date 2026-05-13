@@ -7,6 +7,7 @@ import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class ViewListScreen extends StatelessWidget {
@@ -97,107 +98,31 @@ class ViewListScreen extends StatelessWidget {
 
   void _showHelp(BuildContext context) {
     unawaited(
-      showModalBottomSheet<void>(
+      HelpSheet.show(
         context: context,
-        builder: (context) => const _AddToListHelpSheet(),
-      ),
-    );
-  }
-}
-
-class _AddToListHelpSheet extends StatelessWidget {
-  const _AddToListHelpSheet();
-
-  @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('How to add Tags to a List', style: textTheme.titleLarge),
-            const SizedBox(height: 24),
-            const _HelpStep(
-              number: 1,
-              icon: Icons.more_vert_rounded,
-              title: 'Open the tag menu',
-              description:
-                  'While viewing a Tag, tap the menu button (⋮) in the'
-                  ' top-right corner.',
-            ),
-            const SizedBox(height: 20),
-            const _HelpStep(
-              number: 2,
-              icon: Icons.playlist_add_rounded,
-              title: 'Tap "Add to List"',
-              description: 'Select "Add to List" from the menu.',
-            ),
-            const SizedBox(height: 20),
-            const _HelpStep(
-              number: 3,
-              icon: Icons.checklist_rounded,
-              title: 'Choose or create a List',
-              description:
-                  'Select an existing List, or tap "New List…" to create'
-                  ' one and add the Tag to it.',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HelpStep extends StatelessWidget {
-  const _HelpStep({
-    required this.number,
-    required this.icon,
-    required this.title,
-    required this.description,
-  });
-
-  final int number;
-  final IconData icon;
-  final String title;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CircleAvatar(
-          radius: 16,
-          backgroundColor: cs.primaryContainer,
-          child: Icon(icon, size: 16, color: cs.onPrimaryContainer),
-        ),
-        const SizedBox(width: 16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 2),
-              Text(
-                description,
-                style: textTheme.bodyMedium?.copyWith(
-                  color: cs.onSurfaceVariant,
-                ),
-              ),
-            ],
+        title: 'How to add Tags to a List',
+        steps: [
+          const HelpStep(
+            icon: Icons.more_vert_rounded,
+            title: 'Open the tag menu',
+            description:
+                'While viewing a Tag, tap the menu button (⋮) in the'
+                ' top-right corner.',
           ),
-        ),
-      ],
+          const HelpStep(
+            icon: Icons.playlist_add_rounded,
+            title: 'Tap "Add to List"',
+            description: 'Select "Add to List" from the menu.',
+          ),
+          const HelpStep(
+            icon: Icons.checklist_rounded,
+            title: 'Choose or create a List',
+            description:
+                'Select an existing List, or tap "New List…" to create'
+                ' one and add the Tag to it.',
+          ),
+        ],
+      ),
     );
   }
 }

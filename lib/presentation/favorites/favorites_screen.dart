@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
@@ -5,6 +7,7 @@ import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class FavoritesScreen extends StatelessWidget {
@@ -29,7 +32,23 @@ class FavoritesScreen extends StatelessWidget {
             ),
             Ok(:final value) =>
               value.isEmpty
-                  ? const EmptyStateCard(child: Text('No favorites added yet'))
+                  ? EmptyStateCard(
+                      child: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          const SizedBox(height: 16),
+                          const Text('No favorites yet'),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            icon: const Icon(Icons.help_outline_rounded),
+                            label: const Text(
+                              'How do I add tags to favorites?',
+                            ),
+                            onPressed: () => _showHelp(context),
+                          ),
+                        ],
+                      ),
+                    )
                   : ListView.builder(
                       itemCount: value.length,
                       itemBuilder: (context, index) =>
@@ -74,5 +93,33 @@ class FavoritesScreen extends StatelessWidget {
         ),
       );
     }
+  }
+
+  void _showHelp(BuildContext context) {
+    unawaited(
+      HelpSheet.show(
+        context: context,
+        title: 'How to add Favorites',
+        steps: [
+          const HelpStep(
+            icon: Icons.search_rounded,
+            title: 'Open a tag',
+            description: 'Find a tag you want to add to Favorites',
+          ),
+          const HelpStep(
+            icon: Icons.favorite_outline_rounded,
+            title: 'Tap the Heart',
+            description: 'Tap the outlined Heart in the top-right.',
+          ),
+          const HelpStep(
+            icon: Icons.heart_broken_rounded,
+            title: 'Tap again to remove',
+            description:
+                'If a tag is already in your Favorites, '
+                'tap the Heart again to remove it.',
+          ),
+        ],
+      ),
+    );
   }
 }

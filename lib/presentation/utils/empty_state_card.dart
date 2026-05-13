@@ -18,7 +18,7 @@ class EmptyStateCard extends StatelessWidget {
               Icon(Icons.inbox_rounded, color: cs.onSurfaceVariant, size: 32),
               const SizedBox(height: 12),
               DefaultTextStyle(
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                   color: cs.onSurfaceVariant,
                 ),
                 textAlign: TextAlign.center,
