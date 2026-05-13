@@ -15,8 +15,9 @@ class TagSearchBar extends StatefulWidget {
 }
 
 class _TagSearchBarState extends State<TagSearchBar> {
-  final ValueNotifier<TagSearchQuery> _queryNotifier =
-      ValueNotifier(const TagSearchQuery());
+  final ValueNotifier<TagSearchQuery> _queryNotifier = ValueNotifier(
+    const TagSearchQuery(),
+  );
   final _searchController = SearchController();
 
   @override
@@ -31,7 +32,19 @@ class _TagSearchBarState extends State<TagSearchBar> {
     return SearchAnchor.bar(
       searchController: _searchController,
       barHintText: 'Search tags...',
+
       viewTrailing: [
+        ValueListenableBuilder<TagSearchQuery>(
+          valueListenable: _queryNotifier,
+          builder: (context, query, _) {
+            return (query.text?.isNotEmpty ?? false)
+                ? IconButton(
+                    icon: const Icon(Icons.clear_rounded),
+                    onPressed: _searchController.clear,
+                  )
+                : const SizedBox.shrink();
+          },
+        ),
         ValueListenableBuilder<TagSearchQuery>(
           valueListenable: _queryNotifier,
           builder: (context, query, _) => IconButton(
@@ -44,11 +57,11 @@ class _TagSearchBarState extends State<TagSearchBar> {
         ),
       ],
       suggestionsBuilder: (context, controller) async {
-        _queryNotifier.value =
-            _queryNotifier.value.copyWith(text: controller.text.trim());
+        _queryNotifier.value = _queryNotifier.value.copyWith(
+          text: controller.text.trim(),
+        );
 
-        final result =
-            await widget.repository.searchTags(_queryNotifier.value);
+        final result = await widget.repository.searchTags(_queryNotifier.value);
 
         return switch (result) {
           Failure() => const [],
