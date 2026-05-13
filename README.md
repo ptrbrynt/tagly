@@ -50,3 +50,14 @@ dart run build_runner build --delete-conflicting-outputs
 
 - Flutter SDK (see `.fvm/fvm_config.json` or `pubspec.yaml` for version constraints)
 - iOS 14+ / Android API 21+
+
+## Building for Release
+
+The following commands will compile a release build of the app:
+
+```bash
+# iOS
+flutter build ipa --release --dart-define-from-file=.env --obfuscate --split-debug-info=out/ios
+# Android
+flutter build appbundle --release --dart-define-from-file=.env --obfuscate --split-debug-info=out/ios
+```
