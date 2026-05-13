@@ -62,6 +62,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
+            title: Text('#${widget.tagId}'),
             actions: [
               if (_viewModel.result case Ok(:final value)) ...[
                 _favoriteToggle(context),
