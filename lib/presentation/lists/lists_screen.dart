@@ -20,7 +20,7 @@ class ListsScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Lists'),
         actions: [
-          IconButton.filledTonal(
+          IconButton(
             icon: const Icon(Icons.add_rounded),
             onPressed: () => _createList(context),
           ),

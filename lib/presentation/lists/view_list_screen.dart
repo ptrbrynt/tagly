@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
@@ -32,8 +34,20 @@ class ViewListScreen extends StatelessWidget {
             ),
             Ok(:final value) =>
               value.isEmpty
-                  ? const EmptyStateCard(
-                      child: Text('No tags added to this list yet'),
+                  ? EmptyStateCard(
+                      child: Column(
+                        mainAxisSize: .min,
+                        children: [
+                          const SizedBox(height: 16),
+                          const Text('No tags added to this list yet'),
+                          const SizedBox(height: 8),
+                          TextButton.icon(
+                            icon: const Icon(Icons.help_outline_rounded),
+                            label: const Text('How do I add tags to lists?'),
+                            onPressed: () => _showHelp(context),
+                          ),
+                        ],
+                      ),
                     )
                   : ListView.builder(
                       itemCount: value.length,
@@ -72,6 +86,15 @@ class ViewListScreen extends StatelessWidget {
     );
   }
 
+  void _showHelp(BuildContext context) {
+    unawaited(
+      showModalBottomSheet<void>(
+        context: context,
+        builder: (context) => const _AddToListHelpSheet(),
+      ),
+    );
+  }
+
   Widget _dismissibleBackground(
     BuildContext context,
     Alignment iconAlignment,
@@ -86,6 +109,103 @@ class ViewListScreen extends StatelessWidget {
           color: Theme.of(context).colorScheme.onTertiaryContainer,
         ),
       ),
+    );
+  }
+}
+
+class _AddToListHelpSheet extends StatelessWidget {
+  const _AddToListHelpSheet();
+
+  @override
+  Widget build(BuildContext context) {
+    final textTheme = Theme.of(context).textTheme;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('How to add Tags to a List', style: textTheme.titleLarge),
+            const SizedBox(height: 24),
+            const _HelpStep(
+              number: 1,
+              icon: Icons.more_vert_rounded,
+              title: 'Open the tag menu',
+              description:
+                  'While viewing a Tag, tap the menu button (⋮) in the'
+                  ' top-right corner.',
+            ),
+            const SizedBox(height: 20),
+            const _HelpStep(
+              number: 2,
+              icon: Icons.playlist_add_rounded,
+              title: 'Tap "Add to List"',
+              description: 'Select "Add to List" from the menu.',
+            ),
+            const SizedBox(height: 20),
+            const _HelpStep(
+              number: 3,
+              icon: Icons.checklist_rounded,
+              title: 'Choose or create a List',
+              description:
+                  'Select an existing List, or tap "New List…" to create'
+                  ' one and add the Tag to it.',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HelpStep extends StatelessWidget {
+  const _HelpStep({
+    required this.number,
+    required this.icon,
+    required this.title,
+    required this.description,
+  });
+
+  final int number;
+  final IconData icon;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CircleAvatar(
+          radius: 16,
+          backgroundColor: cs.primaryContainer,
+          child: Icon(icon, size: 16, color: cs.onPrimaryContainer),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 2),
+              Text(
+                description,
+                style: textTheme.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
