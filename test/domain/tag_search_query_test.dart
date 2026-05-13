@@ -118,22 +118,32 @@ void main() {
       });
 
       test('omits null text from query string', () {
-        expect(const TagSearchQuery().asQueryParameters(), isNot(contains('text=')));
+        expect(
+          const TagSearchQuery().asQueryParameters(),
+          isNot(contains('text=')),
+        );
       });
 
       test('omits null limit from query string', () {
-        expect(const TagSearchQuery().asQueryParameters(), isNot(contains('limit=')));
+        expect(
+          const TagSearchQuery().asQueryParameters(),
+          isNot(contains('limit=')),
+        );
       });
 
       test('omits null isClassic from query string', () {
-        expect(const TagSearchQuery().asQueryParameters(), isNot(contains('isClassic=')));
+        expect(
+          const TagSearchQuery().asQueryParameters(),
+          isNot(contains('isClassic=')),
+        );
       });
     });
   });
 }
 
 /// Parses a flat query string like `"a=1&b[]=x&b[]=y"` into the
-/// `Map<String, List<String>>` format that [TagSearchQuery.fromQueryParameters] expects.
+/// `Map<String, List<String>>` format that [TagSearchQuery.fromQueryParameters]
+/// expects.
 Map<String, List<String>> _split(String qs) {
   final result = <String, List<String>>{};
   for (final pair in qs.split('&')) {
