@@ -54,8 +54,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
   Future<void> _load() async {
     if (mounted) setState(() => _loadError = false);
     await _player.stop();
+    final file = await widget.cacheManager.getSingleFile(widget.url);
     try {
-      final file = await widget.cacheManager.getSingleFile(widget.url);
       await _player.setAudioSource(AudioSource.file(file.path));
     } on PlayerException {
       if (!mounted) return;
@@ -154,7 +154,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           );
         }
 
-        // TODO: Show "Streaming" when duration == 0
+        if (duration == 0) return _streamingIndicator();
 
         return Slider(
           max: duration,
@@ -176,6 +176,80 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
           },
         );
       },
+    );
+  }
+
+  Widget _streamingIndicator() {
+    return _StreamingIndicator(playingStream: _player.playingStream);
+  }
+}
+
+class _StreamingIndicator extends StatefulWidget {
+  const _StreamingIndicator({required this.playingStream});
+
+  final Stream<bool> playingStream;
+
+  @override
+  State<_StreamingIndicator> createState() => _StreamingIndicatorState();
+}
+
+class _StreamingIndicatorState extends State<_StreamingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _opacity;
+  StreamSubscription<bool>? _sub;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 900),
+    );
+    _opacity = Tween<double>(begin: 0.4, end: 1).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _sub = widget.playingStream.listen((playing) {
+      if (playing) {
+        unawaited(_controller.repeat(reverse: true));
+      } else {
+        _controller
+          ..stop()
+          ..value = 1.0;
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    unawaited(_sub?.cancel());
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      child: FadeTransition(
+        opacity: _opacity,
+        child: Row(
+          children: [
+            Icon(
+              Icons.wifi_rounded,
+              size: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(width: 6),
+            Text(
+              'Streaming',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
