@@ -36,22 +36,27 @@ class TagListTile extends StatelessWidget {
               spacing: 12,
               children: [
                 if (tag.arranger case final String arranger)
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    spacing: 4,
-                    children: [
-                      Icon(
-                        Icons.edit_note_rounded,
-                        size: 14,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                      Text(
-                        arranger,
-                        style: theme.textTheme.bodySmall?.copyWith(
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      spacing: 4,
+                      children: [
+                        Icon(
+                          Icons.edit_note_rounded,
+                          size: 14,
                           color: colorScheme.onSurfaceVariant,
                         ),
-                      ),
-                    ],
+                        Flexible(
+                          child: Text(
+                            arranger,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 if (tag.downloaded case final int downloads)
                   Row(
