@@ -5,6 +5,177 @@ import '../helpers/fake_tags.dart';
 
 void main() {
   group('tags xml parser', () {
+    group('envelope attributes', () {
+      test('returns empty tag list when no <tag> elements present', () {
+        const xml = '''
+<tags available="100" count="0" stamp="2026-01-01 00:00:00">
+</tags>''';
+        final result = TagsXmlParser.parse(xml);
+        expect(result.available, 100);
+        expect(result.tags, isEmpty);
+      });
+
+      test('defaults available and count to 0 when attributes are absent', () {
+        const xml = '<tags stamp=""><tag><id>1</id><Title>T</Title></tag></tags>';
+        final result = TagsXmlParser.parse(xml);
+        expect(result.available, 0);
+        expect(result.count, 0);
+      });
+    });
+
+    group('isClassic', () {
+      test('is true when Classic element has content', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag>
+    <id>1</id><Title>T</Title>
+    <Classic>yes</Classic>
+  </tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.isClassic, isTrue);
+      });
+
+      test('is false when Classic element is absent', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.isClassic, isFalse);
+      });
+    });
+
+    group('sheet music URL fallback', () {
+      test('prefers SheetMusicAlt over SheetMusic', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag>
+    <id>1</id><Title>T</Title>
+    <SheetMusic type="pdf">http://redirect.example.com</SheetMusic>
+    <SheetMusicAlt>http://static.example.com/file.pdf</SheetMusicAlt>
+  </tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.sheetMusicUrl, 'http://static.example.com/file.pdf');
+      });
+
+      test('falls back to SheetMusic when SheetMusicAlt is absent', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag>
+    <id>1</id><Title>T</Title>
+    <SheetMusic type="pdf">http://redirect.example.com</SheetMusic>
+  </tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.sheetMusicUrl, 'http://redirect.example.com');
+        expect(tag.sheetMusicType, 'pdf');
+      });
+
+      test('sheetMusicUrl is null when neither element is present', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.sheetMusicUrl, isNull);
+        expect(tag.sheetMusicType, isNull);
+      });
+    });
+
+    group('date parsing', () {
+      test('parses standard API date format', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title><Posted>Tue, 25 Jan 2011</Posted></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.posted, '2011-01-25');
+      });
+
+      test('returns null for malformed date', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title><Posted>not a date</Posted></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.posted, isNull);
+      });
+
+      test('returns null when Posted element is absent', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.posted, isNull);
+      });
+    });
+
+    group('key splitting', () {
+      test('splits Major:C into mode and tonic', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title><WritKey>Major:C</WritKey></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.keyMode, 'Major');
+        expect(tag.keyTonic, 'C');
+      });
+
+      test('key without colon yields mode only, tonic null', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title><WritKey>Major</WritKey></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.keyMode, 'Major');
+        expect(tag.keyTonic, isNull);
+      });
+
+      test('absent WritKey yields null mode and tonic', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag><id>1</id><Title>T</Title></tag>
+</tags>''';
+        final tag = TagsXmlParser.parse(xml).tags.first;
+        expect(tag.keyMode, isNull);
+        expect(tag.keyTonic, isNull);
+      });
+    });
+
+    group('video parsing', () {
+      test('isMultitrack is true when Multitrack element is "yes"', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag>
+    <id>1</id><Title>T</Title>
+    <videos>
+      <video>
+        <id>10</id>
+        <Multitrack>Yes</Multitrack>
+      </video>
+    </videos>
+  </tag>
+</tags>''';
+        final video = TagsXmlParser.parse(xml).tags.first.videos.first;
+        expect(video.isMultitrack, isTrue);
+      });
+
+      test('isMultitrack is false when Multitrack element is absent', () {
+        const xml = '''
+<tags available="1" count="1" stamp="">
+  <tag>
+    <id>1</id><Title>T</Title>
+    <videos><video><id>10</id></video></videos>
+  </tag>
+</tags>''';
+        final video = TagsXmlParser.parse(xml).tags.first.videos.first;
+        expect(video.isMultitrack, isFalse);
+      });
+    });
+
     test('parses tags successfully', () {
       const input = fakeTagsXml;
       final result = TagsXmlParser.parse(input);
