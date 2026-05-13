@@ -1,16 +1,16 @@
 import 'dart:io';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:tagly/data/lists_repository.dart';
-import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
+import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,8 +19,7 @@ class ViewTagScreen extends StatefulWidget {
   const ViewTagScreen({
     required this.tagId,
     required this.tagsRepository,
-    required this.listsRepository,
-    required this.settingsRepository,
+    required this.listsViewModel,
     required this.cacheManager,
     required this.sharePlus,
     super.key,
@@ -28,8 +27,7 @@ class ViewTagScreen extends StatefulWidget {
 
   final int tagId;
   final TagsRepository tagsRepository;
-  final ListsRepository listsRepository;
-  final SettingsRepository settingsRepository;
+  final ListsViewModel listsViewModel;
   final CacheManager cacheManager;
   final SharePlus sharePlus;
 
@@ -146,21 +144,17 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           },
           child: const Text('Tag Details'),
         ),
-        AddToListButton(
-          listsRepository: widget.listsRepository,
-          tagId: _viewModel.tagId,
-          onListSelected: (listId) async {
-            final result = await _viewModel.addTagToList(listId);
-
-            if (!context.mounted) return;
-
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(switch (result) {
-                  Ok() => 'Tag added to list',
-                  Failure(:final message) => message,
-                }),
-              ),
+        ListenableBuilder(
+          listenable: widget.listsViewModel,
+          builder: (context, _) {
+            return AddToListButton(
+              lists: switch (widget.listsViewModel.result) {
+                Ok(:final value) => value,
+                _ => [],
+              },
+              onListSelected: _addTagToList,
+              onCreateListSelected: _createList,
+              tagId: widget.tagId,
             );
           },
         ),
@@ -186,5 +180,48 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _addTagToList(int listId) async {
+    final result = await _viewModel.addTagToList(listId);
+
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(switch (result) {
+          Ok() => 'Tag added to list',
+          Failure(:final message) => message,
+        }),
+      ),
+    );
+  }
+
+  Future<void> _createList() async {
+    final promptResult = await showTextInputDialog(
+      context: context,
+      title: 'New List',
+      textFields: [
+        const DialogTextField(
+          hintText: 'Awesome Tags',
+          textCapitalization: .words,
+        ),
+      ],
+    );
+    if (promptResult == null || promptResult.isEmpty) return;
+
+    final listName = promptResult.first;
+
+    final result = await widget.listsViewModel.createList(listName);
+
+    if (result case Failure(:final message)) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+      return;
+    } else if (result case Ok(:final value)) {
+      await _addTagToList(value);
+    }
   }
 }

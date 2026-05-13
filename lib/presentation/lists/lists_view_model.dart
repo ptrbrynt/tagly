@@ -21,7 +21,7 @@ class ListsViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<void>> createList(String name) =>
+  Future<Result<int>> createList(String name) =>
       _repository.createList(name).whenComplete(load);
 
   Future<Result<void>> deleteList(int id) =>

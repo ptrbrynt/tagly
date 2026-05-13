@@ -17,10 +17,10 @@ class ListsRepository {
     }
   }
 
-  Future<Result<void>> createList(String name) async {
+  Future<Result<int>> createList(String name) async {
     try {
-      await _db.insert('lists', {'name': name});
-      return const .ok(null);
+      final id = await _db.insert('lists', {'name': name});
+      return .ok(id);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
     }

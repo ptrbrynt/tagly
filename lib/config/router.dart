@@ -30,8 +30,7 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
               tagId: int.parse(tagId),
               tagsRepository: context.read(),
               cacheManager: context.read(),
-              listsRepository: context.read(),
-              settingsRepository: context.read(),
+              listsViewModel: context.read(),
               sharePlus: context.read(),
             );
           },
