@@ -1,12 +1,19 @@
 import java.util.Properties
 import java.io.FileInputStream
+import com.posthog.android.PostHogCliExecTask
 
 plugins {
     id("com.android.application")
-    // id("com.posthog.android") version "1.2.0"
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.posthog.android") version "1.2.0"
+}
+
+tasks.withType<PostHogCliExecTask> {
+    postHogHost = "https://eu.posthog.com"
+    postHogProjectId = "172464"
+    postHogApiKey = System.getenv("POSTHOG_API_KEY") ?: ""
 }
 
 val keystoreProperties = Properties()
