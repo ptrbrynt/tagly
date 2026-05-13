@@ -26,7 +26,14 @@ class HelpSheet extends StatelessWidget {
   }) async {
     await showModalBottomSheet<void>(
       context: context,
-      builder: (context) => HelpSheet._(steps: steps, title: title),
+      useSafeArea: true,
+      isScrollControlled: true,
+      builder: (context) {
+        return HelpSheet._(
+          steps: steps,
+          title: title,
+        );
+      },
     );
   }
 
@@ -36,22 +43,17 @@ class HelpSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(title, style: textTheme.titleLarge),
-            const SizedBox(height: 24),
-            for (final step in steps) ...[
-              _HelpStepWidget.fromStep(step),
-              if (step != steps.last) const SizedBox(height: 20),
-            ],
-          ],
-        ),
-      ),
+    return ListView(
+      padding: const .all(24),
+      shrinkWrap: true,
+      children: [
+        Text(title, style: textTheme.titleLarge),
+        const SizedBox(height: 24),
+        for (final step in steps) ...[
+          _HelpStepWidget.fromStep(step),
+          if (step != steps.last) const SizedBox(height: 20),
+        ],
+      ],
     );
   }
 }
