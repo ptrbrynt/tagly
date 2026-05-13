@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
+import 'package:tagly/presentation/utils/initial_sync_widget.dart';
 
 class SearchScreen extends StatelessWidget {
   const SearchScreen({
@@ -164,28 +165,6 @@ class _NavCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
-  }
-}
-
-class InitialSyncWidget extends StatelessWidget {
-  const InitialSyncWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const .all(24),
-      alignment: .center,
-      child: const Column(
-        mainAxisAlignment: .center,
-        children: [
-          CircularProgressIndicator.adaptive(),
-          SizedBox(height: 40),
-          Text('Tagly is syncing', style: TextStyle(fontSize: 24)),
-          SizedBox(height: 8),
-          Text('Give us a few seconds to get you set up'),
-        ],
       ),
     );
   }
