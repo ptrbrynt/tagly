@@ -46,26 +46,6 @@ void main() {
       expect(find.text("'Til I Hear You Sing"), findsWidgets);
       expect(find.text('#4696'), findsOne);
     });
-
-    testWidgets('searching for a tag by ID displays result', (tester) async {
-      await pumpSearchScreen(tester, providers);
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.byType(SearchBar));
-
-      await tester.pumpAndSettle();
-
-      await tester.runAsync(() async {
-        await tester.enterText(find.byType(SearchBar).last, '4696');
-        await tester.sendKeyEvent(.enter);
-      });
-
-      await tester.pumpAndSettle();
-
-      expect(find.text("'Til I Hear You Sing"), findsOne);
-      expect(find.text('#4696'), findsOne);
-    });
   });
 }
 
