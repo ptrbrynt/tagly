@@ -20,4 +20,12 @@ class FavoritesViewModel extends ChangeNotifier {
     _result = await _repository.getFavorites();
     notifyListeners();
   }
+
+  Future<Result<void>> addToFavorites(int tagId) async {
+    return _repository.addToFavorites(tagId).whenComplete(load);
+  }
+
+  Future<Result<void>> removeFromFavorites(int tagId) async {
+    return _repository.removeFromFavorites(tagId).whenComplete(load);
+  }
 }

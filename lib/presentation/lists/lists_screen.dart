@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 
@@ -53,8 +54,11 @@ class ListsScreen extends StatelessWidget {
   Widget _listTile(BuildContext context, TagList list) {
     return Dismissible(
       key: ValueKey(list.id),
-      background: _dismissibleBackground(context, .centerLeft),
-      secondaryBackground: _dismissibleBackground(context, .centerRight),
+      background: DismissibleBackground.deleteForever(context, .centerLeft),
+      secondaryBackground: DismissibleBackground.deleteForever(
+        context,
+        .centerRight,
+      ),
       confirmDismiss: (_) async {
         final confirmResult = await showOkCancelAlertDialog(
           context: context,
@@ -81,23 +85,6 @@ class ListsScreen extends StatelessWidget {
         onTap: () {
           unawaited(context.push('/lists/${list.id}?name=${list.name}'));
         },
-      ),
-    );
-  }
-
-  Widget _dismissibleBackground(
-    BuildContext context,
-    Alignment iconAlignment,
-  ) {
-    return Container(
-      color: Theme.of(context).colorScheme.error,
-      padding: const .symmetric(horizontal: 16),
-      child: Align(
-        alignment: iconAlignment,
-        child: Icon(
-          Icons.delete_forever_rounded,
-          color: Theme.of(context).colorScheme.onError,
-        ),
       ),
     );
   }

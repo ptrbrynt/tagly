@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
+import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
@@ -62,8 +63,8 @@ class ViewListScreen extends StatelessWidget {
   Widget _listTile(BuildContext context, BarbershopTag tag) {
     return Dismissible(
       key: ValueKey(tag.id),
-      background: _dismissibleBackground(context, .centerLeft),
-      secondaryBackground: _dismissibleBackground(context, .centerRight),
+      background: DismissibleBackground.remove(context, .centerLeft),
+      secondaryBackground: DismissibleBackground.remove(context, .centerRight),
       onDismissed: (_) async {
         await _removeTagFromList(context, tag.id);
       },
@@ -99,23 +100,6 @@ class ViewListScreen extends StatelessWidget {
       showModalBottomSheet<void>(
         context: context,
         builder: (context) => const _AddToListHelpSheet(),
-      ),
-    );
-  }
-
-  Widget _dismissibleBackground(
-    BuildContext context,
-    Alignment iconAlignment,
-  ) {
-    return Container(
-      color: Theme.of(context).colorScheme.tertiaryContainer,
-      padding: const .symmetric(horizontal: 16),
-      child: Align(
-        alignment: iconAlignment,
-        child: Icon(
-          Icons.remove_rounded,
-          color: Theme.of(context).colorScheme.onTertiaryContainer,
-        ),
       ),
     );
   }
