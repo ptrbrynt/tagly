@@ -105,7 +105,7 @@ class _MainAppState extends State<MainApp> {
     final path = uri.replace(scheme: '').toString().substring(1);
     debugPrint('Deep Link Received: $path');
     if (mounted) {
-      unawaited(context.read<GoRouter>().push(path));
+      context.read<GoRouter>().go(path);
     }
   }
 
