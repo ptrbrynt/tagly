@@ -93,7 +93,12 @@ GoRouter getRouter(List<NavigatorObserver> observers) => GoRouter(
         ),
         GoRoute(
           path: 'settings',
-          builder: (context, _) => SettingsScreen(repository: context.read()),
+          builder: (context, _) {
+            return SettingsScreen(
+              settingsRepository: context.read(),
+              tagsRepository: context.read(),
+            );
+          },
         ),
       ],
     ),

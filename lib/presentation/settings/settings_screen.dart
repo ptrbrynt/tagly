@@ -1,22 +1,30 @@
+import 'dart:async';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:tagly/data/settings_repository.dart';
+import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/presentation/settings/analytics_toggle.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({required this.repository, super.key});
+  const SettingsScreen({
+    required this.tagsRepository,
+    required this.settingsRepository,
+    super.key,
+  });
 
-  final SettingsRepository repository;
+  final TagsRepository tagsRepository;
+  final SettingsRepository settingsRepository;
 
   @override
   Widget build(BuildContext context) {
-    final info = repository.packageInfo;
+    final info = settingsRepository.packageInfo;
     return Scaffold(
       appBar: AppBar(title: const Text('Settings')),
       body: ListenableBuilder(
-        listenable: repository,
+        listenable: settingsRepository,
         builder: (context, _) {
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 8),
@@ -28,11 +36,20 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(height: 16),
               const _SectionHeader('Privacy'),
               _SettingsCard(
-                children: [AnalyticsToggle(repository: repository)],
+                children: [AnalyticsToggle(repository: settingsRepository)],
               ),
               const _SectionHeader('Storage'),
               _SettingsCard(
                 children: [
+                  ListTile(
+                    leading: const Icon(Icons.cloud_sync_rounded),
+                    title: const Text('Force Sync'),
+                    subtitle: const Text(
+                      'Fetch fresh tag data from barbershoptags.com',
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => _forceSync(context),
+                  ),
                   ListTile(
                     leading: const Icon(Icons.delete_sweep_outlined),
                     title: const Text('Clear Cache'),
@@ -98,6 +115,22 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _forceSync(BuildContext context) async {
+    if (tagsRepository.syncStatus == .resyncing) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('There is already a sync in progress!')),
+      );
+      return;
+    }
+    unawaited(tagsRepository.syncTags(force: true));
+
+    if (!context.mounted) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Sync started')),
+    );
+  }
+
   Future<void> _clearCache(BuildContext context) async {
     final confirmResult = await showOkCancelAlertDialog(
       context: context,
@@ -110,7 +143,7 @@ class SettingsScreen extends StatelessWidget {
     if (!context.mounted) return;
     if (confirmResult != OkCancelResult.ok) return;
 
-    await repository.clearCache();
+    await settingsRepository.clearCache();
 
     if (!context.mounted) return;
 

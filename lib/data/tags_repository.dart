@@ -50,7 +50,7 @@ class TagsRepository extends ChangeNotifier {
   static const maxSyncFrequency = Duration(days: 1);
 
   /// Fetches the latest tags from the API and stores them in the database
-  Future<Result<void>> syncTags() async {
+  Future<Result<void>> syncTags({bool force = false}) async {
     final countResult = await _db.rawQuery(TagQueries.count);
     final count = countResult.single['COUNT(DISTINCT id)']! as int;
 
@@ -60,6 +60,7 @@ class TagsRepository extends ChangeNotifier {
     };
 
     final shouldSync =
+        force ||
         count == 0 ||
         lastSynced == null ||
         lastSynced.difference(DateTime.now()) > maxSyncFrequency;

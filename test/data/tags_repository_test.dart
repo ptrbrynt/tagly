@@ -117,6 +117,51 @@ void main() {
     );
 
     test(
+      '''syncTags does sync when force is true, even if tags exist and a recent sync has occurred''',
+
+      () async {
+        await seedTestDb(db);
+
+        await preferences.setInt(
+          TagsRepository.lastSyncedKey,
+          DateTime.now()
+              .subtract(const Duration(hours: 2))
+              .millisecondsSinceEpoch,
+        );
+
+        when(() => api.getTags(count: 1)).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: 1,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: [fakeTag],
+            );
+          },
+        );
+
+        when(() => api.getTags(count: any(named: 'count'))).thenAnswer(
+          (_) async {
+            return TagsResponse(
+              available: 6710,
+              count: fakeTags.length,
+              stamp: DateFormat('YYYY-MM-DD HH:mm:ss').format(DateTime.now()),
+              tags: fakeTags,
+            );
+          },
+        );
+
+        await repository.syncTags(force: true);
+
+        verify(
+          () => api.getTags(
+            count: any(named: 'count', that: isNot(1)),
+          ),
+        );
+      },
+    );
+
+    test(
       '''syncTags does sync when tags is empty and lastSynced is within last 24 hours''',
       () async {
         await preferences.setInt(
