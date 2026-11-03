@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class TagDetailsScreen extends StatelessWidget {
@@ -18,8 +19,8 @@ class TagDetailsScreen extends StatelessWidget {
       listenable: viewModel,
       builder: (context, _) {
         final result = viewModel.result;
-        return Scaffold(
-          appBar: AppBar(title: Text('#${viewModel.tagId}')),
+        return TaglyScaffold(
+          title: '#${viewModel.tagId}',
           body: switch (result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),

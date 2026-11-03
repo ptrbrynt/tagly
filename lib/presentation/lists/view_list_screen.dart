@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
@@ -10,28 +12,56 @@ import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
-class ViewListScreen extends StatelessWidget {
+class ViewListScreen extends StatefulWidget {
   const ViewListScreen({
+    required this.listId,
     required this.listName,
-    required this.viewModel,
+    required this.repository,
+    required this.onTagSelected,
+    this.selectedTagId,
     super.key,
   });
 
+  final int listId;
   final String listName;
-  final ViewListViewModel viewModel;
+  final TagsRepository repository;
+  final ValueChanged<int> onTagSelected;
+  final int? selectedTagId;
+
+  @override
+  State<ViewListScreen> createState() => _ViewListScreenState();
+}
+
+class _ViewListScreenState extends State<ViewListScreen> {
+  late final ViewListViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    _viewModel = ViewListViewModel(
+      listId: widget.listId,
+      repository: widget.repository,
+    );
+  }
+
+  @override
+  void dispose() {
+    _viewModel.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(listName)),
+    return TaglyScaffold(
+      title: widget.listName,
       body: ListenableBuilder(
-        listenable: viewModel,
+        listenable: _viewModel,
         builder: (context, _) {
-          return switch (viewModel.result) {
+          return switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => FailureCard(
               message: message,
-              onRetry: viewModel.load,
+              onRetry: _viewModel.load,
             ),
             Ok(:final value) =>
               value.isEmpty
@@ -69,12 +99,16 @@ class ViewListScreen extends StatelessWidget {
       onDismissed: (_) async {
         await _removeTagFromList(context, tag.id);
       },
-      child: TagListTile(tag: tag),
+      child: TagListTile(
+        tag: tag,
+        selected: tag.id == widget.selectedTagId,
+        onTap: () => widget.onTagSelected(tag.id),
+      ),
     );
   }
 
   Future<void> _removeTagFromList(BuildContext context, int tagId) async {
-    final result = await viewModel.removeTagFromList(tagId);
+    final result = await _viewModel.removeTagFromList(tagId);
     if (!context.mounted) return;
     if (result case Failure(:final message)) {
       ScaffoldMessenger.of(
@@ -88,7 +122,7 @@ class ViewListScreen extends StatelessWidget {
           action: SnackBarAction(
             label: 'Undo',
             onPressed: () async {
-              await viewModel.addTagToList(tagId);
+              await _viewModel.addTagToList(tagId);
             },
           ),
         ),
@@ -103,16 +137,16 @@ class ViewListScreen extends StatelessWidget {
         title: 'How to add Tags to a List',
         steps: [
           const HelpStep(
-            icon: Icons.more_vert_rounded,
-            title: 'Open the tag menu',
-            description:
-                'While viewing a Tag, tap the menu button (⋮) in the'
-                ' top-right corner.',
+            icon: Icons.search_rounded,
+            title: 'Open a tag',
+            description: 'Find a tag you want to add to this List.',
           ),
           const HelpStep(
             icon: Icons.playlist_add_rounded,
             title: 'Tap "Add to List"',
-            description: 'Select "Add to List" from the menu.',
+            description:
+                "Tap Add to List in the toolbar. If you can't see it, "
+                'look in the More (…) menu.',
           ),
           const HelpStep(
             icon: Icons.checklist_rounded,

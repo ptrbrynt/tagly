@@ -16,11 +16,13 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
+import 'package:tagly/data/device_regions_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/db/database.dart';
 import 'package:tagly/db/legacy/legacy_db.dart';
 import 'package:tagly/db/legacy/legacy_migration_repository.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/device_regions_scope.dart';
 import 'package:tagly/presentation/utils/initial_sync_widget.dart';
 
 Future<void> main() async {
@@ -141,23 +143,27 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         final repository = context.watch<TagsRepository>();
-        return ListenableBuilder(
-          listenable: repository,
-          child: child,
-          builder: (context, child) {
-            final syncStatus = repository.syncStatus;
-            if (syncStatus == .initialSync) {
-              return const Scaffold(body: InitialSyncWidget());
-            }
-            if (syncStatus == .initialSyncFailed) {
-              return Scaffold(
-                body: InitialSyncWidget(
-                  onRetry: () => repository.syncTags().ignore(),
-                ),
-              );
-            }
-            return child!;
-          },
+        final regions = context.watch<DeviceRegionsRepository>().regions;
+        return DeviceRegionsScope(
+          regions: regions,
+          child: ListenableBuilder(
+            listenable: repository,
+            child: child,
+            builder: (context, child) {
+              final syncStatus = repository.syncStatus;
+              if (syncStatus == .initialSync) {
+                return const Scaffold(body: InitialSyncWidget());
+              }
+              if (syncStatus == .initialSyncFailed) {
+                return Scaffold(
+                  body: InitialSyncWidget(
+                    onRetry: () => repository.syncTags().ignore(),
+                  ),
+                );
+              }
+              return child!;
+            },
+          ),
         );
       },
     );

@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
@@ -17,15 +16,16 @@ class ListsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lists'),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        label: const Text('Create List'),
-        icon: const Icon(Icons.playlist_add),
-        onPressed: () => _createList(context),
-      ),
+    return TaglyScaffold(
+      title: 'Lists',
+      items: [
+        BarItem(
+          label: 'New List',
+          icon: Icons.playlist_add_rounded,
+          role: .prominent,
+          onPressed: () => _createList(context),
+        ),
+      ],
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -83,7 +83,12 @@ class ListsScreen extends StatelessWidget {
         title: Text(list.name),
         trailing: const Icon(Icons.chevron_right_rounded),
         onTap: () {
-          unawaited(context.push('/lists/${list.id}?name=${list.name}'));
+          context.go(
+            Uri(
+              path: '/lists/${list.id}',
+              queryParameters: {'name': list.name},
+            ).toString(),
+          );
         },
       ),
     );

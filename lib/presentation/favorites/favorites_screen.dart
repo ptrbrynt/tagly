@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
@@ -11,14 +12,21 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({required this.viewModel, super.key});
+  const FavoritesScreen({
+    required this.viewModel,
+    required this.onTagSelected,
+    this.selectedTagId,
+    super.key,
+  });
 
   final FavoritesViewModel viewModel;
+  final ValueChanged<int> onTagSelected;
+  final int? selectedTagId;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Favorites')),
+    return TaglyScaffold(
+      title: 'Favorites',
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -66,7 +74,11 @@ class FavoritesScreen extends StatelessWidget {
       background: DismissibleBackground.remove(context, .centerLeft),
       secondaryBackground: DismissibleBackground.remove(context, .centerRight),
       onDismissed: (_) => _removeFavorite(context, tag.id),
-      child: TagListTile(tag: tag),
+      child: TagListTile(
+        tag: tag,
+        selected: tag.id == selectedTagId,
+        onTap: () => onTagSelected(tag.id),
+      ),
     );
   }
 
@@ -109,7 +121,7 @@ class FavoritesScreen extends StatelessWidget {
           const HelpStep(
             icon: Icons.favorite_outline_rounded,
             title: 'Tap the Heart',
-            description: 'Tap the outlined Heart in the top-right.',
+            description: 'Tap the outlined Heart in the toolbar.',
           ),
           const HelpStep(
             icon: Icons.heart_broken_rounded,

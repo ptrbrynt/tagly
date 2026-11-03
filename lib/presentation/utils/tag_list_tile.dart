@@ -1,14 +1,18 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 
 class TagListTile extends StatelessWidget {
-  const TagListTile({required this.tag, super.key});
+  const TagListTile({
+    required this.tag,
+    required this.onTap,
+    this.selected = false,
+    super.key,
+  });
 
   final BarbershopTag tag;
+  final VoidCallback onTap;
+  final bool selected;
 
   NumberFormat get _downloadsFmt => NumberFormat.compact();
 
@@ -18,6 +22,7 @@ class TagListTile extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return ListTile(
+      selected: selected,
       title: Text(tag.title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +86,7 @@ class TagListTile extends StatelessWidget {
         ],
       ),
       trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () {
-        unawaited(context.push('/tag?id=${tag.id}'));
-      },
+      onTap: onTap,
     );
   }
 }
