@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/config/theme.dart';
 
 class TestApp extends StatelessWidget {
-  const TestApp({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 

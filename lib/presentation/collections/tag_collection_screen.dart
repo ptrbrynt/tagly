@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
@@ -10,7 +10,7 @@ import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class TagCollectionScreen extends StatefulWidget {
-  const TagCollectionScreen({
+  const new({
     required this.title,
     required this.initialQuery,
     required this.repository,

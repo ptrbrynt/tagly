@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'device_regions.dart';
@@ -9,6 +9,7 @@ part of 'device_regions.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $ReservedRegionCopyWith<ReservedRegion> get copyWith => _$ReservedRegionCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReservedRegion&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.left, left) || other.left == left)&&(identical(other.top, top) || other.top == top)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+  final _this = this as ReservedRegion;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ReservedRegion&&(identical(other.kind, _this.kind) || other.kind == _this.kind)&&(identical(other.left, _this.left) || other.left == _this.left)&&(identical(other.top, _this.top) || other.top == _this.top)&&(identical(other.width, _this.width) || other.width == _this.width)&&(identical(other.height, _this.height) || other.height == _this.height));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,left,top,width,height);
+int get hashCode {
+  final _this = this as ReservedRegion;
+  return Object.hash(runtimeType,_this.kind,_this.left,_this.top,_this.width,_this.height);
+}
 
 @override
 String toString() {
-  return 'ReservedRegion(kind: $kind, left: $left, top: $top, width: $width, height: $height)';
+  final _this = this as ReservedRegion;
+  return 'ReservedRegion(kind: ${_this.kind}, left: ${_this.left}, top: ${_this.top}, width: ${_this.width}, height: ${_this.height})';
 }
 
 
@@ -66,7 +72,7 @@ class _$ReservedRegionCopyWithImpl<$Res>
 /// Create a copy of ReservedRegion
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? kind = null,Object? left = null,Object? top = null,Object? width = null,Object? height = null,}) {
-  return _then(_self.copyWith(
+  return _then(ReservedRegion(
 kind: null == kind ? _self.kind : kind // ignore: cast_nullable_to_non_nullable
 as ReservedRegionKind,left: null == left ? _self.left : left // ignore: cast_nullable_to_non_nullable
 as double,top: null == top ? _self.top : top // ignore: cast_nullable_to_non_nullable
@@ -235,16 +241,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReservedRegion&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.left, left) || other.left == left)&&(identical(other.top, top) || other.top == top)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ReservedRegion&&(identical(other.kind, kind) || other.kind == kind)&&(identical(other.left, left) || other.left == left)&&(identical(other.top, top) || other.top == top)&&(identical(other.width, width) || other.width == width)&&(identical(other.height, height) || other.height == height));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,kind,left,top,width,height);
+int get hashCode {
+    return Object.hash(runtimeType,kind,left,top,width,height);
+}
 
 @override
 String toString() {
-  return 'ReservedRegion(kind: $kind, left: $left, top: $top, width: $width, height: $height)';
+    return 'ReservedRegion(kind: $kind, left: $left, top: $top, width: $width, height: $height)';
 }
 
 
@@ -303,16 +311,21 @@ $HingeCopyWith<Hinge> get copyWith => _$HingeCopyWithImpl<Hinge>(this as Hinge, 
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hinge&&(identical(other.status, status) || other.status == status)&&(identical(other.angle, angle) || other.angle == angle));
+  final _this = this as Hinge;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Hinge&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.angle, _this.angle) || other.angle == _this.angle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,angle);
+int get hashCode {
+  final _this = this as Hinge;
+  return Object.hash(runtimeType,_this.status,_this.angle);
+}
 
 @override
 String toString() {
-  return 'Hinge(status: $status, angle: $angle)';
+  final _this = this as Hinge;
+  return 'Hinge(status: ${_this.status}, angle: ${_this.angle})';
 }
 
 
@@ -341,7 +354,7 @@ class _$HingeCopyWithImpl<$Res>
 /// Create a copy of Hinge
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? angle = null,}) {
-  return _then(_self.copyWith(
+  return _then(Hinge(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as HingeStatus,angle: null == angle ? _self.angle : angle // ignore: cast_nullable_to_non_nullable
 as double,
@@ -504,16 +517,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hinge&&(identical(other.status, status) || other.status == status)&&(identical(other.angle, angle) || other.angle == angle));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Hinge&&(identical(other.status, status) || other.status == status)&&(identical(other.angle, angle) || other.angle == angle));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,status,angle);
+int get hashCode {
+    return Object.hash(runtimeType,status,angle);
+}
 
 @override
 String toString() {
-  return 'Hinge(status: $status, angle: $angle)';
+    return 'Hinge(status: $status, angle: $angle)';
 }
 
 
@@ -569,16 +584,21 @@ $DeviceRegionsCopyWith<DeviceRegions> get copyWith => _$DeviceRegionsCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeviceRegions&&const DeepCollectionEquality().equals(other.regions, regions)&&(identical(other.barSide, barSide) || other.barSide == barSide)&&(identical(other.hinge, hinge) || other.hinge == hinge));
+  final _this = this as DeviceRegions;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeviceRegions&&const DeepCollectionEquality().equals(other.regions, _this.regions)&&(identical(other.barSide, _this.barSide) || other.barSide == _this.barSide)&&(identical(other.hinge, _this.hinge) || other.hinge == _this.hinge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(regions),barSide,hinge);
+int get hashCode {
+  final _this = this as DeviceRegions;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.regions),_this.barSide,_this.hinge);
+}
 
 @override
 String toString() {
-  return 'DeviceRegions(regions: $regions, barSide: $barSide, hinge: $hinge)';
+  final _this = this as DeviceRegions;
+  return 'DeviceRegions(regions: ${_this.regions}, barSide: ${_this.barSide}, hinge: ${_this.hinge})';
 }
 
 
@@ -607,7 +627,7 @@ class _$DeviceRegionsCopyWithImpl<$Res>
 /// Create a copy of DeviceRegions
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? regions = null,Object? barSide = freezed,Object? hinge = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(DeviceRegions(
 regions: null == regions ? _self.regions : regions // ignore: cast_nullable_to_non_nullable
 as List<ReservedRegion>,barSide: freezed == barSide ? _self.barSide : barSide // ignore: cast_nullable_to_non_nullable
 as BarSide?,hinge: freezed == hinge ? _self.hinge : hinge // ignore: cast_nullable_to_non_nullable
@@ -764,7 +784,7 @@ return $default(_that.regions,_that.barSide,_that.hinge);case _:
 @JsonSerializable()
 
 class _DeviceRegions implements DeviceRegions {
-  const _DeviceRegions({final  List<ReservedRegion> regions = const <ReservedRegion>[], this.barSide, this.hinge}): _regions = regions;
+  const _DeviceRegions({ List<ReservedRegion> regions = const <ReservedRegion>[], this.barSide, this.hinge}): _regions = regions;
   factory _DeviceRegions.fromJson(Map<String, dynamic> json) => _$DeviceRegionsFromJson(json);
 
  final  List<ReservedRegion> _regions;
@@ -790,16 +810,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeviceRegions&&const DeepCollectionEquality().equals(other._regions, _regions)&&(identical(other.barSide, barSide) || other.barSide == barSide)&&(identical(other.hinge, hinge) || other.hinge == hinge));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _DeviceRegions&&const DeepCollectionEquality().equals(other.regions, _regions)&&(identical(other.barSide, barSide) || other.barSide == barSide)&&(identical(other.hinge, hinge) || other.hinge == hinge));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_regions),barSide,hinge);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_regions),barSide,hinge);
+}
 
 @override
 String toString() {
-  return 'DeviceRegions(regions: $regions, barSide: $barSide, hinge: $hinge)';
+    return 'DeviceRegions(regions: $regions, barSide: $barSide, hinge: $hinge)';
 }
 
 

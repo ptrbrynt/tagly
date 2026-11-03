@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class EmptyStateCard extends StatelessWidget {
-  const EmptyStateCard({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -18,9 +18,8 @@ class EmptyStateCard extends StatelessWidget {
               Icon(Icons.inbox_rounded, color: cs.onSurfaceVariant, size: 32),
               const SizedBox(height: 12),
               DefaultTextStyle(
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  color: cs.onSurfaceVariant,
-                ),
+                style: Theme.of(context).textTheme.bodyLarge!
+                    .copyWith(color: cs.onSurfaceVariant),
                 textAlign: TextAlign.center,
                 child: child,
               ),

@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 enum PaneArrangement {
   /// Divides the area between the panes: side by side when wider than tall,
@@ -20,7 +20,7 @@ enum PaneArrangement {
 /// Display features are read from [MediaQuery] in window coordinates, so
 /// place it where its origin is the window's origin.
 class TwoPane extends StatelessWidget {
-  const TwoPane({
+  const new({
     required this.primary,
     required this.secondary,
     this.arrangement = .split,
@@ -186,7 +186,7 @@ bool isRegularLayout(Size size) => size.width >= 600 && size.height >= 480;
 /// Which physical edges of the window a pane reaches. Vertical bars belong
 /// to the pane on the bar's edge; other panes keep their controls above them.
 class PaneEdges extends InheritedWidget {
-  const PaneEdges({
+  const new({
     required this.left,
     required this.right,
     required super.child,

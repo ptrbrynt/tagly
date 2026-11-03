@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:tagly/data/tags_xml_parser.dart';
 
 class BarbershopTagsApi {
-  BarbershopTagsApi({required Dio dio}) : _dio = dio;
+  new({required this._dio});
 
   final Dio _dio;
 

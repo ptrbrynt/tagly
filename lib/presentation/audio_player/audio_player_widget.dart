@@ -1,16 +1,12 @@
 import 'dart:async';
 
 import 'package:async/async.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:material_ui/material_ui.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
-  const AudioPlayerWidget({
-    required this.url,
-    required this.cacheManager,
-    super.key,
-  });
+  const new({required this.url, required this.cacheManager, super.key});
 
   final CacheManager cacheManager;
   final String url;
@@ -185,7 +181,7 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
 }
 
 class _StreamingIndicator extends StatefulWidget {
-  const _StreamingIndicator({required this.playingStream});
+  const new({required this.playingStream});
 
   final Stream<bool> playingStream;
 
@@ -206,12 +202,13 @@ class _StreamingIndicatorState extends State<_StreamingIndicator>
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
-    _opacity = Tween<double>(begin: 0.4, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _opacity = Tween<double>(
+      begin: 0.4,
+      end: 1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     _sub = widget.playingStream.listen((playing) {
       if (playing) {
-        unawaited(_controller.repeat(reverse: true));
+        _controller.repeat(reverse: true);
       } else {
         _controller
           ..stop()

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 
 class SearchFiltersSheet extends StatefulWidget {
-  const SearchFiltersSheet({
+  const new({
     required this.repository,
     required this.initialQuery,
     this.resetTo = const TagSearchQuery(),
@@ -145,10 +145,7 @@ class _SearchFiltersSheetState extends State<SearchFiltersSheet> {
           ],
           const SizedBox(height: 8),
           FilledButton(onPressed: _apply, child: const Text('Apply filters')),
-          const SafeArea(
-            top: false,
-            child: SizedBox(height: 16),
-          ),
+          const SafeArea(top: false, child: SizedBox(height: 16)),
         ],
       ),
     );

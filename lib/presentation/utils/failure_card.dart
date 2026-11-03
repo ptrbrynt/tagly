@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class FailureCard extends StatelessWidget {
-  const FailureCard({required this.message, this.onRetry, super.key});
+  const new({required this.message, this.onRetry, super.key});
 
   final String message;
   final VoidCallback? onRetry;
@@ -20,9 +20,8 @@ class FailureCard extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               message,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: cs.onErrorContainer,
-              ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: cs.onErrorContainer),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[

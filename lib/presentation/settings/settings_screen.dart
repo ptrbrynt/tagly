@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
@@ -10,7 +10,7 @@ import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({
+  const new({
     required this.tagsRepository,
     required this.settingsRepository,
     super.key,
@@ -30,10 +30,7 @@ class SettingsScreen extends StatelessWidget {
           return ListView(
             padding: const EdgeInsets.symmetric(vertical: 8),
             children: [
-              _AppHeader(
-                name: info.appName,
-                version: info.version,
-              ),
+              _AppHeader(name: info.appName, version: info.version),
               const SizedBox(height: 16),
               const _SectionHeader('Privacy'),
               _SettingsCard(
@@ -127,9 +124,8 @@ class SettingsScreen extends StatelessWidget {
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Sync started')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Sync started')));
   }
 
   Future<void> _clearCache(BuildContext context) async {
@@ -148,14 +144,13 @@ class SettingsScreen extends StatelessWidget {
 
     if (!context.mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Cache cleared')),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text('Cache cleared')));
   }
 }
 
 class _AppHeader extends StatelessWidget {
-  const _AppHeader({required this.name, required this.version});
+  const new({required this.name, required this.version});
 
   final String name;
   final String version;
@@ -188,7 +183,7 @@ class _AppHeader extends StatelessWidget {
 }
 
 class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.title);
+  const new(this.title);
 
   final String title;
 
@@ -211,7 +206,7 @@ class _SectionHeader extends StatelessWidget {
 }
 
 class _SettingsCard extends StatelessWidget {
-  const _SettingsCard({required this.children});
+  const new({required this.children});
 
   final List<Widget> children;
 
@@ -221,10 +216,7 @@ class _SettingsCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       clipBehavior: Clip.antiAlias,
       child: ListTileTheme(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           children: [
             for (int i = 0; i < children.length; i++) ...[

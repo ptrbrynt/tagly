@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
@@ -12,7 +12,7 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class FavoritesScreen extends StatelessWidget {
-  const FavoritesScreen({
+  const new({
     required this.viewModel,
     required this.onTagSelected,
     this.selectedTagId,
@@ -88,9 +88,8 @@ class FavoritesScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

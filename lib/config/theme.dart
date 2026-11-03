@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 
 // Seed: deep burgundy — the classic barbershop stage curtain / quartet vest
 const deepBurgundy = Color(0xFF8B1F3F);
@@ -47,9 +47,7 @@ extension TaglyTheme on ThemeData {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       chipTheme: const ChipThemeData(
         shape: RoundedRectangleBorder(

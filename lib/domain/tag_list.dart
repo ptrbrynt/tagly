@@ -5,11 +5,7 @@ part 'tag_list.g.dart';
 
 @freezed
 abstract class TagList with _$TagList {
-  const factory TagList({
-    required int id,
-    required String name,
-  }) = _TagList;
+  const factory({required int id, required String name}) = _TagList;
 
-  factory TagList.fromJson(Map<String, dynamic> json) =>
-      _$TagListFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$TagListFromJson(json);
 }

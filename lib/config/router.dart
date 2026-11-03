@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/adaptive/list_detail_shell.dart';
@@ -28,9 +28,8 @@ GoRouter getRouter(List<NavigatorObserver> observers) {
       ),
       repository: context.read(),
       selectedTagId: _selectedTagId(state),
-      onTagSelected: (id) => context.go(
-        _withTag(state, path: '/collection/tag', id: id),
-      ),
+      onTagSelected: (id) =>
+          context.go(_withTag(state, path: '/collection/tag', id: id)),
     );
   }
 
@@ -50,9 +49,8 @@ GoRouter getRouter(List<NavigatorObserver> observers) {
       listName: state.uri.queryParameters['name']!,
       repository: context.read(),
       selectedTagId: _selectedTagId(state),
-      onTagSelected: (tagId) => context.go(
-        _withTag(state, path: '/lists/$id/tag', id: tagId),
-      ),
+      onTagSelected: (tagId) =>
+          context.go(_withTag(state, path: '/lists/$id/tag', id: tagId)),
     );
   }
 
@@ -154,10 +152,8 @@ GoRoute _tagRoute({bool inDetailPane = false}) {
     path: 'tag',
     builder: inDetailPane ? null : screen,
     pageBuilder: inDetailPane
-        ? (context, state) => DetailPanePage(
-            key: state.pageKey,
-            child: screen(context, state),
-          )
+        ? (context, state) =>
+              DetailPanePage(key: state.pageKey, child: screen(context, state))
         : null,
     routes: [
       GoRoute(
@@ -184,9 +180,6 @@ int? _selectedTagId(GoRouterState state) =>
 String _withTag(GoRouterState state, {required String path, required int id}) {
   return Uri(
     path: path,
-    queryParameters: {
-      ...state.uri.queryParametersAll,
-      'id': '$id',
-    },
+    queryParameters: {...state.uri.queryParametersAll, 'id': '$id'},
   ).toString();
 }

@@ -1,9 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 
 class TagListTile extends StatelessWidget {
-  const TagListTile({
+  const new({
     required this.tag,
     required this.onTap,
     this.selected = false,

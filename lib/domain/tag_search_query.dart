@@ -4,16 +4,16 @@ part 'tag_search_query.freezed.dart';
 
 @freezed
 abstract class TagSearchQuery with _$TagSearchQuery {
-  const factory TagSearchQuery({
+  const factory({
     String? text,
     List<String>? voicings,
     List<int>? numParts,
-    @Default(defaultSortOrder) TagSortOrder sortOrder,
+    @Default(TagSearchQuery.defaultSortOrder) TagSortOrder sortOrder,
     int? limit,
     bool? isClassic,
   }) = _TagSearchQuery;
 
-  factory TagSearchQuery.fromQueryParameters(Map<String, List<String>> params) {
+  factory fromQueryParameters(Map<String, List<String>> params) {
     return TagSearchQuery(
       text: params['text']?.singleOrNull,
       voicings: params['voicings[]'],
@@ -32,7 +32,7 @@ abstract class TagSearchQuery with _$TagSearchQuery {
     );
   }
 
-  const TagSearchQuery._();
+  const new _();
 
   static const TagSortOrder defaultSortOrder = TagSortOrder.downloadsDesc;
 
@@ -60,10 +60,4 @@ abstract class TagSearchQuery with _$TagSearchQuery {
   }
 }
 
-enum TagSortOrder {
-  titleAsc,
-  dateDesc,
-  downloadsDesc,
-  ratingDesc,
-  id,
-}
+enum TagSortOrder { titleAsc, dateDesc, downloadsDesc, ratingDesc, id }

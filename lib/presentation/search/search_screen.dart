@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
 
 class SearchScreen extends StatelessWidget {
-  const SearchScreen({
-    required this.repository,
-    super.key,
-  });
+  const new({required this.repository, super.key});
 
   final TagsRepository repository;
 
@@ -121,11 +118,7 @@ class SearchScreen extends StatelessWidget {
 }
 
 class _NavCard extends StatelessWidget {
-  const _NavCard({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
+  const new({required this.label, required this.icon, required this.onTap});
 
   final String label;
   final IconData icon;
@@ -150,10 +143,7 @@ class _NavCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: cs.onSurfaceVariant,
-              ),
+              Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant),
             ],
           ),
         ),

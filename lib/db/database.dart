@@ -24,7 +24,7 @@ Future<Database> openTaglyDatabase({
     filePath = join(databasesPath.path, 'tagly.db');
   }
 
-  return openDatabase(
+  return await openDatabase(
     filePath,
     version: Schema.version,
     onConfigure: Schema.onConfigure,

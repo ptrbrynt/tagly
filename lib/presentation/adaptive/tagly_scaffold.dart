@@ -1,7 +1,7 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/device_regions.dart';
 import 'package:tagly/presentation/adaptive/device_regions_scope.dart';
 import 'package:tagly/presentation/adaptive/two_pane.dart';
@@ -15,7 +15,7 @@ enum BarItemRole {
 enum BarItemPriority { low, normal, high }
 
 class BarItem {
-  const BarItem({
+  const new({
     required this.label,
     required this.icon,
     this.onPressed,
@@ -53,7 +53,7 @@ class BarItem {
 /// guidance: on the side the system reports, when this scaffold reaches that
 /// edge of the window, and as a standard app bar everywhere else.
 class TaglyScaffold extends StatelessWidget {
-  const TaglyScaffold({
+  const new({
     required this.body,
     this.title,
     this.items = const [],
@@ -339,7 +339,7 @@ class TaglyScaffold extends StatelessWidget {
 /// Marks a route as the first page of a detail pane, which has no Back
 /// button while the list it belongs to is visible beside it.
 class DetailPaneRoot extends StatelessWidget {
-  const DetailPaneRoot({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -356,11 +356,7 @@ class DetailPaneRoot extends StatelessWidget {
 
 /// Tells detail pages whether their list is currently shown beside them.
 class SplitDetailScope extends InheritedWidget {
-  const SplitDetailScope({
-    required this.isSplit,
-    required super.child,
-    super.key,
-  });
+  const new({required this.isSplit, required super.child, super.key});
 
   final bool isSplit;
 
@@ -370,7 +366,7 @@ class SplitDetailScope extends InheritedWidget {
 }
 
 class _BarButton extends StatelessWidget {
-  const _BarButton({required this.item});
+  const new({required this.item});
 
   final BarItem item;
 
@@ -401,7 +397,7 @@ class _BarButton extends StatelessWidget {
 }
 
 class _OverflowButton extends StatelessWidget {
-  const _OverflowButton({required this.items});
+  const new({required this.items});
 
   final List<BarItem> items;
 

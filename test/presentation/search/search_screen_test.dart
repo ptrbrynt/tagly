@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sqflite/sqflite.dart';
@@ -39,6 +39,7 @@ void main() {
       await tester.runAsync(() async {
         await tester.enterText(find.byType(SearchBar).last, 'i hear you sing');
         await tester.sendKeyEvent(.enter);
+        await Future<void>.delayed(const Duration(milliseconds: 200));
       });
 
       await tester.pumpAndSettle();
@@ -58,11 +59,7 @@ Future<void> pumpSearchScreen(
       providers: providers,
       child: Builder(
         builder: (context) {
-          return TestApp(
-            child: SearchScreen(
-              repository: context.read(),
-            ),
-          );
+          return TestApp(child: SearchScreen(repository: context.read()));
         },
       ),
     ),

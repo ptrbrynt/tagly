@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/settings_repository.dart';
 
 class AnalyticsToggle extends StatefulWidget {
-  const AnalyticsToggle({required this.repository, super.key});
+  const new({required this.repository, super.key});
 
   final SettingsRepository repository;
 

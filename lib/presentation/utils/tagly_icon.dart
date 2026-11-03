@@ -1,15 +1,10 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:material_ui/material_ui.dart';
 
 class TaglyIcon extends StatelessWidget {
-  const TaglyIcon({
-    super.key,
-    this.size = 48,
-    this.backgroundColor,
-    this.iconColor,
-  });
+  const new({super.key, this.size = 48, this.backgroundColor, this.iconColor});
 
-  TaglyIcon.inverse(BuildContext context, {this.size = 48, super.key})
+  new inverse(BuildContext context, {this.size = 48, super.key})
     : backgroundColor = Theme.of(context).colorScheme.onSurface,
       iconColor = Theme.of(context).colorScheme.surfaceContainer;
 

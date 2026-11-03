@@ -8,11 +8,7 @@ import 'package:tagly/domain/device_regions.dart';
 /// into [MediaQuery], so standard dialogs, sheets and menus avoid the fold
 /// and content insets clear any camera the safe area doesn't already cover.
 class DeviceRegionsScope extends StatelessWidget {
-  const DeviceRegionsScope({
-    required this.regions,
-    required this.child,
-    super.key,
-  });
+  const new({required this.regions, required this.child, super.key});
 
   final DeviceRegions regions;
   final Widget child;
@@ -85,7 +81,7 @@ class DeviceRegionsScope extends StatelessWidget {
 }
 
 class _DeviceRegionsInherited extends InheritedWidget {
-  const _DeviceRegionsInherited({required this.regions, required super.child});
+  const new({required this.regions, required super.child});
 
   final DeviceRegions regions;
 

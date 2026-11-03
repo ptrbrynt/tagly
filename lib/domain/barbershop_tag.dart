@@ -6,7 +6,7 @@ part 'barbershop_tag.g.dart';
 
 @freezed
 abstract class BarbershopTag with _$BarbershopTag {
-  const factory BarbershopTag({
+  const factory({
     required int id,
     required String title,
     String? altTitle,
@@ -61,7 +61,7 @@ abstract class BarbershopTag with _$BarbershopTag {
 
   /// Construct from a sqflite row. When using a query that JOINs tag_videos,
   /// use [groupRows] instead — it handles collapsing the duplicated rows.
-  factory BarbershopTag.fromMap(
+  factory fromMap(
     Map<String, dynamic> map, {
     List<BarbershopTagVideo> videos = const [],
   }) => BarbershopTag(
@@ -114,10 +114,9 @@ abstract class BarbershopTag with _$BarbershopTag {
     videos: videos,
     isFavorite: boolFromInt(map['is_favorite'] as int? ?? 0),
   );
-  const BarbershopTag._();
+  const new _();
 
-  factory BarbershopTag.fromJson(Map<String, dynamic> json) =>
-      _$BarbershopTagFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$BarbershopTagFromJson(json);
 
   /// Collapse a list of joined rows (from a query that LEFT JOINs tag_videos
   /// using `tv_` prefixed columns) into a list of tags, each with its videos
@@ -152,11 +151,9 @@ abstract class BarbershopTag with _$BarbershopTag {
       }
     }
 
-    return tagRows.entries.map(
-      (e) {
-        return BarbershopTag.fromMap(e.value, videos: videosByTag[e.key] ?? []);
-      },
-    ).toList();
+    return tagRows.entries.map((e) {
+      return BarbershopTag.fromMap(e.value, videos: videosByTag[e.key] ?? []);
+    }).toList();
   }
 
   /// Serialise to a sqflite row map.

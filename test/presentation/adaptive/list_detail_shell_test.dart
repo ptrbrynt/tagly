@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/adaptive/list_detail_shell.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 
@@ -168,7 +168,7 @@ void main() {
 }
 
 class _Counter extends StatefulWidget {
-  const _Counter({required this.label, super.key});
+  const new({required this.label, super.key});
 
   final String label;
 

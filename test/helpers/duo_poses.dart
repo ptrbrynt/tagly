@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/config/theme.dart';
 import 'package:tagly/domain/device_regions.dart';
 import 'package:tagly/presentation/adaptive/device_regions_scope.dart';
@@ -7,7 +7,7 @@ import 'package:tagly/presentation/adaptive/device_regions_scope.dart';
 /// A window size, its safe-area insets and the reserved regions iOS reports
 /// for it.
 class Pose {
-  const Pose(
+  const new(
     this.name,
     this.size,
     this.padding, [
@@ -148,11 +148,7 @@ Future<void> pumpPose(
 }) async {
   setPose(tester, pose);
   await tester.pumpWidget(
-    _PoseHost(
-      pose: pose,
-      textDirection: textDirection,
-      appBuilder: appBuilder,
-    ),
+    _PoseHost(pose: pose, textDirection: textDirection, appBuilder: appBuilder),
   );
 }
 
@@ -188,7 +184,7 @@ Widget testMaterialApp({required Widget home, TransitionBuilder? builder}) =>
     MaterialApp(theme: lightTheme, builder: builder, home: home);
 
 class _PoseHost extends StatefulWidget {
-  const _PoseHost({
+  const new({
     required this.pose,
     required this.textDirection,
     required this.appBuilder,
@@ -221,7 +217,7 @@ class _PoseHostState extends State<_PoseHost> {
 /// Lets the pose change while the app widget itself (and so all of its
 /// state) stays the same.
 class _PoseRegions extends InheritedWidget {
-  const _PoseRegions({required this.pose, required super.child});
+  const new({required this.pose, required super.child});
 
   final Pose pose;
 
@@ -230,7 +226,7 @@ class _PoseRegions extends InheritedWidget {
 }
 
 class _RegionsFromPose extends StatelessWidget {
-  const _RegionsFromPose({required this.child});
+  const new({required this.child});
 
   final Widget child;
 

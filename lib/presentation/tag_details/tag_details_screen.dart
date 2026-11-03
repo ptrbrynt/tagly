@@ -1,15 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
 class TagDetailsScreen extends StatelessWidget {
-  const TagDetailsScreen({
-    required this.viewModel,
-    super.key,
-  });
+  const new({required this.viewModel, super.key});
 
   final ViewTagViewModel viewModel;
 
@@ -32,16 +29,11 @@ class TagDetailsScreen extends StatelessWidget {
   }
 
   Widget _body(BarbershopTag tag) {
-    final ratingFormat = NumberFormat.decimalPatternDigits(
-      decimalDigits: 2,
-    );
+    final ratingFormat = NumberFormat.decimalPatternDigits(decimalDigits: 2);
     final downloadsFormat = NumberFormat.compact();
     return ListView(
       children: [
-        ListTile(
-          title: Text(tag.title),
-          subtitle: const Text('Title'),
-        ),
+        ListTile(title: Text(tag.title), subtitle: const Text('Title')),
         if (tag.altTitle != null)
           ListTile(
             title: Text(tag.altTitle!),
@@ -58,10 +50,7 @@ class TagDetailsScreen extends StatelessWidget {
             subtitle: const Text('Arranger'),
           ),
         if (tag.quartet != null)
-          ListTile(
-            title: Text(tag.quartet!),
-            subtitle: const Text('Tracks'),
-          ),
+          ListTile(title: Text(tag.quartet!), subtitle: const Text('Tracks')),
         const Divider(),
         ListTile(
           leading: const Icon(Icons.download_rounded),
@@ -70,9 +59,7 @@ class TagDetailsScreen extends StatelessWidget {
         ),
         ListTile(
           leading: const Icon(Icons.star_rate_rounded),
-          title: Text(
-            ratingFormat.format(tag.rating ?? 0),
-          ),
+          title: Text(ratingFormat.format(tag.rating ?? 0)),
           subtitle: const Text('Rating'),
         ),
         if (tag.posted != null)

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:tagly/domain/device_regions.dart';
 
 class DeviceRegionsRepository extends ChangeNotifier {
-  DeviceRegionsRepository({required Stream<Object?> events}) {
+  new({required Stream<Object?> events}) {
     _subscription = events.listen(
       _onEvent,
       // Platforms without the native bridge have nothing to report.
@@ -15,10 +15,9 @@ class DeviceRegionsRepository extends ChangeNotifier {
     );
   }
 
-  factory DeviceRegionsRepository.platform() => DeviceRegionsRepository(
-    events: const EventChannel(
-      'com.ptrbrynt.tagly/device_regions',
-    ).receiveBroadcastStream(),
+  factory platform() => DeviceRegionsRepository(
+    events: const EventChannel('com.ptrbrynt.tagly/device_regions')
+        .receiveBroadcastStream(),
   );
 
   late final StreamSubscription<Object?> _subscription;

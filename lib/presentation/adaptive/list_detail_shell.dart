@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/adaptive/two_pane.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
@@ -10,7 +10,7 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 /// The list keeps its state when it moves between those places because
 /// both [ListDetailShell] and [ListDetailPage] mount it under [listKey].
 class ListDetailShell extends StatelessWidget {
-  const ListDetailShell({
+  const new({
     required this.listKey,
     required this.list,
     required this.detailNavigator,
@@ -44,7 +44,7 @@ class ListDetailShell extends StatelessWidget {
 /// The list route's page inside the detail navigator: the list itself at
 /// compact size, or the empty detail state while the list is beside it.
 class ListDetailPage extends StatelessWidget {
-  const ListDetailPage({
+  const new({
     required this.listKey,
     required this.list,
     required this.emptyDetailMessage,
@@ -63,9 +63,7 @@ class ListDetailPage extends StatelessWidget {
             ?.isSplit ??
         false;
     if (!isSplit) return KeyedSubtree(key: listKey, child: list);
-    return TaglyScaffold(
-      body: EmptyStateCard(child: Text(emptyDetailMessage)),
-    );
+    return TaglyScaffold(body: EmptyStateCard(child: Text(emptyDetailMessage)));
   }
 }
 
@@ -73,7 +71,7 @@ class ListDetailPage extends StatelessWidget {
 /// and slides like any other page otherwise. One page type for both keeps
 /// the route, and the tag's state, alive as the device folds and unfolds.
 class DetailPanePage extends Page<void> {
-  const DetailPanePage({required this.child, super.key});
+  const new({required this.child, super.key});
 
   final Widget child;
 
@@ -83,7 +81,7 @@ class DetailPanePage extends Page<void> {
 
 class _DetailPaneRoute extends PageRoute<void>
     with MaterialRouteTransitionMixin {
-  _DetailPaneRoute(DetailPanePage page) : super(settings: page);
+  new(DetailPanePage page) : super(settings: page);
 
   @override
   Widget buildContent(BuildContext context) =>

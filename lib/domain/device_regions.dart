@@ -19,7 +19,7 @@ enum ReservedRegionKind {
 
 @freezed
 abstract class ReservedRegion with _$ReservedRegion {
-  const factory ReservedRegion({
+  const factory({
     required ReservedRegionKind kind,
     required double left,
     required double top,
@@ -27,28 +27,23 @@ abstract class ReservedRegion with _$ReservedRegion {
     required double height,
   }) = _ReservedRegion;
 
-  factory ReservedRegion.fromJson(Map<String, dynamic> json) =>
-      _$ReservedRegionFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$ReservedRegionFromJson(json);
 }
 
 @freezed
 abstract class Hinge with _$Hinge {
-  const factory Hinge({
-    required HingeStatus status,
-    required double angle,
-  }) = _Hinge;
+  const factory({required HingeStatus status, required double angle}) = _Hinge;
 
-  factory Hinge.fromJson(Map<String, dynamic> json) => _$HingeFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$HingeFromJson(json);
 }
 
 @freezed
 abstract class DeviceRegions with _$DeviceRegions {
-  const factory DeviceRegions({
+  const factory({
     @Default(<ReservedRegion>[]) List<ReservedRegion> regions,
     BarSide? barSide,
     Hinge? hinge,
   }) = _DeviceRegions;
 
-  factory DeviceRegions.fromJson(Map<String, dynamic> json) =>
-      _$DeviceRegionsFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$DeviceRegionsFromJson(json);
 }

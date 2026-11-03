@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
@@ -13,7 +13,7 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class ViewListScreen extends StatefulWidget {
-  const ViewListScreen({
+  const new({
     required this.listId,
     required this.listName,
     required this.repository,
@@ -111,9 +111,8 @@ class _ViewListScreenState extends State<ViewListScreen> {
     final result = await _viewModel.removeTagFromList(tagId);
     if (!context.mounted) return;
     if (result case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

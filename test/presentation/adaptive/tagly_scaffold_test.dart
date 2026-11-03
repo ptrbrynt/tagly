@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/adaptive/two_pane.dart';
 
@@ -91,9 +91,7 @@ void main() {
       });
 
       for (final pose in [innerPortrait, standardIPhone, androidTablet]) {
-        testWidgets('$pose ($textDirection): standard app bar', (
-          tester,
-        ) async {
+        testWidgets('$pose ($textDirection): standard app bar', (tester) async {
           await pumpScaffold(tester, pose, textDirection: textDirection);
 
           expect(find.byType(AppBar), findsOneWidget);
