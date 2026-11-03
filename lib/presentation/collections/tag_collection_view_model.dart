@@ -7,10 +7,8 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 
 class TagCollectionViewModel extends ChangeNotifier {
-  TagCollectionViewModel({
-    required this.initialQuery,
-    required this.repository,
-  }) : query = initialQuery {
+  new({required this.initialQuery, required this.repository})
+    : query = initialQuery {
     unawaited(load());
   }
 

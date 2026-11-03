@@ -5,7 +5,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:recase/recase.dart';
 
 class AnalyticsService {
-  AnalyticsService._({required Posthog posthog}) : _posthog = posthog;
+  new _({required this._posthog});
 
   final Posthog _posthog;
 
@@ -47,8 +47,8 @@ class AnalyticsService {
 
   Future<void> enableTracking() {
     if (kDebugMode) return Future.value();
-    return _posthog.enable();
+    return _posthog.optIn();
   }
 
-  Future<void> disableTracking() => _posthog.disable();
+  Future<void> disableTracking() => _posthog.optOut();
 }

@@ -6,8 +6,7 @@ import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 
 class ViewTagViewModel extends ChangeNotifier {
-  ViewTagViewModel({required TagsRepository repository, required this.tagId})
-    : _repository = repository {
+  new({required this._repository, required this.tagId}) {
     unawaited(load());
   }
 
@@ -23,14 +22,14 @@ class ViewTagViewModel extends ChangeNotifier {
   }
 
   Future<Result<void>> addToFavorites() async {
-    return _repository.addToFavorites(tagId).whenComplete(load);
+    return await _repository.addToFavorites(tagId).whenComplete(load);
   }
 
   Future<Result<void>> removeFromFavorites() async {
-    return _repository.removeFromFavorites(tagId).whenComplete(load);
+    return await _repository.removeFromFavorites(tagId).whenComplete(load);
   }
 
   Future<Result<void>> addTagToList(int listId) async {
-    return _repository.addTagToList(tagId: tagId, listId: listId);
+    return await _repository.addTagToList(tagId: tagId, listId: listId);
   }
 }

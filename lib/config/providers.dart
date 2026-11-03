@@ -7,6 +7,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tagly/config/router.dart';
 import 'package:tagly/data/barbershop_tags_api.dart';
+import 'package:tagly/data/device_regions_repository.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
@@ -21,6 +22,7 @@ List<SingleChildWidget> get productionProviders => [
     dispose: (context, value) => value.dispose(),
   ),
   Provider<SharePlus>(create: (_) => SharePlus.instance),
+  ChangeNotifierProvider(create: (_) => DeviceRegionsRepository.platform()),
   ...appProviders,
 ];
 
@@ -35,9 +37,7 @@ List<SingleChildWidget> get appProviders => [
       preferences: context.read(),
     ),
   ),
-  Provider(
-    create: (context) => ListsRepository(db: context.read()),
-  ),
+  Provider(create: (context) => ListsRepository(db: context.read())),
   ChangeNotifierProvider(
     create: (context) => SettingsRepository(
       cacheManager: context.read(),

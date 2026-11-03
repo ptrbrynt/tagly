@@ -9,10 +9,7 @@ void main() {
       });
 
       test('returns null for non-numeric text', () {
-        expect(
-          const TagSearchQuery(text: 'i hear you sing').exactId,
-          isNull,
-        );
+        expect(const TagSearchQuery(text: 'i hear you sing').exactId, isNull);
       });
 
       test('returns parsed int for numeric text', () {
@@ -63,9 +60,7 @@ void main() {
       test('round-trips text', () {
         const original = TagSearchQuery(text: 'i hear you sing');
         final encoded = original.asQueryParameters();
-        final decoded = TagSearchQuery.fromQueryParameters(
-          _split(encoded),
-        );
+        final decoded = TagSearchQuery.fromQueryParameters(_split(encoded));
         expect(decoded.text, original.text);
       });
 

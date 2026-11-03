@@ -2,33 +2,34 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
-import 'package:tagly/presentation/lists/add_to_list_button.dart';
+import 'package:tagly/presentation/lists/add_to_list_menu.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
-import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewTagScreen extends StatefulWidget {
-  const ViewTagScreen({
+  const new({
     required this.tagId,
     required this.tagsRepository,
     required this.listsViewModel,
     required this.cacheManager,
     required this.sharePlus,
+    required this.onShowDetails,
     super.key,
   });
 
+  final VoidCallback onShowDetails;
   final int tagId;
   final TagsRepository tagsRepository;
   final ListsViewModel listsViewModel;
@@ -60,18 +61,14 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _viewModel,
+      listenable: Listenable.merge([_viewModel, widget.listsViewModel]),
       builder: (context, _) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('#${widget.tagId}'),
-            actions: [
-              if (_viewModel.result case Ok(:final value)) ...[
-                _favoriteToggle(context),
-                _tagMenu(context, value),
-              ],
-            ],
-          ),
+        return TaglyScaffold(
+          title: '#${widget.tagId}',
+          items: switch (_viewModel.result) {
+            Ok(:final value) => _barItems(context, value),
+            _ => const [],
+          },
           body: switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
@@ -85,7 +82,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
               ),
             },
           },
-          bottomNavigationBar: switch (_viewModel.result) {
+          bottomBar: switch (_viewModel.result) {
             Ok(:final value) => _tracksPlayer(context, value),
             _ => null,
           },
@@ -110,114 +107,94 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     );
   }
 
-  Widget _favoriteToggle(BuildContext context) {
-    return switch (_viewModel.result) {
-      Ok(:final value) => IconButton(
-        isSelected: value.isFavorite,
-        icon: const Icon(Icons.favorite_border_rounded),
-        selectedIcon: const Icon(Icons.favorite_rounded),
-        onPressed: () async {
-          final result = await ((value.isFavorite)
-              ? _viewModel.removeFromFavorites()
-              : _viewModel.addToFavorites());
-
-          if (!context.mounted) return;
-
-          if (result case Failure(:final message)) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(message)));
-          }
+  List<BarItem> _barItems(BuildContext context, BarbershopTag tag) => [
+    BarItem(
+      label: tag.isFavorite ? 'Remove from Favorites' : 'Add to Favorites',
+      icon: Icons.favorite_border_rounded,
+      selectedIcon: Icons.favorite_rounded,
+      isSelected: tag.isFavorite,
+      priority: .high,
+      onPressed: () => _toggleFavorite(context, tag),
+    ),
+    BarItem(
+      label: 'Add to List',
+      icon: Icons.playlist_add_rounded,
+      group: 1,
+      menuChildren: addToListMenuItems(
+        lists: switch (widget.listsViewModel.result) {
+          Ok(:final value) => value,
+          _ => [],
         },
+        onListSelected: _addTagToList,
+        onCreateListSelected: _createList,
       ),
-      _ => const SizedBox.shrink(),
-    };
+    ),
+    BarItem(
+      label: 'Share',
+      icon: Platform.isIOS ? Icons.ios_share_rounded : Icons.share_rounded,
+      group: 1,
+      menuChildren: [
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.explore_rounded),
+          onPressed: () => _share(tag.tagUri, tag.title),
+          child: const Text('Link to barbershoptags.com'),
+        ),
+        MenuItemButton(
+          leadingIcon: TaglyIcon.inverse(context, size: 24),
+          onPressed: () => _share(tag.deepLink, tag.title),
+          child: const Text('Tagly Link'),
+        ),
+        const Divider(),
+        MenuItemButton(
+          leadingIcon: const Icon(Icons.help_outline_rounded),
+          onPressed: () => _showShareHelp(context),
+          child: const Text('What do I choose?'),
+        ),
+      ],
+    ),
+    BarItem(
+      label: 'Tag Details',
+      icon: Icons.info_outline_rounded,
+      priority: .low,
+      group: 2,
+      onPressed: widget.onShowDetails,
+    ),
+    BarItem(
+      label: 'Open in Browser',
+      icon: Icons.open_in_browser_rounded,
+      priority: .low,
+      group: 2,
+      onPressed: () async {
+        if (await canLaunchUrl(tag.tagUri)) {
+          await launchUrl(tag.tagUri, mode: .externalApplication);
+        }
+      },
+    ),
+  ];
+
+  Future<void> _toggleFavorite(BuildContext context, BarbershopTag tag) async {
+    final result = await (tag.isFavorite
+        ? _viewModel.removeFromFavorites()
+        : _viewModel.addToFavorites());
+
+    if (!context.mounted) return;
+
+    if (result case Failure(:final message)) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    }
   }
 
-  Widget _tagMenu(BuildContext context, BarbershopTag tag) {
-    return PositionOriginProvider(
-      builder: (context, rect) {
-        return MenuAnchor(
-          builder: (context, controller, child) => IconButton(
-            icon: const Icon(Icons.more_vert_rounded),
-            onPressed: controller.open,
-          ),
-          menuChildren: [
-            MenuItemButton(
-              leadingIcon: const Icon(Icons.info_outline_rounded),
-              onPressed: () {
-                context.go('tag/details?id=${tag.id}');
-              },
-              child: const Text('Tag Details'),
-            ),
-            ListenableBuilder(
-              listenable: widget.listsViewModel,
-              builder: (context, _) {
-                return AddToListButton(
-                  lists: switch (widget.listsViewModel.result) {
-                    Ok(:final value) => value,
-                    _ => [],
-                  },
-                  onListSelected: _addTagToList,
-                  onCreateListSelected: _createList,
-                  tagId: widget.tagId,
-                );
-              },
-            ),
-            SubmenuButton(
-              menuChildren: [
-                MenuItemButton(
-                  leadingIcon: const Icon(Icons.explore_rounded),
-                  onPressed: () async {
-                    await widget.sharePlus.share(
-                      ShareParams(
-                        uri: tag.tagUri,
-                        title: tag.title,
-                        sharePositionOrigin: rect,
-                      ),
-                    );
-                  },
-                  child: const Text('Link to barbershoptags.com'),
-                ),
-                MenuItemButton(
-                  leadingIcon: TaglyIcon.inverse(context, size: 24),
-                  onPressed: () async {
-                    await widget.sharePlus.share(
-                      ShareParams(
-                        uri: tag.deepLink,
-                        title: tag.title,
-                        sharePositionOrigin: rect,
-                      ),
-                    );
-                  },
-                  child: const Text('Tagly Link'),
-                ),
-                const Divider(),
-                MenuItemButton(
-                  leadingIcon: const Icon(Icons.help_outline_rounded),
-                  onPressed: () {
-                    _showShareHelp(context);
-                  },
-                  child: const Text('What do I choose?'),
-                ),
-              ],
-              leadingIcon: Platform.isIOS
-                  ? const Icon(Icons.ios_share_rounded)
-                  : const Icon(Icons.share_rounded),
-              child: const Text('Share'),
-            ),
-            MenuItemButton(
-              leadingIcon: const Icon(Icons.open_in_browser_rounded),
-              onPressed: () async {
-                if (await canLaunchUrl(tag.tagUri)) {
-                  await launchUrl(tag.tagUri, mode: .externalApplication);
-                }
-              },
-              child: const Text('Open in browser'),
-            ),
-          ],
-        );
-      },
+  Future<void> _share(Uri uri, String title) async {
+    final box = context.findRenderObject() as RenderBox?;
+    await widget.sharePlus.share(
+      ShareParams(
+        uri: uri,
+        title: title,
+        sharePositionOrigin: box == null
+            ? null
+            : box.localToGlobal(.zero) & box.size,
+      ),
     );
   }
 
@@ -291,9 +268,8 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
 
     if (result case Failure(:final message)) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
       return;
     } else if (result case Ok(:final value)) {
       await _addTagToList(value);

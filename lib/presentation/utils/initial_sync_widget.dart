@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 
 class InitialSyncWidget extends StatelessWidget {
-  const InitialSyncWidget({this.onRetry, super.key});
+  const new({this.onRetry, super.key});
 
   final VoidCallback? onRetry;
 
@@ -50,9 +50,7 @@ class InitialSyncWidget extends StatelessWidget {
                 label: const Text('Try again'),
               ),
             ] else ...[
-              LinearProgressIndicator(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              LinearProgressIndicator(borderRadius: BorderRadius.circular(8)),
               const SizedBox(height: 20),
               Text(
                 "Syncing tags. Don't go away...",

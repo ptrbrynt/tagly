@@ -2,9 +2,9 @@ import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:mocktail/mocktail.dart';
 
-class MockFile extends Mock implements File {}
+class MockFile extends Mock implements File;
 
-class MockCacheManager extends Mock implements CacheManager {}
+class MockCacheManager extends Mock implements CacheManager;
 
 class FakeCacheManager extends Fake implements CacheManager {
   @override

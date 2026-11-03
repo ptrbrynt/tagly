@@ -1,14 +1,12 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
+import 'package:tagly/presentation/adaptive/tagly_scaffold.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
 
 class SearchScreen extends StatelessWidget {
-  const SearchScreen({
-    required this.repository,
-    super.key,
-  });
+  const new({required this.repository, super.key});
 
   final TagsRepository repository;
 
@@ -17,28 +15,24 @@ class SearchScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: repository,
       builder: (context, _) {
-        return Scaffold(
+        return TaglyScaffold(
+          items: [
+            BarItem(
+              label: 'Settings',
+              icon: Icons.settings_rounded,
+              onPressed: () => context.go('/settings'),
+            ),
+          ],
           body: CustomScrollView(
             slivers: [
               SliverSafeArea(
                 sliver: SliverPadding(
-                  padding: const .fromLTRB(24, 32, 24, 8),
+                  padding: const .fromLTRB(24, 8, 24, 8),
                   sliver: SliverList.list(
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Tagly',
-                              style: Theme.of(context).textTheme.displaySmall,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.settings_rounded),
-                            onPressed: () => context.go('/settings'),
-                          ),
-                        ],
+                      Text(
+                        'Tagly',
+                        style: Theme.of(context).textTheme.displaySmall,
                       ),
                       const SizedBox(height: 24),
                       TagSearchBar(repository: repository),
@@ -124,11 +118,7 @@ class SearchScreen extends StatelessWidget {
 }
 
 class _NavCard extends StatelessWidget {
-  const _NavCard({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
+  const new({required this.label, required this.icon, required this.onTap});
 
   final String label;
   final IconData icon;
@@ -153,10 +143,7 @@ class _NavCard extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: cs.onSurfaceVariant,
-              ),
+              Icon(Icons.chevron_right_rounded, color: cs.onSurfaceVariant),
             ],
           ),
         ),

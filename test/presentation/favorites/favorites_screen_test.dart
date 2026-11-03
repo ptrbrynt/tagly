@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sqflite/sqflite.dart';
@@ -105,8 +105,12 @@ Future<void> pumpFavoritesScreen(
     MultiProvider(
       providers: providers,
       child: Builder(
-        builder: (context) =>
-            TestApp(child: FavoritesScreen(viewModel: context.read())),
+        builder: (context) => TestApp(
+          child: FavoritesScreen(
+            viewModel: context.read(),
+            onTagSelected: (_) {},
+          ),
+        ),
       ),
     ),
   );

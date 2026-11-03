@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
@@ -16,11 +16,13 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
+import 'package:tagly/data/device_regions_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/db/database.dart';
 import 'package:tagly/db/legacy/legacy_db.dart';
 import 'package:tagly/db/legacy/legacy_migration_repository.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/adaptive/device_regions_scope.dart';
 import 'package:tagly/presentation/utils/initial_sync_widget.dart';
 
 Future<void> main() async {
@@ -73,7 +75,7 @@ Future<void> main() async {
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  const new({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -141,23 +143,33 @@ class _MainAppState extends State<MainApp> {
       debugShowCheckedModeBanner: false,
       builder: (context, child) {
         final repository = context.watch<TagsRepository>();
-        return ListenableBuilder(
-          listenable: repository,
-          child: child,
-          builder: (context, child) {
-            final syncStatus = repository.syncStatus;
-            if (syncStatus == .initialSync) {
-              return const Scaffold(body: InitialSyncWidget());
-            }
-            if (syncStatus == .initialSyncFailed) {
-              return Scaffold(
-                body: InitialSyncWidget(
-                  onRetry: () => repository.syncTags().ignore(),
-                ),
-              );
-            }
-            return child!;
-          },
+        final regions = context.watch<DeviceRegionsRepository>().regions;
+        // extended_image and posthog_flutter still render with
+        // package:flutter/material.dart; the bridge gives them our theme.
+        // Remove once both have migrated to material_ui.
+        // ignore: deprecated_member_use
+        return MaterialUiCompatibilityBridge(
+          child: DeviceRegionsScope(
+            regions: regions,
+            child: ListenableBuilder(
+              listenable: repository,
+              child: child,
+              builder: (context, child) {
+                final syncStatus = repository.syncStatus;
+                if (syncStatus == .initialSync) {
+                  return const Scaffold(body: InitialSyncWidget());
+                }
+                if (syncStatus == .initialSyncFailed) {
+                  return Scaffold(
+                    body: InitialSyncWidget(
+                      onRetry: () => repository.syncTags().ignore(),
+                    ),
+                  );
+                }
+                return child!;
+              },
+            ),
+          ),
         );
       },
     );

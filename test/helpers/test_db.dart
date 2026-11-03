@@ -13,10 +13,7 @@ Future<Database> openTestDb() async {
     databaseFactory = databaseFactoryFfi;
     _ffiInitialized = true;
   }
-  final db = await openTaglyDatabase(
-    inMemory: true,
-    singleInstance: false,
-  );
+  final db = await openTaglyDatabase(inMemory: true, singleInstance: false);
   return db;
 }
 
