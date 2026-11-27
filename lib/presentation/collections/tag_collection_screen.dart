@@ -55,6 +55,7 @@ class TagCollectionScreen extends StatelessWidget {
             ),
             Ok(value: []) => const EmptyStateCard(child: Text('No results')),
             Ok(:final value) => ListView.builder(
+              key: const PageStorageKey('tags'),
               itemCount: value.length,
               itemBuilder: (context, index) => TagListTile(
                 tag: value[index],

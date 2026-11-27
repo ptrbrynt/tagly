@@ -1,5 +1,5 @@
-import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/collections/tag_collection_screen.dart';
@@ -74,7 +74,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
               path: 'collection',
               builder: (context, state) => showsListAndDetail(context)
                   ? const NoTagSelected()
-                  : _collectionScreen(context, state),
+                  : ListPane(child: _collectionScreen(context, state)),
               routes: [_tagInListRoute()],
             ),
           ],
@@ -90,7 +90,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
               path: 'favorites',
               builder: (context, state) => showsListAndDetail(context)
                   ? const NoTagSelected()
-                  : _favoritesScreen(context, state),
+                  : ListPane(child: _favoritesScreen(context, state)),
               routes: [_tagInListRoute()],
             ),
           ],
@@ -124,7 +124,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
                   path: ':id',
                   builder: (context, state) => showsListAndDetail(context)
                       ? const NoTagSelected()
-                      : _viewListScreen(context, state),
+                      : ListPane(child: _viewListScreen(context, state)),
                   routes: [_tagInListRoute()],
                 ),
               ],
@@ -147,11 +147,18 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
 
 GoRoute _tagInListRoute() => GoRoute(
   path: 'tags/:tagId',
-  builder: (context, state) => _viewTagScreen(
-    context,
-    _selectedTagId(state)!,
-    onShowDetails: () =>
-        context.go(_withQuery('${state.matchedLocation}/details', state)),
+  // Named like the top-level tag route so analytics report one screen name.
+  pageBuilder: (context, state) => MaterialPage(
+    key: state.pageKey,
+    name: 'tag',
+    restorationId: state.pageKey.value,
+    child: _viewTagScreen(
+      context,
+      _selectedTagId(state)!,
+      showsBackButton: !showsListAndDetail(context),
+      onShowDetails: () =>
+          context.go(_withQuery('${state.matchedLocation}/details', state)),
+    ),
   ),
   routes: [
     GoRoute(
@@ -197,6 +204,7 @@ Widget _viewTagScreen(
   BuildContext context,
   int tagId, {
   required VoidCallback onShowDetails,
+  bool showsBackButton = true,
 }) {
   return ViewTagScreen(
     key: ValueKey(tagId),
@@ -206,6 +214,7 @@ Widget _viewTagScreen(
     listsViewModel: context.read(),
     sharePlus: context.read(),
     onShowDetails: onShowDetails,
+    showsBackButton: showsBackButton,
   );
 }
 

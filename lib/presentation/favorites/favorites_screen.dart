@@ -63,6 +63,7 @@ class FavoritesScreen extends StatelessWidget {
                       ),
                     )
                   : ListView.builder(
+                      key: const PageStorageKey('tags'),
                       itemCount: value.length,
                       itemBuilder: (context, index) =>
                           _listTile(context, value[index]),

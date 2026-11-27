@@ -6,15 +6,26 @@ const listDetailMinWidth = 600.0;
 bool showsListAndDetail(BuildContext context) =>
     MediaQuery.sizeOf(context).width >= listDetailMinWidth;
 
-class ListDetailLayout extends StatelessWidget {
+class ListDetailLayout extends StatefulWidget {
   const new({required this.list, required this.detail, super.key});
 
   final Widget list;
   final Widget detail;
 
   @override
+  State<ListDetailLayout> createState() => _ListDetailLayoutState();
+}
+
+class _ListDetailLayoutState extends State<ListDetailLayout> {
+  final _listStorage = PageStorageBucket();
+
+  @override
   Widget build(BuildContext context) {
-    if (!showsListAndDetail(context)) return detail;
+    return _ListStorageScope(bucket: _listStorage, child: _layout(context));
+  }
+
+  Widget _layout(BuildContext context) {
+    if (!showsListAndDetail(context)) return widget.detail;
     // Each pane gets its own messenger so a snackbar appears only in the pane
     // that raised it, instead of being duplicated in both. Each pane also
     // drops the inset on the edge it shares with the other pane.
@@ -24,7 +35,7 @@ class ListDetailLayout extends StatelessWidget {
           child: MediaQuery.removePadding(
             context: context,
             removeRight: true,
-            child: ScaffoldMessenger(child: list),
+            child: ScaffoldMessenger(child: ListPane(child: widget.list)),
           ),
         ),
         const VerticalDivider(width: 1),
@@ -32,12 +43,38 @@ class ListDetailLayout extends StatelessWidget {
           child: MediaQuery.removePadding(
             context: context,
             removeLeft: true,
-            child: ScaffoldMessenger(child: detail),
+            child: ScaffoldMessenger(child: widget.detail),
           ),
         ),
       ],
     );
   }
+}
+
+/// Wraps the list wherever it appears, beside the detail or as the first page
+/// of the detail navigator, so both share one scroll position.
+class ListPane extends StatelessWidget {
+  const new({required this.child, super.key});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<_ListStorageScope>();
+    if (scope == null) return child;
+    return PageStorage(bucket: scope.bucket, child: child);
+  }
+}
+
+class _ListStorageScope extends InheritedWidget {
+  const new({required this.bucket, required super.child});
+
+  final PageStorageBucket bucket;
+
+  @override
+  bool updateShouldNotify(_ListStorageScope oldWidget) =>
+      bucket != oldWidget.bucket;
 }
 
 class NoTagSelected extends StatelessWidget {

@@ -101,6 +101,28 @@ void main() {
       );
     });
 
+    testWidgets('hides the tag back button only beside the list', (
+      tester,
+    ) async {
+      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+      Finder tagBackButton() => find.descendant(
+        of: find.byType(ViewTagScreen),
+        matching: find.byType(BackButton),
+      );
+      expect(tagBackButton(), findsNothing);
+
+      tester.view.physicalSize = _narrow;
+      await _settle(tester);
+      expect(tagBackButton(), findsOneWidget);
+    });
+
+    testWidgets('names tag pages "tag" for analytics', (tester) async {
+      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+
+      final route = ModalRoute.of(tester.element(find.byType(ViewTagScreen)));
+      expect(route!.settings.name, 'tag');
+    });
+
     testWidgets('shows a placeholder beside the list when nothing is chosen', (
       tester,
     ) async {
@@ -169,6 +191,32 @@ void main() {
       await _settle(tester);
 
       expect(find.byType(TagListTile), findsNothing);
+    });
+
+    testWidgets('keeps the list scroll position when the window narrows', (
+      tester,
+    ) async {
+      await pumpApp(
+        tester,
+        const Size(951, 300),
+        '/collection?title=All&sortOrder=id',
+      );
+      await tester.drag(find.byType(TagListTile).first, const Offset(0, -150));
+      await _settle(tester);
+      final before = tester
+          .state<ScrollableState>(find.byType(Scrollable).first)
+          .position
+          .pixels;
+      expect(before, greaterThan(0));
+
+      tester.view.physicalSize = const Size(466, 300);
+      await _settle(tester);
+
+      final after = tester
+          .state<ScrollableState>(find.byType(Scrollable).first)
+          .position
+          .pixels;
+      expect(after, before);
     });
 
     testWidgets('keeps collection filters in the tag URL', (tester) async {

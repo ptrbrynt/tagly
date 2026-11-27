@@ -26,6 +26,7 @@ class ViewTagScreen extends StatefulWidget {
     required this.cacheManager,
     required this.sharePlus,
     required this.onShowDetails,
+    this.showsBackButton = true,
     super.key,
   });
 
@@ -35,6 +36,7 @@ class ViewTagScreen extends StatefulWidget {
   final CacheManager cacheManager;
   final SharePlus sharePlus;
   final VoidCallback onShowDetails;
+  final bool showsBackButton;
 
   @override
   State<ViewTagScreen> createState() => _ViewTagScreenState();
@@ -65,6 +67,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: widget.showsBackButton,
             title: Text('#${widget.tagId}'),
             actions: [
               if (_viewModel.result case Ok(:final value)) ...[
