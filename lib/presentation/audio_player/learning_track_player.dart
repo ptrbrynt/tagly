@@ -3,6 +3,8 @@ import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/audio_player/audio_player_widget.dart';
 
+const _rowLayoutMinWidth = 600.0;
+
 class LearningTrackPlayer extends StatefulWidget {
   const new({required this.tracks, required this.cacheManager, super.key});
 
@@ -35,27 +37,30 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.orientationOf(context);
-    return switch (orientation) {
-      .portrait => Column(
-        mainAxisSize: .min,
-        crossAxisAlignment: .stretch,
-        children: [
-          Align(alignment: .topLeft, child: _trackPicker()),
-          const SizedBox(height: 8),
-          _audioPlayer(),
-        ],
-      ),
-      .landscape => IntrinsicHeight(
-        child: Row(
-          children: [
-            _trackPicker(),
-            const VerticalDivider(width: 40),
-            Expanded(child: _audioPlayer()),
-          ],
-        ),
-      ),
-    };
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth < _rowLayoutMinWidth) {
+          return Column(
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
+            children: [
+              Align(alignment: .topLeft, child: _trackPicker()),
+              const SizedBox(height: 8),
+              _audioPlayer(),
+            ],
+          );
+        }
+        return IntrinsicHeight(
+          child: Row(
+            children: [
+              _trackPicker(),
+              const VerticalDivider(width: 40),
+              Expanded(child: _audioPlayer()),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _audioPlayer() {

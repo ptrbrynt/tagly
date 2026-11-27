@@ -27,7 +27,9 @@ class SettingsScreen extends StatelessWidget {
         listenable: settingsRepository,
         builder: (context, _) {
           return ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding:
+                MediaQuery.paddingOf(context) +
+                const EdgeInsets.symmetric(vertical: 8),
             children: [
               _AppHeader(name: info.appName, version: info.version),
               const SizedBox(height: 16),

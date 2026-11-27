@@ -15,16 +15,18 @@ void main() {
 
     setUp(() {
       cacheManager = MockCacheManager();
-      when(
-        () => cacheManager.getSingleFile(any()),
-      ).thenAnswer((_) => Completer<File>().future);
+      when(() => cacheManager.getSingleFile(any()))
+          .thenAnswer((_) => Completer<File>().future);
     });
 
-    Widget app(Size size) {
-      return MaterialApp(
-        home: MediaQuery(
-          data: MediaQueryData(size: size),
-          child: Scaffold(
+    Future<void> pumpPlayer(WidgetTester tester, Size size) async {
+      tester.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
             body: LearningTrackPlayer(
               tracks: const {'All parts': 'https://example.com/all.mp3'},
               cacheManager: cacheManager,
@@ -34,16 +36,38 @@ void main() {
       );
     }
 
-    testWidgets('keeps the audio player alive when orientation changes', (
+    testWidgets('keeps the audio player alive when the layout changes', (
       tester,
     ) async {
-      await tester.pumpWidget(app(const Size(400, 800)));
+      await pumpPlayer(tester, const Size(400, 800));
       final portraitState = tester.state(find.byType(AudioPlayerWidget));
 
-      await tester.pumpWidget(app(const Size(800, 400)));
+      await pumpPlayer(tester, const Size(800, 400));
       final landscapeState = tester.state(find.byType(AudioPlayerWidget));
 
       expect(landscapeState, same(portraitState));
+    });
+
+    testWidgets('stacks the track picker above the player when narrow', (
+      tester,
+    ) async {
+      await pumpPlayer(tester, const Size(400, 800));
+
+      expect(find.byType(VerticalDivider), findsNothing);
+    });
+
+    testWidgets('lays out the picker beside the player when wide', (
+      tester,
+    ) async {
+      await pumpPlayer(tester, const Size(800, 400));
+
+      expect(find.byType(VerticalDivider), findsOneWidget);
+    });
+
+    testWidgets('stays stacked on a narrow landscape window', (tester) async {
+      await pumpPlayer(tester, const Size(500, 300));
+
+      expect(find.byType(VerticalDivider), findsNothing);
     });
   });
 }

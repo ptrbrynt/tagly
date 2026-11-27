@@ -77,10 +77,14 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
             Failure(:final message) => Center(child: Text(message)),
             Ok(:final value) => switch (value.sheetMusicUrl) {
               null => const SizedBox.shrink(),
-              final url => SizedBox.expand(
-                child: SheetMusicViewer(
-                  url: url,
-                  cacheManager: widget.cacheManager,
+              final url => SafeArea(
+                top: false,
+                bottom: false,
+                child: SizedBox.expand(
+                  child: SheetMusicViewer(
+                    url: url,
+                    cacheManager: widget.cacheManager,
+                  ),
                 ),
               ),
             },
