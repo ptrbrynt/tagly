@@ -5,6 +5,7 @@ import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/search_filters_sheet.dart';
+import 'package:tagly/presentation/utils/fold_display_feature.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
@@ -107,6 +108,7 @@ class _TagSearchBarState extends State<TagSearchBar> {
   Future<void> _showFilters() async {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
+      anchorPoint: foldAwareSheetAnchor(context),
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(

@@ -5,6 +5,7 @@ import 'package:tagly/presentation/collections/tag_collection_view_model.dart';
 import 'package:tagly/presentation/search/search_filters_sheet.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/fold_display_feature.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
@@ -71,6 +72,7 @@ class TagCollectionScreen extends StatelessWidget {
   Future<void> _showFilters(BuildContext context) async {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
+      anchorPoint: foldAwareSheetAnchor(context),
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(
