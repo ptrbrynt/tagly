@@ -65,6 +65,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
                 builder: (context) => ListDetailLayout(
                   list: _collectionScreen(context, state),
                   detail: child,
+                  onBack: () => context.go('/'),
                 ),
               ),
             );
@@ -84,6 +85,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           builder: (context, state, child) => ListDetailLayout(
             list: _favoritesScreen(context, state),
             detail: child,
+            onBack: () => context.go('/'),
           ),
           routes: [
             GoRoute(
@@ -115,6 +117,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
                     builder: (context) => ListDetailLayout(
                       list: _viewListScreen(context, state),
                       detail: child,
+                      onBack: () => context.go('/lists'),
                     ),
                   ),
                 );

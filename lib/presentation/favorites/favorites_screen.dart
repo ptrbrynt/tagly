@@ -9,6 +9,7 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class FavoritesScreen extends StatelessWidget {
   const new({
@@ -27,11 +28,9 @@ class FavoritesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: onBack),
-        title: const Text('Favorites'),
-      ),
+    return VerticalBarScaffold(
+      leading: BackButton(onPressed: onBack),
+      title: const Text('Favorites'),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {

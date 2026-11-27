@@ -9,6 +9,7 @@ import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class ListsScreen extends StatelessWidget {
   const new({required this.viewModel, super.key});
@@ -17,8 +18,8 @@ class ListsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Lists')),
+    return VerticalBarScaffold(
+      title: const Text('Lists'),
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('Create List'),
         icon: const Icon(Icons.playlist_add),

@@ -4,6 +4,7 @@ import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class SearchScreen extends StatelessWidget {
   const new({required this.repository, super.key});
@@ -15,41 +16,50 @@ class SearchScreen extends StatelessWidget {
     return ListenableBuilder(
       listenable: repository,
       builder: (context, _) {
-        return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverSafeArea(
-                sliver: SliverPadding(
-                  padding: const .fromLTRB(24, 32, 24, 8),
-                  sliver: SliverList.list(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              'Tagly',
-                              style: Theme.of(context).textTheme.displaySmall,
+        final settingsButton = IconButton(
+          icon: const Icon(Icons.settings_rounded),
+          tooltip: 'Settings',
+          onPressed: () => context.go('/settings'),
+        );
+        return VerticalBarControls(
+          groups: [
+            [settingsButton],
+          ],
+          builder: (context, {required inVerticalBar}) => Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                SliverSafeArea(
+                  sliver: SliverPadding(
+                    padding: const .fromLTRB(24, 32, 24, 8),
+                    sliver: SliverList.list(
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Tagly',
+                                style: Theme.of(context).textTheme.displaySmall,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.settings_rounded),
-                            onPressed: () => context.go('/settings'),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 24),
-                      TagSearchBar(repository: repository),
-                      const SizedBox(height: 32),
-                      _Sections(
-                        collections: _collectionsSection(context),
-                        browse: _browseSection(context),
-                      ),
-                    ],
+                            if (!inVerticalBar) ...[
+                              const SizedBox(width: 8),
+                              settingsButton,
+                            ],
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        TagSearchBar(repository: repository),
+                        const SizedBox(height: 32),
+                        _Sections(
+                          collections: _collectionsSection(context),
+                          browse: _browseSection(context),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

@@ -9,6 +9,7 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class ViewListScreen extends StatelessWidget {
   const new({
@@ -29,11 +30,9 @@ class ViewListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: BackButton(onPressed: onBack),
-        title: Text(listName),
-      ),
+    return VerticalBarScaffold(
+      leading: BackButton(onPressed: onBack),
+      title: Text(listName),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {

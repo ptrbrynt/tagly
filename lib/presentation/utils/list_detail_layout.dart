@@ -1,5 +1,7 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:tagly/domain/vertical_bar.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 const listDetailMinWidth = 720.0;
 
@@ -12,10 +14,20 @@ bool fitsTwoPanes(BuildContext context) {
 }
 
 class ListDetailLayout extends StatefulWidget {
-  const new({required this.list, required this.detail, super.key});
+  const new({
+    required this.list,
+    required this.detail,
+    required this.onBack,
+    super.key,
+  });
 
   final Widget list;
   final Widget detail;
+
+  /// Leaves the list. While the system's vertical bar sits on the detail
+  /// pane's edge, its back button goes there, at the top of the column, rather
+  /// than in a corner of the list pane.
+  final VoidCallback onBack;
 
   @override
   State<ListDetailLayout> createState() => _ListDetailLayoutState();
@@ -31,6 +43,20 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
 
   Widget _layout(BuildContext context) {
     if (!fitsTwoPanes(context)) return widget.detail;
+    final backInBar =
+        VerticalBarScope.of(context)?.edge == VerticalBarEdge.right;
+    if (!backInBar) return _panes(context, backInBar: false);
+    return VerticalBarControls(
+      groups: [
+        [BackButton(onPressed: widget.onBack)],
+      ],
+      builder: (context, {required inVerticalBar}) =>
+          _panes(context, backInBar: true),
+    );
+  }
+
+  Widget _panes(BuildContext context, {required bool backInBar}) {
+    final list = ListPane(child: widget.list);
     // Each pane gets its own messenger so a snackbar appears only in the pane
     // that raised it, instead of being duplicated in both. Each pane also
     // drops the inset on the edge it shares with the other pane.
@@ -40,7 +66,13 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
           child: MediaQuery.removePadding(
             context: context,
             removeRight: true,
-            child: ScaffoldMessenger(child: ListPane(child: widget.list)),
+            child: WindowEdges(
+              left: true,
+              right: false,
+              child: ScaffoldMessenger(
+                child: backInBar ? LeadingShownElsewhere(child: list) : list,
+              ),
+            ),
           ),
         ),
         const VerticalDivider(width: 1),
@@ -48,7 +80,11 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
           child: MediaQuery.removePadding(
             context: context,
             removeLeft: true,
-            child: ScaffoldMessenger(child: widget.detail),
+            child: WindowEdges(
+              left: false,
+              right: true,
+              child: ScaffoldMessenger(child: widget.detail),
+            ),
           ),
         ),
       ],

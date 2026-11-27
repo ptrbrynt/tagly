@@ -15,6 +15,7 @@ import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
 import 'package:tagly/presentation/view_tag/tabletop_column.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
@@ -76,17 +77,15 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     return ListenableBuilder(
       listenable: _changes,
       builder: (context, _) {
-        return Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: widget.showsBackButton,
-            title: Text('#${widget.tagId}'),
-            actions: [
-              if (_viewModel.result case Ok(:final value)) ...[
-                _favoriteToggle(context),
-                _tagMenu(context, value),
-              ],
+        return VerticalBarScaffold(
+          automaticallyImplyLeading: widget.showsBackButton,
+          title: Text('#${widget.tagId}'),
+          actions: [
+            if (_viewModel.result case Ok(:final value)) ...[
+              _favoriteToggle(context),
+              _tagMenu(context, value),
             ],
-          ),
+          ],
           body: switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),

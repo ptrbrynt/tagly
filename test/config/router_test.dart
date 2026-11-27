@@ -11,6 +11,7 @@ import 'package:provider/single_child_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/data/fold_repository.dart';
+import 'package:tagly/domain/vertical_bar.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/collections/tag_collection_screen.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
@@ -18,6 +19,7 @@ import 'package:tagly/presentation/lists/view_list_screen.dart';
 import 'package:tagly/presentation/search/search_screen.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
 
 import '../helpers/fake_cache_manager.dart';
@@ -74,8 +76,9 @@ void main() {
     Future<GoRouter> pumpApp(
       WidgetTester tester,
       Size size,
-      String location,
-    ) async {
+      String location, {
+      VerticalBar? verticalBar,
+    }) async {
       tester.view
         ..physicalSize = size
         ..devicePixelRatio = 1;
@@ -87,7 +90,11 @@ void main() {
           child: Builder(
             builder: (context) {
               router = context.read();
-              return MaterialApp.router(routerConfig: router);
+              return MaterialApp.router(
+                routerConfig: router,
+                builder: (context, child) =>
+                    VerticalBarScope(verticalBar: verticalBar, child: child!),
+              );
             },
           ),
         ),
@@ -130,6 +137,42 @@ void main() {
 
       final route = ModalRoute.of(tester.element(find.byType(ViewTagScreen)));
       expect(route!.settings.name, 'tag');
+    });
+
+    testWidgets('puts the back button and tag controls in the vertical bar', (
+      tester,
+    ) async {
+      await pumpApp(
+        tester,
+        _wide,
+        '/favorites/tags/$tagId',
+        verticalBar: const VerticalBar(
+          edge: VerticalBarEdge.right,
+          controls: ScreenRect(left: 879, top: 124, width: 48, height: 511),
+        ),
+      );
+
+      // The list's back button leads the column; the tag's controls follow.
+      final back = find.byType(BackButton);
+      expect(back, findsOneWidget);
+      expect(tester.getCenter(back).dx, 903);
+      expect(tester.getTopLeft(back).dy, 124);
+      for (final icon in [Icons.favorite_rounded, Icons.more_vert_rounded]) {
+        expect(tester.getCenter(find.byIcon(icon)).dx, 903);
+        expect(
+          tester.getTopLeft(find.byIcon(icon)).dy,
+          greaterThanOrEqualTo(tester.getBottomLeft(back).dy),
+        );
+      }
+      final listBar = find.descendant(
+        of: find.byType(FavoritesScreen),
+        matching: find.byType(AppBar),
+      );
+      expect(listBar, findsOneWidget);
+      expect(
+        find.descendant(of: listBar, matching: find.byType(BackButton)),
+        findsNothing,
+      );
     });
 
     testWidgets('shows a placeholder beside the list when nothing is chosen', (

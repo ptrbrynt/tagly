@@ -11,6 +11,7 @@ import 'package:tagly/data/fold_repository.dart';
 import 'package:tagly/data/lists_repository.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
+import 'package:tagly/data/vertical_bar_repository.dart';
 import 'package:tagly/presentation/favorites/favorites_view_model.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
 
@@ -27,6 +28,12 @@ List<SingleChildWidget> get productionProviders => [
       regionEvents: const EventChannel('tagly/fold_regions')
           .receiveBroadcastStream(),
     ),
+  ),
+  ChangeNotifierProvider(
+    create: (_) => VerticalBarRepository(
+      events: const EventChannel('tagly/vertical_bar').receiveBroadcastStream(),
+    ),
+    lazy: false,
   ),
   ...appProviders,
 ];

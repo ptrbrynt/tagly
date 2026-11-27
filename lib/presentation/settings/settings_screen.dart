@@ -6,6 +6,7 @@ import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/presentation/settings/analytics_toggle.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -21,8 +22,8 @@ class SettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final info = settingsRepository.packageInfo;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+    return VerticalBarScaffold(
+      title: const Text('Settings'),
       body: ListenableBuilder(
         listenable: settingsRepository,
         builder: (context, _) {
