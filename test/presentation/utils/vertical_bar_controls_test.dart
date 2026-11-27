@@ -11,6 +11,14 @@ const _rightBar = VerticalBar(
   controls: ScreenRect(left: 879, top: 124, width: 48, height: 511),
 );
 
+// The inner display in landscape asks for 16pt at the left edge to clear
+// the top-left corner.
+const _cornerBar = VerticalBar(
+  edge: VerticalBarEdge.right,
+  controls: ScreenRect(left: 879, top: 124, width: 48, height: 511),
+  cornerSafeArea: ScreenInsets(left: 16, right: 84, bottom: 34),
+);
+
 const _favorite = Key('favorite');
 
 void main() {
@@ -134,6 +142,40 @@ void main() {
       await tester.pump();
       expect(tester.state(find.byType(TextField)), same(field));
       expect(find.text('sing'), findsOneWidget);
+    });
+
+    testWidgets('keeps the title a margin clear of the display corner', (
+      tester,
+    ) async {
+      await pump(tester, verticalBar: _cornerBar);
+
+      expect(tester.getTopLeft(find.text('Popular Tags')).dx, 16 + 16);
+    });
+
+    testWidgets('has no corner to clear in a pane away from the left edge', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = _window
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: VerticalBarScope(
+            verticalBar: _cornerBar,
+            child: WindowEdges(
+              left: false,
+              right: true,
+              child: VerticalBarScaffold(
+                title: Text('#1809'),
+                body: SizedBox.expand(),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      expect(tester.getTopLeft(find.text('#1809')).dx, 16);
     });
 
     testWidgets('keeps a top bar in a pane away from the bar edge', (

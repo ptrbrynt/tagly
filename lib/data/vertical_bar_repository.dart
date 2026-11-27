@@ -29,6 +29,7 @@ class VerticalBarRepository extends ChangeNotifier {
           final ScreenRect controls => VerticalBar(
             edge: edge == 'left' ? VerticalBarEdge.left : VerticalBarEdge.right,
             controls: controls,
+            cornerSafeArea: _insets(event['cornerSafeArea']),
           ),
           null => null,
         },
@@ -53,6 +54,22 @@ class VerticalBarRepository extends ChangeNotifier {
         height: height.toDouble(),
       ),
     _ => null,
+  };
+
+  static ScreenInsets _insets(Object? value) => switch (value) {
+    {
+      'left': final num left,
+      'top': final num top,
+      'right': final num right,
+      'bottom': final num bottom,
+    } =>
+      ScreenInsets(
+        left: left.toDouble(),
+        top: top.toDouble(),
+        right: right.toDouble(),
+        bottom: bottom.toDouble(),
+      ),
+    _ => const ScreenInsets(),
   };
 
   @override

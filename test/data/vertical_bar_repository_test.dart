@@ -39,6 +39,20 @@ void main() {
       );
     });
 
+    test('reports the corner-adapted safe area', () async {
+      // Measured on the closed display in landscape.
+      await emit({
+        'edge': 'right',
+        'bar': {'left': 606, 'top': 24, 'width': 48, 'height': 408},
+        'cornerSafeArea': {'left': 17.3, 'top': 0, 'right': 84, 'bottom': 34},
+      });
+
+      expect(
+        repository.verticalBar?.cornerSafeArea,
+        const ScreenInsets(left: 17.3, right: 84, bottom: 34),
+      );
+    });
+
     test('reports the bar column on the left edge', () async {
       await emit({
         'edge': 'left',

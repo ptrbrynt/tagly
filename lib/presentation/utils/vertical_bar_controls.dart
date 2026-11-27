@@ -19,6 +19,23 @@ class VerticalBarScope extends InheritedWidget {
       verticalBar != oldWidget.verticalBar;
 }
 
+/// Space to add, beyond the safe area, before content along the top edge of
+/// this subtree so a rounded display corner doesn't cut into it. Only the
+/// edges this subtree shares with the window have corners to clear.
+EdgeInsets cornerPadding(BuildContext context) {
+  final corners = VerticalBarScope.of(context)?.cornerSafeArea;
+  if (corners == null) return EdgeInsets.zero;
+  final padding = MediaQuery.paddingOf(context);
+  return EdgeInsets.only(
+    left: WindowEdges.reaches(context, VerticalBarEdge.left)
+        ? math.max(corners.left - padding.left, 0)
+        : 0,
+    right: WindowEdges.reaches(context, VerticalBarEdge.right)
+        ? math.max(corners.right - padding.right, 0)
+        : 0,
+  );
+}
+
 /// Which edges of the window a subtree reaches. Panes laid out side by side
 /// reach one edge each; without this, a subtree reaches both.
 class WindowEdges extends InheritedWidget {
@@ -236,7 +253,9 @@ class _TitleHeader extends StatelessWidget {
       child: SizedBox(
         height: kToolbarHeight,
         child: Padding(
-          padding: const .symmetric(horizontal: 16),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16) +
+              cornerPadding(context),
           child: Align(
             alignment: .centerLeft,
             child: DefaultTextStyle(

@@ -7,8 +7,10 @@ import UIKit
 /// - `tagly/fold_regions`: the fold's division regions as
 ///   `[{left, top, width, height, active}]`.
 /// - `tagly/vertical_bar`: the column where the system places bar controls
-///   while it shows its vertical bar, as `{edge, bar}`, with `edge` one of
-///   `left`, `right` or `none`, and `bar` a rect when there is one.
+///   while it shows its vertical bar, as `{edge, bar, cornerSafeArea}`, with
+///   `edge` one of `left`, `right` or `none`, `bar` a rect when there is one,
+///   and `cornerSafeArea` the safe area insets widened to clear the display
+///   corners for content along the top edge.
 ///
 /// Devices and OS versions without these APIs get an empty fold list and an
 /// `edge` of `none`.
@@ -40,7 +42,12 @@ enum DisplayGeometry {
     let bar = barFrame(on: edge, in: view)
     // The layout guide is empty until the first layout pass.
     guard !bar.isEmpty else { return ["edge": "none"] }
-    return ["edge": edge == .left ? "left" : "right", "bar": rectMap(bar)]
+    return [
+      "edge": edge == .left ? "left" : "right",
+      "bar": rectMap(bar),
+      "cornerSafeArea": insetsMap(
+        view.edgeInsets(for: .safeArea(cornerAdaptation: .horizontal))),
+    ]
   }
 
   /// The column where the system wants bar content on [edge]: below the
@@ -99,6 +106,10 @@ enum DisplayGeometry {
     var map = rectMap(region.frame)
     map["active"] = region.isActive
     return map
+  }
+
+  private static func insetsMap(_ insets: UIEdgeInsets) -> [String: Any] {
+    ["left": insets.left, "top": insets.top, "right": insets.right, "bottom": insets.bottom]
   }
 
   private static func rectMap(_ rect: CGRect) -> [String: Any] {

@@ -286,11 +286,286 @@ as double,
 }
 
 /// @nodoc
+mixin _$ScreenInsets {
+
+ double get left; double get top; double get right; double get bottom;
+/// Create a copy of ScreenInsets
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ScreenInsetsCopyWith<ScreenInsets> get copyWith => _$ScreenInsetsCopyWithImpl<ScreenInsets>(this as ScreenInsets, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+  final _this = this as ScreenInsets;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ScreenInsets&&(identical(other.left, _this.left) || other.left == _this.left)&&(identical(other.top, _this.top) || other.top == _this.top)&&(identical(other.right, _this.right) || other.right == _this.right)&&(identical(other.bottom, _this.bottom) || other.bottom == _this.bottom));
+}
+
+
+@override
+int get hashCode {
+  final _this = this as ScreenInsets;
+  return Object.hash(runtimeType,_this.left,_this.top,_this.right,_this.bottom);
+}
+
+@override
+String toString() {
+  final _this = this as ScreenInsets;
+  return 'ScreenInsets(left: ${_this.left}, top: ${_this.top}, right: ${_this.right}, bottom: ${_this.bottom})';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class $ScreenInsetsCopyWith<$Res>  {
+  factory $ScreenInsetsCopyWith(ScreenInsets value, $Res Function(ScreenInsets) _then) = _$ScreenInsetsCopyWithImpl;
+@useResult
+$Res call({
+ double left, double top, double right, double bottom
+});
+
+
+
+
+}
+/// @nodoc
+class _$ScreenInsetsCopyWithImpl<$Res>
+    implements $ScreenInsetsCopyWith<$Res> {
+  _$ScreenInsetsCopyWithImpl(this._self, this._then);
+
+  final ScreenInsets _self;
+  final $Res Function(ScreenInsets) _then;
+
+/// Create a copy of ScreenInsets
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? left = null,Object? top = null,Object? right = null,Object? bottom = null,}) {
+  return _then(ScreenInsets(
+left: null == left ? _self.left : left // ignore: cast_nullable_to_non_nullable
+as double,top: null == top ? _self.top : top // ignore: cast_nullable_to_non_nullable
+as double,right: null == right ? _self.right : right // ignore: cast_nullable_to_non_nullable
+as double,bottom: null == bottom ? _self.bottom : bottom // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+}
+
+
+/// Adds pattern-matching-related methods to [ScreenInsets].
+extension ScreenInsetsPatterns on ScreenInsets {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ScreenInsets value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ScreenInsets() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ScreenInsets value)  $default,){
+final _that = this;
+switch (_that) {
+case _ScreenInsets():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ScreenInsets value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ScreenInsets() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( double left,  double top,  double right,  double bottom)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ScreenInsets() when $default != null:
+return $default(_that.left,_that.top,_that.right,_that.bottom);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( double left,  double top,  double right,  double bottom)  $default,) {final _that = this;
+switch (_that) {
+case _ScreenInsets():
+return $default(_that.left,_that.top,_that.right,_that.bottom);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( double left,  double top,  double right,  double bottom)?  $default,) {final _that = this;
+switch (_that) {
+case _ScreenInsets() when $default != null:
+return $default(_that.left,_that.top,_that.right,_that.bottom);case _:
+  return null;
+
+}
+}
+
+}
+
+/// @nodoc
+
+
+class _ScreenInsets implements ScreenInsets {
+  const _ScreenInsets({this.left = 0, this.top = 0, this.right = 0, this.bottom = 0});
+  
+
+@override@JsonKey() final  double left;
+@override@JsonKey() final  double top;
+@override@JsonKey() final  double right;
+@override@JsonKey() final  double bottom;
+
+/// Create a copy of ScreenInsets
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ScreenInsetsCopyWith<_ScreenInsets> get copyWith => __$ScreenInsetsCopyWithImpl<_ScreenInsets>(this, _$identity);
+
+
+
+@override
+bool operator ==(Object other) {
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ScreenInsets&&(identical(other.left, left) || other.left == left)&&(identical(other.top, top) || other.top == top)&&(identical(other.right, right) || other.right == right)&&(identical(other.bottom, bottom) || other.bottom == bottom));
+}
+
+
+@override
+int get hashCode {
+    return Object.hash(runtimeType,left,top,right,bottom);
+}
+
+@override
+String toString() {
+    return 'ScreenInsets(left: $left, top: $top, right: $right, bottom: $bottom)';
+}
+
+
+}
+
+/// @nodoc
+abstract mixin class _$ScreenInsetsCopyWith<$Res> implements $ScreenInsetsCopyWith<$Res> {
+  factory _$ScreenInsetsCopyWith(_ScreenInsets value, $Res Function(_ScreenInsets) _then) = __$ScreenInsetsCopyWithImpl;
+@override @useResult
+$Res call({
+ double left, double top, double right, double bottom
+});
+
+
+
+
+}
+/// @nodoc
+class __$ScreenInsetsCopyWithImpl<$Res>
+    implements _$ScreenInsetsCopyWith<$Res> {
+  __$ScreenInsetsCopyWithImpl(this._self, this._then);
+
+  final _ScreenInsets _self;
+  final $Res Function(_ScreenInsets) _then;
+
+/// Create a copy of ScreenInsets
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? left = null,Object? top = null,Object? right = null,Object? bottom = null,}) {
+  return _then(_ScreenInsets(
+left: null == left ? _self.left : left // ignore: cast_nullable_to_non_nullable
+as double,top: null == top ? _self.top : top // ignore: cast_nullable_to_non_nullable
+as double,right: null == right ? _self.right : right // ignore: cast_nullable_to_non_nullable
+as double,bottom: null == bottom ? _self.bottom : bottom // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+
+
+}
+
+/// @nodoc
 mixin _$VerticalBar {
 
  VerticalBarEdge get edge;/// Where the system places bar controls, centred on the status bar and
 /// camera above it.
- ScreenRect get controls;
+ ScreenRect get controls;/// The safe area, widened where a display corner would otherwise cut
+/// into content laid out along the top edge, such as a title.
+ ScreenInsets get cornerSafeArea;
 /// Create a copy of VerticalBar
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -302,20 +577,20 @@ $VerticalBarCopyWith<VerticalBar> get copyWith => _$VerticalBarCopyWithImpl<Vert
 @override
 bool operator ==(Object other) {
   final _this = this as VerticalBar;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is VerticalBar&&(identical(other.edge, _this.edge) || other.edge == _this.edge)&&(identical(other.controls, _this.controls) || other.controls == _this.controls));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is VerticalBar&&(identical(other.edge, _this.edge) || other.edge == _this.edge)&&(identical(other.controls, _this.controls) || other.controls == _this.controls)&&(identical(other.cornerSafeArea, _this.cornerSafeArea) || other.cornerSafeArea == _this.cornerSafeArea));
 }
 
 
 @override
 int get hashCode {
   final _this = this as VerticalBar;
-  return Object.hash(runtimeType,_this.edge,_this.controls);
+  return Object.hash(runtimeType,_this.edge,_this.controls,_this.cornerSafeArea);
 }
 
 @override
 String toString() {
   final _this = this as VerticalBar;
-  return 'VerticalBar(edge: ${_this.edge}, controls: ${_this.controls})';
+  return 'VerticalBar(edge: ${_this.edge}, controls: ${_this.controls}, cornerSafeArea: ${_this.cornerSafeArea})';
 }
 
 
@@ -326,11 +601,11 @@ abstract mixin class $VerticalBarCopyWith<$Res>  {
   factory $VerticalBarCopyWith(VerticalBar value, $Res Function(VerticalBar) _then) = _$VerticalBarCopyWithImpl;
 @useResult
 $Res call({
- VerticalBarEdge edge, ScreenRect controls
+ VerticalBarEdge edge, ScreenRect controls, ScreenInsets cornerSafeArea
 });
 
 
-$ScreenRectCopyWith<$Res> get controls;
+$ScreenRectCopyWith<$Res> get controls;$ScreenInsetsCopyWith<$Res> get cornerSafeArea;
 
 }
 /// @nodoc
@@ -343,11 +618,12 @@ class _$VerticalBarCopyWithImpl<$Res>
 
 /// Create a copy of VerticalBar
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? edge = null,Object? controls = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? edge = null,Object? controls = null,Object? cornerSafeArea = null,}) {
   return _then(VerticalBar(
 edge: null == edge ? _self.edge : edge // ignore: cast_nullable_to_non_nullable
 as VerticalBarEdge,controls: null == controls ? _self.controls : controls // ignore: cast_nullable_to_non_nullable
-as ScreenRect,
+as ScreenRect,cornerSafeArea: null == cornerSafeArea ? _self.cornerSafeArea : cornerSafeArea // ignore: cast_nullable_to_non_nullable
+as ScreenInsets,
   ));
 }
 /// Create a copy of VerticalBar
@@ -358,6 +634,15 @@ $ScreenRectCopyWith<$Res> get controls {
   
   return $ScreenRectCopyWith<$Res>(_self.controls, (value) {
     return _then(_self.copyWith(controls: value));
+  });
+}/// Create a copy of VerticalBar
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ScreenInsetsCopyWith<$Res> get cornerSafeArea {
+  
+  return $ScreenInsetsCopyWith<$Res>(_self.cornerSafeArea, (value) {
+    return _then(_self.copyWith(cornerSafeArea: value));
   });
 }
 }
@@ -441,10 +726,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( VerticalBarEdge edge,  ScreenRect controls)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( VerticalBarEdge edge,  ScreenRect controls,  ScreenInsets cornerSafeArea)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _VerticalBar() when $default != null:
-return $default(_that.edge,_that.controls);case _:
+return $default(_that.edge,_that.controls,_that.cornerSafeArea);case _:
   return orElse();
 
 }
@@ -462,10 +747,10 @@ return $default(_that.edge,_that.controls);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( VerticalBarEdge edge,  ScreenRect controls)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( VerticalBarEdge edge,  ScreenRect controls,  ScreenInsets cornerSafeArea)  $default,) {final _that = this;
 switch (_that) {
 case _VerticalBar():
-return $default(_that.edge,_that.controls);case _:
+return $default(_that.edge,_that.controls,_that.cornerSafeArea);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -482,10 +767,10 @@ return $default(_that.edge,_that.controls);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( VerticalBarEdge edge,  ScreenRect controls)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( VerticalBarEdge edge,  ScreenRect controls,  ScreenInsets cornerSafeArea)?  $default,) {final _that = this;
 switch (_that) {
 case _VerticalBar() when $default != null:
-return $default(_that.edge,_that.controls);case _:
+return $default(_that.edge,_that.controls,_that.cornerSafeArea);case _:
   return null;
 
 }
@@ -497,13 +782,16 @@ return $default(_that.edge,_that.controls);case _:
 
 
 class _VerticalBar implements VerticalBar {
-  const _VerticalBar({required this.edge, required this.controls});
+  const _VerticalBar({required this.edge, required this.controls, this.cornerSafeArea = const ScreenInsets()});
   
 
 @override final  VerticalBarEdge edge;
 /// Where the system places bar controls, centred on the status bar and
 /// camera above it.
 @override final  ScreenRect controls;
+/// The safe area, widened where a display corner would otherwise cut
+/// into content laid out along the top edge, such as a title.
+@override@JsonKey() final  ScreenInsets cornerSafeArea;
 
 /// Create a copy of VerticalBar
 /// with the given fields replaced by the non-null parameter values.
@@ -515,18 +803,18 @@ _$VerticalBarCopyWith<_VerticalBar> get copyWith => __$VerticalBarCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VerticalBar&&(identical(other.edge, edge) || other.edge == edge)&&(identical(other.controls, controls) || other.controls == controls));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _VerticalBar&&(identical(other.edge, edge) || other.edge == edge)&&(identical(other.controls, controls) || other.controls == controls)&&(identical(other.cornerSafeArea, cornerSafeArea) || other.cornerSafeArea == cornerSafeArea));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,edge,controls);
+    return Object.hash(runtimeType,edge,controls,cornerSafeArea);
 }
 
 @override
 String toString() {
-    return 'VerticalBar(edge: $edge, controls: $controls)';
+    return 'VerticalBar(edge: $edge, controls: $controls, cornerSafeArea: $cornerSafeArea)';
 }
 
 
@@ -537,11 +825,11 @@ abstract mixin class _$VerticalBarCopyWith<$Res> implements $VerticalBarCopyWith
   factory _$VerticalBarCopyWith(_VerticalBar value, $Res Function(_VerticalBar) _then) = __$VerticalBarCopyWithImpl;
 @override @useResult
 $Res call({
- VerticalBarEdge edge, ScreenRect controls
+ VerticalBarEdge edge, ScreenRect controls, ScreenInsets cornerSafeArea
 });
 
 
-@override $ScreenRectCopyWith<$Res> get controls;
+@override $ScreenRectCopyWith<$Res> get controls;@override $ScreenInsetsCopyWith<$Res> get cornerSafeArea;
 
 }
 /// @nodoc
@@ -554,11 +842,12 @@ class __$VerticalBarCopyWithImpl<$Res>
 
 /// Create a copy of VerticalBar
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? edge = null,Object? controls = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? edge = null,Object? controls = null,Object? cornerSafeArea = null,}) {
   return _then(_VerticalBar(
 edge: null == edge ? _self.edge : edge // ignore: cast_nullable_to_non_nullable
 as VerticalBarEdge,controls: null == controls ? _self.controls : controls // ignore: cast_nullable_to_non_nullable
-as ScreenRect,
+as ScreenRect,cornerSafeArea: null == cornerSafeArea ? _self.cornerSafeArea : cornerSafeArea // ignore: cast_nullable_to_non_nullable
+as ScreenInsets,
   ));
 }
 
@@ -570,6 +859,15 @@ $ScreenRectCopyWith<$Res> get controls {
   
   return $ScreenRectCopyWith<$Res>(_self.controls, (value) {
     return _then(_self.copyWith(controls: value));
+  });
+}/// Create a copy of VerticalBar
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ScreenInsetsCopyWith<$Res> get cornerSafeArea {
+  
+  return $ScreenInsetsCopyWith<$Res>(_self.cornerSafeArea, (value) {
+    return _then(_self.copyWith(cornerSafeArea: value));
   });
 }
 }

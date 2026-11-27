@@ -54,7 +54,9 @@ class _TagSearchBarState extends State<TagSearchBar> {
       // While the system's vertical bar shows, the search view's buttons
       // move into its column, as the app's other bars do, and only the field
       // and its clear button stay at the top.
-      viewLeading: _inVerticalBar ? const SizedBox.shrink() : null,
+      viewLeading: _inVerticalBar
+          ? SizedBox(width: cornerPadding(context).left)
+          : null,
       viewTrailing: [
         _clearButton(),
         if (!_inVerticalBar) ...[_filterButton(), _helpButton()],
