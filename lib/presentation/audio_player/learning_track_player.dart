@@ -15,6 +15,7 @@ class LearningTrackPlayer extends StatefulWidget {
 
 class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
   late String _selectedTrack;
+  final GlobalKey _audioPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -59,6 +60,7 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
 
   Widget _audioPlayer() {
     return AudioPlayerWidget(
+      key: _audioPlayerKey,
       url: widget.tracks[_selectedTrack]!,
       cacheManager: widget.cacheManager,
     );
