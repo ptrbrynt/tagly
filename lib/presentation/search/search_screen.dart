@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/tag_search_bar.dart';
+import 'package:tagly/presentation/utils/fold_row.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
@@ -152,7 +153,7 @@ class SearchScreen extends StatelessWidget {
   }
 }
 
-/// Side by side on wide landscape windows, so the fold falls between them.
+/// Side by side on wide landscape windows, either side of the fold.
 class _Sections extends StatelessWidget {
   const new({required this.collections, required this.browse});
 
@@ -167,13 +168,12 @@ class _Sections extends StatelessWidget {
         children: [collections, const SizedBox(height: 32), browse],
       );
     }
-    return Row(
+    return FoldRow(
       crossAxisAlignment: .start,
-      children: [
-        Expanded(child: collections),
-        const SizedBox(width: 24),
-        Expanded(child: browse),
-      ],
+      start: collections,
+      gap: (width) => SizedBox(width: width),
+      gapWidth: 24,
+      end: browse,
     );
   }
 }

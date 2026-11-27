@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/vertical_bar.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
+import 'package:tagly/presentation/utils/fold_row.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 const listDetailMinWidth = 720.0;
@@ -67,34 +68,36 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
     // Each pane gets its own messenger so a snackbar appears only in the pane
     // that raised it, instead of being duplicated in both. Each pane also
     // drops the inset on the edge it shares with the other pane.
-    return Row(
-      children: [
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeRight: true,
-            child: WindowEdges(
-              left: true,
-              right: false,
-              child: ScaffoldMessenger(
-                child: LeadingShownElsewhere(isShown: backInBar, child: list),
-              ),
-            ),
+    return FoldRow(
+      start: MediaQuery.removePadding(
+        context: context,
+        removeRight: true,
+        child: WindowEdges(
+          left: true,
+          right: false,
+          child: ScaffoldMessenger(
+            child: LeadingShownElsewhere(isShown: backInBar, child: list),
           ),
         ),
-        const VerticalDivider(width: 1),
-        Expanded(
-          child: MediaQuery.removePadding(
-            context: context,
-            removeLeft: true,
-            child: WindowEdges(
-              left: false,
-              right: true,
-              child: ScaffoldMessenger(child: widget.detail),
-            ),
-          ),
+      ),
+      // A fold already divides the panes, so a gap wider than the divider
+      // is left blank rather than drawing a line in the curve.
+      gap: (width) => ColoredBox(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        child: width > 1
+            ? SizedBox(width: width)
+            : const VerticalDivider(width: 1),
+      ),
+      gapWidth: 1,
+      end: MediaQuery.removePadding(
+        context: context,
+        removeLeft: true,
+        child: WindowEdges(
+          left: false,
+          right: true,
+          child: ScaffoldMessenger(child: widget.detail),
         ),
-      ],
+      ),
     );
   }
 }
