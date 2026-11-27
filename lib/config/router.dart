@@ -17,15 +17,12 @@ import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 
-typedef NavigatorObserversFactory = List<NavigatorObserver> Function();
-
 // Each list of tags is a ShellRoute so the selected tag lives in the shell's
 // navigator. On wide windows the shell shows the list beside that navigator;
 // on narrow ones the list is the navigator's first page. The navigator keeps
 // its state when the device opens or closes, so the open tag (and its audio)
 // survives the switch.
-GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
-  observers: observers(),
+GoRouter getRouter() => GoRouter(
   routes: [
     GoRoute(
       path: '/',
@@ -61,7 +58,6 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           ],
         ),
         ShellRoute(
-          observers: observers(),
           builder: (context, state, child) {
             return ChangeNotifierProvider(
               key: ValueKey(state.uri.query),
@@ -91,7 +87,6 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           ],
         ),
         ShellRoute(
-          observers: observers(),
           builder: (context, state, child) => ListDetailLayout(
             list: _favoritesScreen(context, state),
             detail: child,
@@ -114,7 +109,6 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           },
           routes: [
             ShellRoute(
-              observers: observers(),
               builder: (context, state, child) {
                 final listId = int.parse(state.pathParameters['id']!);
                 return ChangeNotifierProvider(
@@ -160,10 +154,8 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
 
 GoRoute _tagInListRoute() => GoRoute(
   path: 'tags/:tagId',
-  // Named like the top-level tag route so analytics report one screen name.
   pageBuilder: (context, state) => MaterialPage(
     key: state.pageKey,
-    name: 'tag',
     restorationId: state.pageKey.value,
     child: _viewTagScreen(
       context,

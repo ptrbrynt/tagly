@@ -1,0 +1,17 @@
+# Copy to release.local.mk (gitignored) and fill in. No secrets belong here:
+# API keys live in the Keychain (asc) and ~/.playconsole-cli (playconsole-cli).
+
+# Numeric Apple ID from App Store Connect > App Information.
+ASC_APP_ID =
+
+# Optional: named credential profiles, if you have more than one.
+# ASC_PROFILE =
+# GPC_PROFILE =
+
+# Optional: TestFlight groups to distribute to (comma-separated names or IDs).
+# Leave empty to upload without distributing.
+# TESTFLIGHT_GROUPS =
+
+# Optional: Play track (internal, alpha, beta, production) and rollout percentage.
+# PLAY_TRACK = internal
+# PLAY_ROLLOUT = 100

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
-import 'package:tagly/presentation/settings/analytics_toggle.dart';
 import 'package:tagly/presentation/utils/fold_aware_dialogs.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
@@ -34,10 +33,6 @@ class SettingsScreen extends StatelessWidget {
             children: [
               _AppHeader(name: info.appName, version: info.version),
               const SizedBox(height: 16),
-              const _SectionHeader('Privacy'),
-              _SettingsCard(
-                children: [AnalyticsToggle(repository: settingsRepository)],
-              ),
               const _SectionHeader('Storage'),
               _SettingsCard(
                 children: [

@@ -133,13 +133,6 @@ void main() {
       expect(tagBackButton(), findsOneWidget);
     });
 
-    testWidgets('names tag pages "tag" for analytics', (tester) async {
-      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
-
-      final route = ModalRoute.of(tester.element(find.byType(ViewTagScreen)));
-      expect(route!.settings.name, 'tag');
-    });
-
     testWidgets('puts the back button and tag controls in the vertical bar', (
       tester,
     ) async {

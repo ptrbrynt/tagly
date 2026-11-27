@@ -9,11 +9,9 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
 import 'package:tagly/data/fold_repository.dart';
@@ -29,8 +27,6 @@ import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  final analyticsService = await AnalyticsService.setUp(Posthog());
 
   GoogleFonts.config.allowRuntimeFetching = false;
 
@@ -64,7 +60,6 @@ Future<void> main() async {
   runApp(
     MultiProvider(
       providers: [
-        Provider.value(value: analyticsService),
         Provider.value(value: db),
         Provider.value(value: sharedPrefs),
         Provider.value(value: migrationRepo),
@@ -164,7 +159,7 @@ class _MainAppState extends State<MainApp> {
               fold: context.watch<FoldRepository>().activeFold,
               child: VerticalBarScope(
                 verticalBar: context.watch<VerticalBarRepository>().verticalBar,
-                // extended_image and posthog_flutter still use
+                // extended_image still uses
                 // package:flutter/material.dart and need the theme bridged.
                 // ignore: deprecated_member_use
                 child: MaterialUiCompatibilityBridge(child: child!),

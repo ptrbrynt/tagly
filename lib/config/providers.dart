@@ -1,7 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:share_plus/share_plus.dart';
@@ -17,7 +16,6 @@ import 'package:tagly/presentation/lists/lists_view_model.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
-  Provider<NavigatorObserversFactory>.value(value: () => [PosthogObserver()]),
   Provider<CacheManager>(
     create: (_) => DefaultCacheManager(),
     dispose: (context, value) => value.dispose(),
@@ -39,7 +37,7 @@ List<SingleChildWidget> get productionProviders => [
 ];
 
 List<SingleChildWidget> get appProviders => [
-  Provider(create: (context) => getRouter(context.read())),
+  Provider(create: (context) => getRouter()),
   Provider(create: (context) => BarbershopTagsApi(dio: context.read())),
   ChangeNotifierProvider(
     create: (context) => TagsRepository(
@@ -53,7 +51,6 @@ List<SingleChildWidget> get appProviders => [
   ChangeNotifierProvider(
     create: (context) => SettingsRepository(
       cacheManager: context.read(),
-      analyticsService: context.read(),
       packageInfo: context.read(),
     ),
   ),

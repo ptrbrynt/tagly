@@ -48,3 +48,10 @@ app.*.map.json
 
 # FVM Version Cache
 .fvm/
+# Release automation: local config, credentials and debug symbols
+release.local.mk
+/out/
+.asc/
+.gpc.yaml
+*.p8
+*service-account*.json

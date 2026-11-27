@@ -35,7 +35,6 @@ Clean-ish layered architecture:
 - Models use `freezed` — run build_runner after editing `.dart` files that have `.freezed.dart` counterparts.
 - Repositories extend `ChangeNotifier` and are provided via `Provider` in `providers.dart`.
 - Navigation is declarative via `GoRouter`. Add new routes in `lib/config/router.dart`.
-- Analytics calls go through `AnalyticsService` (wraps PostHog). Do not call PostHog directly.
 - Linting is enforced by `very_good_analysis`. Fix any new lint warnings before committing.
 - No comments unless the reason is non-obvious. Code should be self-documenting via naming.
 
