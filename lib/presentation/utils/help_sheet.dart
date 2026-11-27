@@ -25,6 +25,9 @@ class HelpSheet extends StatelessWidget {
     await showModalBottomSheet<void>(
       context: context,
       anchorPoint: foldAwareAnchor(context),
+      // A screen in a pane of the split view has a navigator of its own, but
+      // Flutter places sheets around the fold in window coordinates.
+      useRootNavigator: true,
       useSafeArea: true,
       isScrollControlled: true,
       builder: (context) {

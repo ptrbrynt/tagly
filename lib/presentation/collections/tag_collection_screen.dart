@@ -73,6 +73,7 @@ class TagCollectionScreen extends StatelessWidget {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
       anchorPoint: foldAwareAnchor(context),
+      useRootNavigator: true,
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(

@@ -418,6 +418,31 @@ void main() {
       expect(menu.right, lessThanOrEqualTo(_wide.width - 84));
     });
 
+    testWidgets('opens a sheet from the tag pane on its page of the fold', (
+      tester,
+    ) async {
+      tester.view.displayFeatures = [
+        const DisplayFeature(
+          bounds: Rect.fromLTRB(455.5, 0, 495.5, 669),
+          type: DisplayFeatureType.fold,
+          state: DisplayFeatureState.postureHalfOpened,
+        ),
+      ];
+      addTearDown(tester.view.resetDisplayFeatures);
+      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+
+      await tester.tap(find.byIcon(Icons.more_vert_rounded));
+      await _settle(tester);
+      await tester.tap(find.text('Share'));
+      await _settle(tester);
+      await tester.tap(find.text('What do I choose?'));
+      await _settle(tester);
+
+      final sheet = tester.getRect(find.byType(BottomSheet));
+      expect(sheet.left, greaterThanOrEqualTo(495.5));
+      expect(sheet.width, greaterThan(300));
+    });
+
     testWidgets('moves the search view buttons into the vertical bar', (
       tester,
     ) async {
