@@ -55,64 +55,76 @@ class VerticalBarControls extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bar = VerticalBarScope.of(context);
-    if (bar == null || !WindowEdges.reaches(context, bar.edge)) {
-      return builder(context, inVerticalBar: false);
-    }
-    final groups = [
-      for (final group in this.groups)
-        if (group.isNotEmpty) group,
-    ];
-    final column = bar.controls;
-    // Groups placed by an enclosing layout come first in the column.
     final placedAbove = _PlacedControls.heightOf(context);
+    final inVerticalBar = bar != null && WindowEdges.reaches(context, bar.edge);
+    final groups = [
+      if (inVerticalBar)
+        for (final group in this.groups)
+          if (group.isNotEmpty) group,
+    ];
     final ownHeight = groups.fold<double>(
       0,
       (height, group) => height + _SideCapsule.heightOf(group) + _groupSpacing,
     );
-    // The column is in window coordinates. This subtree starts at the top of
-    // the window and reaches the bar's edge, so measure from those.
-    final windowWidth = MediaQuery.sizeOf(context).width;
+    // The content keeps the same place in the tree whether or not the bar is
+    // showing, so its state survives the device opening and closing.
     return Stack(
       children: [
         Positioned.fill(
           child: _PlacedControls(
             height: placedAbove + ownHeight,
-            child: builder(context, inVerticalBar: true),
+            child: builder(context, inVerticalBar: inVerticalBar),
           ),
         ),
-        Positioned(
-          left: bar.edge == VerticalBarEdge.left ? column.left : null,
-          right: bar.edge == VerticalBarEdge.right
-              ? windowWidth - column.right
-              : null,
-          top: column.top + placedAbove,
-          width: column.width,
-          height: (column.height - placedAbove).clamp(0, double.infinity),
-          child: Column(
-            spacing: _groupSpacing,
-            children: [
-              for (final group in groups) _SideCapsule(controls: group),
-            ],
-          ),
-        ),
+        if (inVerticalBar) _column(context, bar, placedAbove, groups),
       ],
+    );
+  }
+
+  Widget _column(
+    BuildContext context,
+    VerticalBar bar,
+    double placedAbove,
+    List<List<Widget>> groups,
+  ) {
+    final column = bar.controls;
+    // The column is in window coordinates. This subtree starts at the top of
+    // the window and reaches the bar's edge, so measure from those.
+    final windowWidth = MediaQuery.sizeOf(context).width;
+    return Positioned(
+      left: bar.edge == VerticalBarEdge.left ? column.left : null,
+      right: bar.edge == VerticalBarEdge.right
+          ? windowWidth - column.right
+          : null,
+      top: column.top + placedAbove,
+      width: column.width,
+      height: (column.height - placedAbove).clamp(0, double.infinity),
+      child: Column(
+        spacing: _groupSpacing,
+        children: [for (final group in groups) _SideCapsule(controls: group)],
+      ),
     );
   }
 }
 
 const _groupSpacing = 8.0;
 
-/// Marks a subtree whose back button an enclosing layout already shows, so
-/// [VerticalBarScaffold]s inside it leave theirs out.
+/// Marks a subtree whose back button an enclosing layout already shows, while
+/// [isShown], so [VerticalBarScaffold]s inside it leave theirs out.
 class LeadingShownElsewhere extends InheritedWidget {
-  const new({required super.child, super.key});
+  const new({required this.isShown, required super.child, super.key});
+
+  final bool isShown;
 
   static bool applies(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<LeadingShownElsewhere>() !=
-      null;
+      context
+          .dependOnInheritedWidgetOfExactType<LeadingShownElsewhere>()
+          ?.isShown ??
+      false;
 
   @override
-  bool updateShouldNotify(LeadingShownElsewhere oldWidget) => false;
+  bool updateShouldNotify(LeadingShownElsewhere oldWidget) =>
+      isShown != oldWidget.isShown;
 }
 
 /// The height of controls already placed at the top of the vertical bar's
@@ -174,15 +186,13 @@ class VerticalBarScaffold extends StatelessWidget {
                 title: title,
                 actions: actions,
               ),
-        body: inVerticalBar
-            ? Column(
-                crossAxisAlignment: .stretch,
-                children: [
-                  _TitleHeader(title: title),
-                  Expanded(child: body),
-                ],
-              )
-            : body,
+        body: Column(
+          crossAxisAlignment: .stretch,
+          children: [
+            if (inVerticalBar) _TitleHeader(title: title),
+            Expanded(key: const ValueKey('body'), child: body),
+          ],
+        ),
         floatingActionButton: floatingActionButton,
       ),
     );

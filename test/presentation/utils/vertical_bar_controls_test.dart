@@ -103,6 +103,43 @@ void main() {
       expect(tester.getCenter(find.byType(BackButton)).dx, 903);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
+    testWidgets('keeps body state when the bar comes and goes', (
+      tester,
+    ) async {
+      tester.view
+        ..physicalSize = _window
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final bar = ValueNotifier<VerticalBar?>(null);
+      addTearDown(bar.dispose);
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ValueListenableBuilder(
+            valueListenable: bar,
+            builder: (context, verticalBar, child) => VerticalBarScope(
+              verticalBar: verticalBar,
+              child: child!,
+            ),
+            child: const VerticalBarScaffold(
+              title: Text('Search'),
+              body: TextField(),
+            ),
+          ),
+        ),
+      );
+      await tester.enterText(find.byType(TextField), 'sing');
+      final field = tester.state(find.byType(TextField));
+
+      bar.value = _rightBar;
+      await tester.pump();
+      expect(tester.state(find.byType(TextField)), same(field));
+
+      bar.value = null;
+      await tester.pump();
+      expect(tester.state(find.byType(TextField)), same(field));
+      expect(find.text('sing'), findsOneWidget);
+    });
+
     testWidgets('keeps a top bar in a pane away from the bar edge', (
       tester,
     ) async {

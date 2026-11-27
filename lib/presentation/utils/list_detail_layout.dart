@@ -45,13 +45,12 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
     if (!fitsTwoPanes(context)) return widget.detail;
     final backInBar =
         VerticalBarScope.of(context)?.edge == VerticalBarEdge.right;
-    if (!backInBar) return _panes(context, backInBar: false);
     return VerticalBarControls(
       groups: [
-        [BackButton(onPressed: widget.onBack)],
+        if (backInBar) [BackButton(onPressed: widget.onBack)],
       ],
       builder: (context, {required inVerticalBar}) =>
-          _panes(context, backInBar: true),
+          _panes(context, backInBar: backInBar),
     );
   }
 
@@ -70,7 +69,7 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
               left: true,
               right: false,
               child: ScaffoldMessenger(
-                child: backInBar ? LeadingShownElsewhere(child: list) : list,
+                child: LeadingShownElsewhere(isShown: backInBar, child: list),
               ),
             ),
           ),
