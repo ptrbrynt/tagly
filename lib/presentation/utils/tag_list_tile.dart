@@ -6,9 +6,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 
 class TagListTile extends StatelessWidget {
-  const new({required this.tag, super.key});
+  const new({required this.tag, this.onTap, this.selected = false, super.key});
 
   final BarbershopTag tag;
+  final VoidCallback? onTap;
+  final bool selected;
 
   NumberFormat get _downloadsFmt => NumberFormat.compact();
 
@@ -18,6 +20,7 @@ class TagListTile extends StatelessWidget {
     final colorScheme = theme.colorScheme;
 
     return ListTile(
+      selected: selected,
       title: Text(tag.title),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -81,9 +84,11 @@ class TagListTile extends StatelessWidget {
         ],
       ),
       trailing: const Icon(Icons.chevron_right_rounded),
-      onTap: () {
-        unawaited(context.push('/tag?id=${tag.id}'));
-      },
+      onTap:
+          onTap ??
+          () {
+            unawaited(context.push('/tag?id=${tag.id}'));
+          },
     );
   }
 }

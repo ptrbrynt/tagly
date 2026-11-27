@@ -162,6 +162,7 @@ class TagsRepository extends ChangeNotifier {
       );
 
       unawaited(cacheTag(id));
+      notifyListeners();
 
       return const .ok(null);
     } on DatabaseException catch (e) {
@@ -177,6 +178,7 @@ class TagsRepository extends ChangeNotifier {
         where: 'id = ?',
         whereArgs: [id],
       );
+      notifyListeners();
 
       return const .ok(null);
     } on DatabaseException catch (e) {
@@ -201,6 +203,7 @@ class TagsRepository extends ChangeNotifier {
     try {
       await _db.insert('list_tags', {'tag_id': tagId, 'list_id': listId});
       unawaited(cacheTag(tagId));
+      notifyListeners();
       return const .ok(null);
     } on DatabaseException catch (e) {
       return .failure(e.toString());
@@ -217,6 +220,7 @@ class TagsRepository extends ChangeNotifier {
         where: 'tag_id = ? AND list_id = ?',
         whereArgs: [tagId, listId],
       );
+      notifyListeners();
       return const .ok(null);
     } on DatabaseException catch (e) {
       return .failure(e.toString());

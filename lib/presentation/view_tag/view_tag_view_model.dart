@@ -7,6 +7,7 @@ import 'package:tagly/domain/result.dart';
 
 class ViewTagViewModel extends ChangeNotifier {
   new({required this._repository, required this.tagId}) {
+    _repository.addListener(_reload);
     unawaited(load());
   }
 
@@ -17,19 +18,29 @@ class ViewTagViewModel extends ChangeNotifier {
   Result<BarbershopTag>? get result => _result;
 
   Future<void> load() async {
-    _result = await _repository.getTagById(tagId);
+    final result = await _repository.getTagById(tagId);
+    if (_isDisposed) return;
+    _result = result;
     notifyListeners();
   }
 
-  Future<Result<void>> addToFavorites() {
-    return _repository.addToFavorites(tagId).whenComplete(load);
-  }
+  bool _isDisposed = false;
 
-  Future<Result<void>> removeFromFavorites() {
-    return _repository.removeFromFavorites(tagId).whenComplete(load);
-  }
+  void _reload() => unawaited(load());
+
+  Future<Result<void>> addToFavorites() => _repository.addToFavorites(tagId);
+
+  Future<Result<void>> removeFromFavorites() =>
+      _repository.removeFromFavorites(tagId);
 
   Future<Result<void>> addTagToList(int listId) {
     return _repository.addTagToList(tagId: tagId, listId: listId);
+  }
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _repository.removeListener(_reload);
+    super.dispose();
   }
 }

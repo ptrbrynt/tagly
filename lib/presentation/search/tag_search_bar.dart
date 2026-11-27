@@ -5,13 +5,28 @@ import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/search_filters_sheet.dart';
+import 'package:tagly/presentation/utils/fold_display_feature.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class TagSearchBar extends StatefulWidget {
-  const new({required this.repository, super.key});
+  const new({
+    required this.repository,
+    required this.onTagSelected,
+    required this.onResultSelected,
+    super.key,
+  });
 
   final TagsRepository repository;
+
+  /// Opens a tag over the search results, which stay open beneath it.
+  final ValueChanged<int> onTagSelected;
+
+  /// Opens a tag beside the results of [TagSearchQuery], on windows wide
+  /// enough for two panes. The search view closes first.
+  final void Function(TagSearchQuery query, int tagId) onResultSelected;
 
   @override
   State<TagSearchBar> createState() => _TagSearchBarState();
@@ -36,33 +51,36 @@ class _TagSearchBarState extends State<TagSearchBar> {
       searchController: _searchController,
       barHintText: 'Search or enter an ID...',
 
+      // While the system's vertical bar shows, the search view's buttons
+      // move into its column, as the app's other bars do, and only the field
+      // and its clear button stay at the top. The search view keeps the
+      // widgets it opened with, so each decides when it builds, as the bar
+      // comes and goes with the device opening and closing.
+      viewLeading: Builder(
+        builder: (context) => _inVerticalBar(context)
+            ? SizedBox(width: cornerPadding(context).left)
+            : const BackButton(),
+      ),
       viewTrailing: [
-        ValueListenableBuilder<TagSearchQuery>(
-          valueListenable: _queryNotifier,
-          builder: (context, query, _) {
-            return (query.text?.isNotEmpty ?? false)
-                ? IconButton(
-                    icon: const Icon(Icons.clear_rounded),
-                    onPressed: _searchController.clear,
-                  )
-                : const SizedBox.shrink();
-          },
-        ),
-        ValueListenableBuilder<TagSearchQuery>(
-          valueListenable: _queryNotifier,
-          builder: (context, query, _) => IconButton(
-            icon: Badge(
-              isLabelVisible: query.hasFilters,
-              child: const Icon(Icons.filter_list_rounded),
-            ),
-            onPressed: _showFilters,
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.help_outline_rounded),
-          onPressed: _showHelp,
-        ),
+        _clearButton(),
+        _outsideVerticalBar(_filterButton()),
+        _outsideVerticalBar(_helpButton()),
       ],
+      viewBuilder: (suggestions) => VerticalBarControls(
+        groups: [
+          const [BackButton()],
+          [_filterButton(), _helpButton()],
+        ],
+        builder: (context, {required inVerticalBar}) =>
+            MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListView(
+                padding: .only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+                children: suggestions.toList(),
+              ),
+            ),
+      ),
       suggestionsBuilder: (context, controller) async {
         _queryNotifier.value = _queryNotifier.value.copyWith(
           text: controller.text.trim(),
@@ -72,15 +90,73 @@ class _TagSearchBarState extends State<TagSearchBar> {
 
         return switch (result) {
           Failure() => const [],
-          Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
+          Ok(:final value) => [
+            for (final tag in value)
+              TagListTile(tag: tag, onTap: () => _open(tag.id)),
+          ],
         };
       },
     );
   }
 
+  static bool _inVerticalBar(BuildContext context) =>
+      VerticalBarScope.of(context) != null;
+
+  static Widget _outsideVerticalBar(Widget child) => Builder(
+    builder: (context) =>
+        _inVerticalBar(context) ? const SizedBox.shrink() : child,
+  );
+
+  Widget _clearButton() {
+    return ValueListenableBuilder<TagSearchQuery>(
+      valueListenable: _queryNotifier,
+      builder: (context, query, _) {
+        return (query.text?.isNotEmpty ?? false)
+            ? IconButton(
+                icon: const Icon(Icons.clear_rounded),
+                onPressed: _searchController.clear,
+              )
+            : const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _filterButton() {
+    return ValueListenableBuilder<TagSearchQuery>(
+      valueListenable: _queryNotifier,
+      builder: (context, query, _) => IconButton(
+        icon: Badge(
+          isLabelVisible: query.hasFilters,
+          child: const Icon(Icons.filter_list_rounded),
+        ),
+        tooltip: 'Filters',
+        onPressed: _showFilters,
+      ),
+    );
+  }
+
+  Widget _helpButton() {
+    return IconButton(
+      icon: const Icon(Icons.help_outline_rounded),
+      tooltip: 'Help',
+      onPressed: _showHelp,
+    );
+  }
+
+  void _open(int tagId) {
+    if (!fitsTwoPanes(context)) {
+      widget.onTagSelected(tagId);
+      return;
+    }
+    final query = _queryNotifier.value;
+    _searchController.closeView(_searchController.text);
+    widget.onResultSelected(query, tagId);
+  }
+
   Future<void> _showFilters() async {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
+      anchorPoint: foldAwareAnchor(context),
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(

@@ -49,8 +49,10 @@ abstract class TagSearchQuery with _$TagSearchQuery {
 
   String asQueryParameters() {
     final params = <String>[
-      if (text != null && text!.isNotEmpty) 'text=$text',
-      for (final item in (voicings ?? [])) ...['voicings[]=$item'],
+      if (text != null && text!.isNotEmpty)
+        'text=${Uri.encodeQueryComponent(text!)}',
+      for (final item in voicings ?? const <String>[])
+        'voicings[]=${Uri.encodeQueryComponent(item)}',
       for (final item in (numParts ?? [])) ...['numParts[]=$item'],
       'sortOrder=${sortOrder.name}',
       if (limit != null) 'limit=$limit',

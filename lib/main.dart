@@ -16,12 +16,16 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
 import 'package:tagly/config/theme.dart';
+import 'package:tagly/data/fold_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
+import 'package:tagly/data/vertical_bar_repository.dart';
 import 'package:tagly/db/database.dart';
 import 'package:tagly/db/legacy/legacy_db.dart';
 import 'package:tagly/db/legacy/legacy_migration_repository.dart';
 import 'package:tagly/domain/result.dart';
+import 'package:tagly/presentation/utils/fold_display_feature.dart';
 import 'package:tagly/presentation/utils/initial_sync_widget.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -156,10 +160,16 @@ class _MainAppState extends State<MainApp> {
                 ),
               );
             }
-            // extended_image and posthog_flutter still use
-            // package:flutter/material.dart and need the theme bridged.
-            // ignore: deprecated_member_use
-            return MaterialUiCompatibilityBridge(child: child!);
+            return FoldDisplayFeature(
+              fold: context.watch<FoldRepository>().activeFold,
+              child: VerticalBarScope(
+                verticalBar: context.watch<VerticalBarRepository>().verticalBar,
+                // extended_image and posthog_flutter still use
+                // package:flutter/material.dart and need the theme bridged.
+                // ignore: deprecated_member_use
+                child: MaterialUiCompatibilityBridge(child: child!),
+              ),
+            );
           },
         );
       },

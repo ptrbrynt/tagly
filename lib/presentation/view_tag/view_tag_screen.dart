@@ -1,21 +1,24 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tagly/data/fold_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/fold_aware_dialogs.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
+import 'package:tagly/presentation/view_tag/tabletop_column.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -26,6 +29,9 @@ class ViewTagScreen extends StatefulWidget {
     required this.listsViewModel,
     required this.cacheManager,
     required this.sharePlus,
+    required this.foldRepository,
+    required this.onShowDetails,
+    this.showsBackButton = true,
     super.key,
   });
 
@@ -34,6 +40,9 @@ class ViewTagScreen extends StatefulWidget {
   final ListsViewModel listsViewModel;
   final CacheManager cacheManager;
   final SharePlus sharePlus;
+  final FoldRepository foldRepository;
+  final VoidCallback onShowDetails;
+  final bool showsBackButton;
 
   @override
   State<ViewTagScreen> createState() => _ViewTagScreenState();
@@ -41,6 +50,12 @@ class ViewTagScreen extends StatefulWidget {
 
 class _ViewTagScreenState extends State<ViewTagScreen> {
   late final ViewTagViewModel _viewModel;
+  late final Listenable _changes;
+
+  // Keep the sheet music and the player (and its audio) alive when they move
+  // into and out of the tabletop layout.
+  final GlobalKey _sheetMusicKey = GlobalKey();
+  final GlobalKey _tracksPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -49,6 +64,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       repository: widget.tagsRepository,
       tagId: widget.tagId,
     );
+    _changes = Listenable.merge([_viewModel, widget.foldRepository]);
   }
 
   @override
@@ -60,52 +76,71 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _viewModel,
+      listenable: _changes,
       builder: (context, _) {
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('#${widget.tagId}'),
-            actions: [
-              if (_viewModel.result case Ok(:final value)) ...[
-                _favoriteToggle(context),
-                _tagMenu(context, value),
-              ],
+        return VerticalBarScaffold(
+          automaticallyImplyLeading: widget.showsBackButton,
+          title: Text('#${widget.tagId}'),
+          actions: [
+            if (_viewModel.result case Ok(:final value)) ...[
+              _favoriteToggle(context),
+              _tagMenu(context, value),
             ],
-          ),
+          ],
           body: switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
-            Ok(:final value) => switch (value.sheetMusicUrl) {
-              null => const SizedBox.shrink(),
-              final url => SizedBox.expand(
-                child: SheetMusicViewer(
-                  url: url,
-                  cacheManager: widget.cacheManager,
-                ),
-              ),
-            },
-          },
-          bottomNavigationBar: switch (_viewModel.result) {
-            Ok(:final value) => _tracksPlayer(context, value),
-            _ => null,
+            Ok(:final value) => TabletopColumn(
+              fold: widget.foldRepository.activeFold,
+              content: _sheetMusic(value),
+              controls: value.learningTracks.isEmpty
+                  ? null
+                  : ({required isTabletop}) =>
+                        _tracksPlayer(context, value, isTabletop: isTabletop),
+            ),
           },
         );
       },
     );
   }
 
-  Widget? _tracksPlayer(BuildContext context, BarbershopTag value) {
-    if (value.learningTracks.isEmpty) return null;
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      child: SafeArea(
-        child: Padding(
-          padding: const .all(16),
-          child: LearningTrackPlayer(
-            tracks: value.learningTracks,
+  Widget _sheetMusic(BarbershopTag value) {
+    return switch (value.sheetMusicUrl) {
+      null => const SizedBox.shrink(),
+      final url => SafeArea(
+        top: false,
+        bottom: false,
+        child: SizedBox.expand(
+          child: SheetMusicViewer(
+            key: _sheetMusicKey,
+            url: url,
             cacheManager: widget.cacheManager,
           ),
         ),
+      ),
+    };
+  }
+
+  Widget _tracksPlayer(
+    BuildContext context,
+    BarbershopTag value, {
+    required bool isTabletop,
+  }) {
+    final player = Padding(
+      padding: isShortWindow(context)
+          ? const .symmetric(horizontal: 16, vertical: 4)
+          : const .all(16),
+      child: LearningTrackPlayer(
+        key: _tracksPlayerKey,
+        tracks: value.learningTracks,
+        cacheManager: widget.cacheManager,
+      ),
+    );
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: isTabletop ? Center(child: player) : player,
       ),
     );
   }
@@ -137,6 +172,11 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     return PositionOriginProvider(
       builder: (context, origin) {
         return MenuAnchor(
+          // In the split view this screen sits in a pane with its own
+          // overlay. Flutter places menus there by mixing pane coordinates
+          // with window ones for the fold, which runs the menu under the
+          // vertical bar. The root overlay uses window coordinates throughout.
+          useRootOverlay: true,
           builder: (context, controller, child) => IconButton(
             icon: const Icon(Icons.more_vert_rounded),
             onPressed: controller.open,
@@ -144,9 +184,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           menuChildren: [
             MenuItemButton(
               leadingIcon: const Icon(Icons.info_outline_rounded),
-              onPressed: () {
-                context.go('tag/details?id=${tag.id}');
-              },
+              onPressed: widget.onShowDetails,
               child: const Text('Tag Details'),
             ),
             ListenableBuilder(
@@ -272,19 +310,13 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   }
 
   Future<void> _createList() async {
-    final promptResult = await showTextInputDialog(
+    final listName = await showTextPromptDialog(
       context: context,
       title: 'New List',
-      textFields: [
-        const DialogTextField(
-          hintText: 'Awesome Tags',
-          textCapitalization: .words,
-        ),
-      ],
+      hintText: 'Awesome Tags',
+      textCapitalization: .words,
     );
-    if (promptResult == null || promptResult.isEmpty) return;
-
-    final listName = promptResult.first;
+    if (listName == null || !mounted) return;
 
     final result = await widget.listsViewModel.createList(listName);
 

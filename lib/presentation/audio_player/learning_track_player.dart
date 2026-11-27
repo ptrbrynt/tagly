@@ -2,6 +2,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/audio_player/audio_player_widget.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
+
+const _rowLayoutMinWidth = 600.0;
 
 class LearningTrackPlayer extends StatefulWidget {
   const new({required this.tracks, required this.cacheManager, super.key});
@@ -15,6 +18,7 @@ class LearningTrackPlayer extends StatefulWidget {
 
 class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
   late String _selectedTrack;
+  final GlobalKey _audioPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -34,31 +38,38 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
 
   @override
   Widget build(BuildContext context) {
-    final orientation = MediaQuery.orientationOf(context);
-    return switch (orientation) {
-      .portrait => Column(
-        mainAxisSize: .min,
-        crossAxisAlignment: .stretch,
-        children: [
-          Align(alignment: .topLeft, child: _trackPicker()),
-          const SizedBox(height: 8),
-          _audioPlayer(),
-        ],
-      ),
-      .landscape => IntrinsicHeight(
-        child: Row(
-          children: [
-            _trackPicker(),
-            const VerticalDivider(width: 40),
-            Expanded(child: _audioPlayer()),
-          ],
-        ),
-      ),
-    };
+    final isShort = isShortWindow(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // A short window can't spare a second row, so the picker sits beside
+        // the player however narrow the window is.
+        if (constraints.maxWidth < _rowLayoutMinWidth && !isShort) {
+          return Column(
+            mainAxisSize: .min,
+            crossAxisAlignment: .stretch,
+            children: [
+              Align(alignment: .topLeft, child: _trackPicker()),
+              const SizedBox(height: 8),
+              _audioPlayer(),
+            ],
+          );
+        }
+        return IntrinsicHeight(
+          child: Row(
+            children: [
+              _trackPicker(),
+              VerticalDivider(width: isShort ? 24 : 40),
+              Expanded(child: _audioPlayer()),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   Widget _audioPlayer() {
     return AudioPlayerWidget(
+      key: _audioPlayerKey,
       url: widget.tracks[_selectedTrack]!,
       cacheManager: widget.cacheManager,
     );

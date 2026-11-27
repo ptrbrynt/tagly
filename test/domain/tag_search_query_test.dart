@@ -64,6 +64,14 @@ void main() {
         expect(decoded.text, original.text);
       });
 
+      test('round-trips text with reserved characters', () {
+        const original = TagSearchQuery(text: 'Sweet & Low #1?');
+        final decoded = TagSearchQuery.fromQueryParameters(
+          _split(original.asQueryParameters()),
+        );
+        expect(decoded.text, original.text);
+      });
+
       test('round-trips voicings', () {
         const original = TagSearchQuery(voicings: ['Barbershop', 'Mixed']);
         final decoded = TagSearchQuery.fromQueryParameters(
@@ -145,7 +153,7 @@ Map<String, List<String>> _split(String qs) {
     if (pair.isEmpty) continue;
     final idx = pair.indexOf('=');
     final key = pair.substring(0, idx);
-    final value = pair.substring(idx + 1);
+    final value = Uri.decodeQueryComponent(pair.substring(idx + 1));
     result.putIfAbsent(key, () => []).add(value);
   }
   return result;

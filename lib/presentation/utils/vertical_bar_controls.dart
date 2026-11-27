@@ -1,0 +1,344 @@
+import 'dart:math' as math;
+
+import 'package:material_ui/material_ui.dart';
+import 'package:tagly/domain/vertical_bar.dart';
+
+/// Makes the system's vertical bar available to the widgets below it, as
+/// [MediaQuery] does for other window metrics.
+class VerticalBarScope extends InheritedWidget {
+  const new({required this.verticalBar, required super.child, super.key});
+
+  final VerticalBar? verticalBar;
+
+  static VerticalBar? of(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<VerticalBarScope>()
+      ?.verticalBar;
+
+  @override
+  bool updateShouldNotify(VerticalBarScope oldWidget) =>
+      verticalBar != oldWidget.verticalBar;
+}
+
+/// Space to add, beyond the safe area, before content along the top edge of
+/// this subtree so a rounded display corner doesn't cut into it. Only the
+/// edges this subtree shares with the window have corners to clear.
+EdgeInsets cornerPadding(BuildContext context) {
+  final corners = VerticalBarScope.of(context)?.cornerSafeArea;
+  if (corners == null) return EdgeInsets.zero;
+  final padding = MediaQuery.paddingOf(context);
+  return EdgeInsets.only(
+    left: WindowEdges.reaches(context, VerticalBarEdge.left)
+        ? math.max(corners.left - padding.left, 0)
+        : 0,
+    right: WindowEdges.reaches(context, VerticalBarEdge.right)
+        ? math.max(corners.right - padding.right, 0)
+        : 0,
+  );
+}
+
+/// Which edges of the window a subtree reaches. Panes laid out side by side
+/// reach one edge each; without this, a subtree reaches both.
+class WindowEdges extends InheritedWidget {
+  const new({
+    required this.left,
+    required this.right,
+    required super.child,
+    super.key,
+  });
+
+  final bool left;
+  final bool right;
+
+  static bool reaches(BuildContext context, VerticalBarEdge edge) {
+    final edges = context.dependOnInheritedWidgetOfExactType<WindowEdges>();
+    if (edges == null) return true;
+    return edge == VerticalBarEdge.left ? edges.left : edges.right;
+  }
+
+  @override
+  bool updateShouldNotify(WindowEdges oldWidget) =>
+      left != oldWidget.left || right != oldWidget.right;
+}
+
+/// Builds [builder], and while the system shows its vertical bar on an edge
+/// this subtree reaches, stacks [groups] of controls in the bar's column so
+/// they line up with the status bar and camera. Each group sits in its own
+/// capsule, as related controls share one in the native vertical bar.
+class VerticalBarControls extends StatefulWidget {
+  const new({required this.groups, required this.builder, super.key});
+
+  final List<List<Widget>> groups;
+  final Widget Function(BuildContext context, {required bool inVerticalBar})
+  builder;
+
+  @override
+  State<VerticalBarControls> createState() => _VerticalBarControlsState();
+}
+
+class _VerticalBarControlsState extends State<VerticalBarControls> {
+  // How far below the top of the window this subtree starts. Most start at
+  // the top; one below a header, as in the search view, measures it.
+  double _top = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final bar = VerticalBarScope.of(context);
+    final placedAbove = _PlacedControls.heightOf(context);
+    final inVerticalBar = bar != null && WindowEdges.reaches(context, bar.edge);
+    if (inVerticalBar) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measureTop());
+    }
+    final groups = [
+      if (inVerticalBar)
+        for (final group in widget.groups)
+          if (group.isNotEmpty) group,
+    ];
+    final ownHeight = groups.fold<double>(
+      0,
+      (height, group) => height + _SideCapsule.heightOf(group) + _groupSpacing,
+    );
+    // The content keeps the same place in the tree whether or not the bar is
+    // showing, so its state survives the device opening and closing.
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: _PlacedControls(
+            height: placedAbove + ownHeight,
+            child: widget.builder(context, inVerticalBar: inVerticalBar),
+          ),
+        ),
+        if (inVerticalBar) _column(context, bar, placedAbove, groups),
+      ],
+    );
+  }
+
+  Widget _column(
+    BuildContext context,
+    VerticalBar bar,
+    double placedAbove,
+    List<List<Widget>> groups,
+  ) {
+    final column = bar.controls;
+    // The column is in window coordinates. This subtree reaches the bar's
+    // edge of the window, so measure across from that edge, and down from
+    // where this subtree starts.
+    final windowWidth = MediaQuery.sizeOf(context).width;
+    final top = math.max(column.top - _top, 0) + placedAbove;
+    return Positioned(
+      left: bar.edge == VerticalBarEdge.left ? column.left : null,
+      right: bar.edge == VerticalBarEdge.right
+          ? windowWidth - column.right
+          : null,
+      top: top,
+      width: column.width,
+      height: math.max(column.bottom - _top - top, 0),
+      child: Column(
+        spacing: _groupSpacing,
+        children: [for (final group in groups) _SideCapsule(controls: group)],
+      ),
+    );
+  }
+
+  void _measureTop() {
+    if (!mounted) return;
+    final box = context.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return;
+    final top = box.localToGlobal(Offset.zero).dy;
+    if (top != _top) setState(() => _top = top);
+  }
+}
+
+const _groupSpacing = 8.0;
+
+/// Marks a subtree whose back button an enclosing layout already shows, while
+/// [isShown], so [VerticalBarScaffold]s inside it leave theirs out.
+class LeadingShownElsewhere extends InheritedWidget {
+  const new({required this.isShown, required super.child, super.key});
+
+  final bool isShown;
+
+  static bool applies(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<LeadingShownElsewhere>()
+          ?.isShown ??
+      false;
+
+  @override
+  bool updateShouldNotify(LeadingShownElsewhere oldWidget) =>
+      isShown != oldWidget.isShown;
+}
+
+/// The height of controls already placed at the top of the vertical bar's
+/// column by enclosing [VerticalBarControls].
+class _PlacedControls extends InheritedWidget {
+  const new({required this.height, required super.child});
+
+  final double height;
+
+  static double heightOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_PlacedControls>()?.height ??
+      0;
+
+  @override
+  bool updateShouldNotify(_PlacedControls oldWidget) =>
+      height != oldWidget.height;
+}
+
+/// A [Scaffold] whose top bar controls move into the system's vertical bar
+/// while it is shown, with the title moving into the content above [body].
+class VerticalBarScaffold extends StatelessWidget {
+  const new({
+    required this.title,
+    required this.body,
+    this.leading,
+    this.actions = const [],
+    this.automaticallyImplyLeading = true,
+    this.floatingActionButton,
+    super.key,
+  });
+
+  final Widget title;
+  final Widget body;
+  final Widget? leading;
+  final List<Widget> actions;
+  final bool automaticallyImplyLeading;
+  final Widget? floatingActionButton;
+
+  @override
+  Widget build(BuildContext context) {
+    final leading = LeadingShownElsewhere.applies(context)
+        ? null
+        : this.leading ??
+              (automaticallyImplyLeading &&
+                      (ModalRoute.of(context)?.impliesAppBarDismissal ?? false)
+                  ? const BackButton()
+                  : null);
+    return VerticalBarControls(
+      groups: [
+        [?leading],
+        actions,
+      ],
+      builder: (context, {required inVerticalBar}) => Scaffold(
+        appBar: inVerticalBar
+            ? null
+            : AppBar(
+                leading: leading,
+                automaticallyImplyLeading: false,
+                title: title,
+                actions: actions,
+              ),
+        body: Column(
+          crossAxisAlignment: .stretch,
+          children: [
+            if (inVerticalBar) _TitleHeader(title: title),
+            Expanded(key: const ValueKey('body'), child: body),
+          ],
+        ),
+        floatingActionButton: floatingActionButton,
+      ),
+    );
+  }
+}
+
+class _TitleHeader extends StatelessWidget {
+  const new({required this.title});
+
+  final Widget title;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return SafeArea(
+      bottom: false,
+      child: SizedBox(
+        height: kToolbarHeight,
+        child: Padding(
+          padding:
+              const EdgeInsets.symmetric(horizontal: 16) +
+              cornerPadding(context),
+          child: Align(
+            alignment: .centerLeft,
+            child: DefaultTextStyle(
+              style:
+                  theme.appBarTheme.titleTextStyle ??
+                  theme.textTheme.titleLarge!,
+              maxLines: 1,
+              overflow: .ellipsis,
+              child: title,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A raised capsule of icon buttons for the vertical bar: a tonal surface
+/// with a soft shadow, standing in for the glass the native controls sit on,
+/// in the theme's own colours.
+class _SideCapsule extends StatelessWidget {
+  const new({required this.controls});
+
+  final List<Widget> controls;
+
+  /// Apple's minimum tap target, which leaves the capsule inside the bar's
+  /// 48pt column.
+  static const _buttonSize = 44.0;
+
+  static double heightOf(List<Widget> controls) =>
+      controls.length * _buttonSize;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Material(
+      color: theme.brightness == Brightness.light
+          ? colors.surfaceContainerLowest
+          : colors.surfaceContainerHigh,
+      elevation: 2,
+      shadowColor: colors.shadow.withValues(alpha: 0.4),
+      surfaceTintColor: Colors.transparent,
+      shape: StadiumBorder(
+        side: BorderSide(color: colors.outlineVariant.withValues(alpha: 0.4)),
+      ),
+      clipBehavior: .antiAlias,
+      child: ActionIconTheme(
+        data: (ActionIconTheme.of(context) ?? const ActionIconThemeData())
+            .copyWith(backButtonIconBuilder: (_) => const _CentredBackIcon()),
+        child: IconButtonTheme(
+          data: IconButtonThemeData(
+            style: IconButton.styleFrom(
+              foregroundColor: colors.onSurface,
+              fixedSize: const Size.square(_buttonSize),
+              minimumSize: const Size.square(_buttonSize),
+              padding: .zero,
+              tapTargetSize: .shrinkWrap,
+            ),
+          ),
+          child: Column(mainAxisSize: .min, children: controls),
+        ),
+      ),
+    );
+  }
+}
+
+/// The back chevron, moved to look centred in a round button. Centred by its
+/// strokes, it looks pushed toward its open side, so it moves toward its
+/// point. The offset was judged by eye on the iPhone Duo simulator.
+class _CentredBackIcon extends StatelessWidget {
+  const new();
+
+  static const _opticalOffset = -1.5;
+
+  @override
+  Widget build(BuildContext context) {
+    return switch (Theme.of(context).platform) {
+      TargetPlatform.iOS || TargetPlatform.macOS => Transform.translate(
+        offset: const Offset(_opticalOffset, 0),
+        child: const Icon(Icons.arrow_back_ios_new_rounded),
+      ),
+      _ => const Icon(Icons.arrow_back),
+    };
+  }
+}

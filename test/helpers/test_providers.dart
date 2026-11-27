@@ -7,6 +7,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:tagly/config/analytics_service.dart';
 import 'package:tagly/config/providers.dart';
+import 'package:tagly/config/router.dart';
+import 'package:tagly/data/fold_repository.dart';
+import 'package:tagly/data/vertical_bar_repository.dart';
 
 import 'fake_analytics_service.dart';
 import 'fake_cache_manager.dart';
@@ -21,8 +24,16 @@ Future<List<SingleChildWidget>> getTestProviders({
     Provider<Dio>(create: (_) => Dio()),
     Provider<AnalyticsService>(create: (_) => FakeAnalyticsService()),
     Provider<Database>.value(value: db),
-    Provider<List<NavigatorObserver>>.value(value: const []),
+    Provider<NavigatorObserversFactory>.value(
+      value: () => <NavigatorObserver>[],
+    ),
     Provider<SharedPreferences>(create: (_) => FakeSharedPreferences()),
+    ChangeNotifierProvider(
+      create: (_) => FoldRepository(regionEvents: const Stream.empty()),
+    ),
+    ChangeNotifierProvider(
+      create: (_) => VerticalBarRepository(events: const Stream.empty()),
+    ),
     ...appProviders,
     ...overrides,
   ];

@@ -95,54 +95,65 @@ class _SearchFiltersSheetState extends State<SearchFiltersSheet> {
               TextButton(onPressed: _reset, child: const Text('Reset')),
             ],
           ),
-          const SizedBox(height: 16),
-          Text('Sort by', style: theme.textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (final order in TagSortOrder.values)
-                ChoiceChip(
-                  label: Text(_sortLabel(order)),
-                  selected: _sortOrder == order,
-                  onSelected: (_) => setState(() => _sortOrder = order),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text('Number of parts', style: theme.textTheme.titleSmall),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 8,
-            children: [
-              for (final n in [2, 3, 4, 5, 6, 7, 8])
-                FilterChip(
-                  label: Text('$n parts'),
-                  selected: _numParts.contains(n),
-                  onSelected: (selected) => setState(() {
-                    selected ? _numParts.add(n) : _numParts.remove(n);
-                  }),
-                ),
-            ],
-          ),
-          if (_voicingOptions.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Text('Voicing', style: theme.textTheme.titleSmall),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              children: [
-                for (final i in _voicingOptions)
-                  FilterChip(
-                    label: Text(i),
-                    selected: _voicings.contains(i),
-                    onSelected: (selected) => setState(() {
-                      selected ? _voicings.add(i) : _voicings.remove(i);
-                    }),
+          // Scrolls when the sheet is short, as on one side of a fold, so
+          // the apply button stays in reach.
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 16),
+                  Text('Sort by', style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      for (final order in TagSortOrder.values)
+                        ChoiceChip(
+                          label: Text(_sortLabel(order)),
+                          selected: _sortOrder == order,
+                          onSelected: (_) => setState(() => _sortOrder = order),
+                        ),
+                    ],
                   ),
-              ],
+                  const SizedBox(height: 16),
+                  Text('Number of parts', style: theme.textTheme.titleSmall),
+                  const SizedBox(height: 8),
+                  Wrap(
+                    spacing: 8,
+                    children: [
+                      for (final n in [2, 3, 4, 5, 6, 7, 8])
+                        FilterChip(
+                          label: Text('$n parts'),
+                          selected: _numParts.contains(n),
+                          onSelected: (selected) => setState(() {
+                            selected ? _numParts.add(n) : _numParts.remove(n);
+                          }),
+                        ),
+                    ],
+                  ),
+                  if (_voicingOptions.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text('Voicing', style: theme.textTheme.titleSmall),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 8,
+                      children: [
+                        for (final i in _voicingOptions)
+                          FilterChip(
+                            label: Text(i),
+                            selected: _voicings.contains(i),
+                            onSelected: (selected) => setState(() {
+                              selected ? _voicings.add(i) : _voicings.remove(i);
+                            }),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
             ),
-          ],
+          ),
           const SizedBox(height: 8),
           FilledButton(onPressed: _apply, child: const Text('Apply filters')),
           const SafeArea(top: false, child: SizedBox(height: 16)),
