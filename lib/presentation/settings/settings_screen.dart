@@ -1,10 +1,10 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/settings_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/presentation/settings/analytics_toggle.dart';
+import 'package:tagly/presentation/utils/fold_aware_dialogs.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -131,7 +131,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Future<void> _clearCache(BuildContext context) async {
-    final confirmResult = await showOkCancelAlertDialog(
+    final confirmed = await showConfirmDialog(
       context: context,
       title: 'Are you sure?',
       message:
@@ -140,7 +140,7 @@ class SettingsScreen extends StatelessWidget {
     );
 
     if (!context.mounted) return;
-    if (confirmResult != OkCancelResult.ok) return;
+    if (!confirmed) return;
 
     await settingsRepository.clearCache();
 

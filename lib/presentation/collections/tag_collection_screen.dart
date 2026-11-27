@@ -72,7 +72,7 @@ class TagCollectionScreen extends StatelessWidget {
   Future<void> _showFilters(BuildContext context) async {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
-      anchorPoint: foldAwareSheetAnchor(context),
+      anchorPoint: foldAwareAnchor(context),
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(

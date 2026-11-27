@@ -24,7 +24,7 @@ class HelpSheet extends StatelessWidget {
   }) async {
     await showModalBottomSheet<void>(
       context: context,
-      anchorPoint: foldAwareSheetAnchor(context),
+      anchorPoint: foldAwareAnchor(context),
       useSafeArea: true,
       isScrollControlled: true,
       builder: (context) {

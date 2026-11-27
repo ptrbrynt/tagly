@@ -33,13 +33,15 @@ class FoldDisplayFeature extends StatelessWidget {
   }
 }
 
-/// Where a sheet should go when a fold divides the window: the trailing page
-/// of a book, or the base of a device propped on a table, where controls are
-/// steadiest to tap.
-Offset foldAwareSheetAnchor(BuildContext context) {
+/// Where a sheet or dialog should go when a fold divides the window: the
+/// trailing page of a book, or the base of a device propped on a table, where
+/// controls are steadiest to tap. Anything that brings up the keyboard goes
+/// above a tabletop fold instead, since the keyboard covers the base.
+Offset foldAwareAnchor(BuildContext context, {bool isAboveKeyboard = false}) {
   final size = MediaQuery.sizeOf(context);
+  final y = isAboveKeyboard ? 0.0 : size.height;
   return switch (Directionality.of(context)) {
-    TextDirection.ltr => Offset(size.width, size.height),
-    TextDirection.rtl => Offset(0, size.height),
+    TextDirection.ltr => Offset(size.width, y),
+    TextDirection.rtl => Offset(0, y),
   };
 }

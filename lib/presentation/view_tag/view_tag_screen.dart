@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
@@ -12,6 +11,7 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
+import 'package:tagly/presentation/utils/fold_aware_dialogs.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
@@ -305,19 +305,13 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   }
 
   Future<void> _createList() async {
-    final promptResult = await showTextInputDialog(
+    final listName = await showTextPromptDialog(
       context: context,
       title: 'New List',
-      textFields: [
-        const DialogTextField(
-          hintText: 'Awesome Tags',
-          textCapitalization: .words,
-        ),
-      ],
+      hintText: 'Awesome Tags',
+      textCapitalization: .words,
     );
-    if (promptResult == null || promptResult.isEmpty) return;
-
-    final listName = promptResult.first;
+    if (listName == null || !mounted) return;
 
     final result = await widget.listsViewModel.createList(listName);
 

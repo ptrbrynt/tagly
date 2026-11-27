@@ -38,7 +38,7 @@ void main() {
                 child: TextButton(
                   onPressed: () => showModalBottomSheet<void>(
                     context: context,
-                    anchorPoint: foldAwareSheetAnchor(context),
+                    anchorPoint: foldAwareAnchor(context),
                     builder: (_) => const SizedBox(height: 200),
                   ),
                   child: const Text('Open'),

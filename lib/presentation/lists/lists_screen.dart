@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/result.dart';
@@ -9,6 +8,7 @@ import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/dismissible_background.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
+import 'package:tagly/presentation/utils/fold_aware_dialogs.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class ListsScreen extends StatelessWidget {
@@ -59,14 +59,15 @@ class ListsScreen extends StatelessWidget {
         .centerRight,
       ),
       confirmDismiss: (_) async {
-        final confirmResult = await showOkCancelAlertDialog(
+        return await showConfirmDialog(
           context: context,
           title: 'Delete List?',
-          message: '''Are you sure you want to delete this list? This cannot be undone!''',
-          isDestructiveAction: true,
+          message:
+              'Are you sure you want to delete this list? '
+              'This cannot be undone!',
+          confirmLabel: 'Delete',
+          isDestructive: true,
         );
-
-        return confirmResult == .ok;
       },
       onDismissed: (_) async {
         final result = await viewModel.deleteList(list.id);
@@ -87,19 +88,13 @@ class ListsScreen extends StatelessWidget {
   }
 
   Future<void> _createList(BuildContext context) async {
-    final promptResult = await showTextInputDialog(
+    final listName = await showTextPromptDialog(
       context: context,
       title: 'New List',
-      textFields: [
-        const DialogTextField(
-          hintText: 'Awesome Tags',
-          textCapitalization: .words,
-        ),
-      ],
+      hintText: 'Awesome Tags',
+      textCapitalization: .words,
     );
-    if (promptResult == null || promptResult.isEmpty) return;
-
-    final listName = promptResult.first;
+    if (listName == null) return;
 
     final result = await viewModel.createList(listName);
 

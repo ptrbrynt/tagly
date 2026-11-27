@@ -108,7 +108,7 @@ class _TagSearchBarState extends State<TagSearchBar> {
   Future<void> _showFilters() async {
     final result = await showModalBottomSheet<TagSearchQuery>(
       context: context,
-      anchorPoint: foldAwareSheetAnchor(context),
+      anchorPoint: foldAwareAnchor(context),
       isScrollControlled: true,
       useSafeArea: true,
       builder: (_) => SearchFiltersSheet(
