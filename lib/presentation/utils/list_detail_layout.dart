@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/utils/empty_state_card.dart';
 
-const listDetailMinWidth = 600.0;
+const listDetailMinWidth = 720.0;
 
 /// Whether to lay content out side by side: only in a wide, landscape-shaped
 /// window. Tall windows, such as the inner display held upright, show one pane

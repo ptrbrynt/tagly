@@ -157,6 +157,15 @@ void main() {
       expect(find.byType(FavoritesScreen), findsNothing);
     });
 
+    testWidgets('shows only the tag on the outer display in landscape', (
+      tester,
+    ) async {
+      await pumpApp(tester, const Size(678, 466), '/favorites/tags/$tagId');
+
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(find.byType(FavoritesScreen), findsNothing);
+    });
+
     testWidgets('keeps the open tag when the window narrows and widens', (
       tester,
     ) async {
