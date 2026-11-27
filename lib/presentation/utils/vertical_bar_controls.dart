@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/vertical_bar.dart';
 
@@ -45,7 +47,7 @@ class WindowEdges extends InheritedWidget {
 /// this subtree reaches, stacks [groups] of controls in the bar's column so
 /// they line up with the status bar and camera. Each group sits in its own
 /// capsule, as related controls share one in the native vertical bar.
-class VerticalBarControls extends StatelessWidget {
+class VerticalBarControls extends StatefulWidget {
   const new({required this.groups, required this.builder, super.key});
 
   final List<List<Widget>> groups;
@@ -53,13 +55,25 @@ class VerticalBarControls extends StatelessWidget {
   builder;
 
   @override
+  State<VerticalBarControls> createState() => _VerticalBarControlsState();
+}
+
+class _VerticalBarControlsState extends State<VerticalBarControls> {
+  // How far below the top of the window this subtree starts. Most start at
+  // the top; one below a header, as in the search view, measures it.
+  double _top = 0;
+
+  @override
   Widget build(BuildContext context) {
     final bar = VerticalBarScope.of(context);
     final placedAbove = _PlacedControls.heightOf(context);
     final inVerticalBar = bar != null && WindowEdges.reaches(context, bar.edge);
+    if (inVerticalBar) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _measureTop());
+    }
     final groups = [
       if (inVerticalBar)
-        for (final group in this.groups)
+        for (final group in widget.groups)
           if (group.isNotEmpty) group,
     ];
     final ownHeight = groups.fold<double>(
@@ -73,7 +87,7 @@ class VerticalBarControls extends StatelessWidget {
         Positioned.fill(
           child: _PlacedControls(
             height: placedAbove + ownHeight,
-            child: builder(context, inVerticalBar: inVerticalBar),
+            child: widget.builder(context, inVerticalBar: inVerticalBar),
           ),
         ),
         if (inVerticalBar) _column(context, bar, placedAbove, groups),
@@ -88,22 +102,32 @@ class VerticalBarControls extends StatelessWidget {
     List<List<Widget>> groups,
   ) {
     final column = bar.controls;
-    // The column is in window coordinates. This subtree starts at the top of
-    // the window and reaches the bar's edge, so measure from those.
+    // The column is in window coordinates. This subtree reaches the bar's
+    // edge of the window, so measure across from that edge, and down from
+    // where this subtree starts.
     final windowWidth = MediaQuery.sizeOf(context).width;
+    final top = math.max(column.top - _top, 0) + placedAbove;
     return Positioned(
       left: bar.edge == VerticalBarEdge.left ? column.left : null,
       right: bar.edge == VerticalBarEdge.right
           ? windowWidth - column.right
           : null,
-      top: column.top + placedAbove,
+      top: top,
       width: column.width,
-      height: (column.height - placedAbove).clamp(0, double.infinity),
+      height: math.max(column.bottom - _top - top, 0),
       child: Column(
         spacing: _groupSpacing,
         children: [for (final group in groups) _SideCapsule(controls: group)],
       ),
     );
+  }
+
+  void _measureTop() {
+    if (!mounted) return;
+    final box = context.findRenderObject();
+    if (box is! RenderBox || !box.hasSize) return;
+    final top = box.localToGlobal(Offset.zero).dy;
+    if (top != _top) setState(() => _top = top);
   }
 }
 

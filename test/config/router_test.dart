@@ -380,6 +380,39 @@ void main() {
       expect(find.byType(TagCollectionScreen), findsNothing);
     });
 
+    testWidgets('moves the search view buttons into the vertical bar', (
+      tester,
+    ) async {
+      // The closed display held upright: the column sits below the camera
+      // and status bar.
+      const column = ScreenRect(left: 394, top: 172, width: 48, height: 450);
+      await pumpApp(
+        tester,
+        _narrow,
+        '/',
+        verticalBar: const VerticalBar(
+          edge: VerticalBarEdge.right,
+          controls: column,
+        ),
+      );
+
+      await tester.tap(find.byType(SearchBar));
+      await _settle(tester);
+
+      final filter = find.byIcon(Icons.filter_list_rounded);
+      final help = find.byIcon(Icons.help_outline_rounded);
+      expect(filter, findsOneWidget);
+      expect(help, findsOneWidget);
+      for (final control in [filter, help]) {
+        expect(tester.getCenter(control).dx, 418);
+        expect(tester.getTopLeft(control).dy, greaterThan(column.top));
+      }
+
+      await tester.tap(find.byType(BackButton));
+      await _settle(tester);
+      expect(filter, findsNothing);
+    });
+
     testWidgets('shows a list beside its tag when wide', (tester) async {
       await pumpApp(tester, _wide, '/lists/$listId/tags/$tagId?name=Mine');
 

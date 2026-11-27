@@ -9,6 +9,7 @@ import 'package:tagly/presentation/utils/fold_display_feature.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class TagSearchBar extends StatefulWidget {
   const new({
@@ -50,33 +51,29 @@ class _TagSearchBarState extends State<TagSearchBar> {
       searchController: _searchController,
       barHintText: 'Search or enter an ID...',
 
+      // While the system's vertical bar shows, the search view's buttons
+      // move into its column, as the app's other bars do, and only the field
+      // and its clear button stay at the top.
+      viewLeading: _inVerticalBar ? const SizedBox.shrink() : null,
       viewTrailing: [
-        ValueListenableBuilder<TagSearchQuery>(
-          valueListenable: _queryNotifier,
-          builder: (context, query, _) {
-            return (query.text?.isNotEmpty ?? false)
-                ? IconButton(
-                    icon: const Icon(Icons.clear_rounded),
-                    onPressed: _searchController.clear,
-                  )
-                : const SizedBox.shrink();
-          },
-        ),
-        ValueListenableBuilder<TagSearchQuery>(
-          valueListenable: _queryNotifier,
-          builder: (context, query, _) => IconButton(
-            icon: Badge(
-              isLabelVisible: query.hasFilters,
-              child: const Icon(Icons.filter_list_rounded),
-            ),
-            onPressed: _showFilters,
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.help_outline_rounded),
-          onPressed: _showHelp,
-        ),
+        _clearButton(),
+        if (!_inVerticalBar) ...[_filterButton(), _helpButton()],
       ],
+      viewBuilder: (suggestions) => VerticalBarControls(
+        groups: [
+          const [BackButton()],
+          [_filterButton(), _helpButton()],
+        ],
+        builder: (context, {required inVerticalBar}) =>
+            MediaQuery.removePadding(
+              context: context,
+              removeTop: true,
+              child: ListView(
+                padding: .only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+                children: suggestions.toList(),
+              ),
+            ),
+      ),
       suggestionsBuilder: (context, controller) async {
         _queryNotifier.value = _queryNotifier.value.copyWith(
           text: controller.text.trim(),
@@ -92,6 +89,44 @@ class _TagSearchBarState extends State<TagSearchBar> {
           ],
         };
       },
+    );
+  }
+
+  bool get _inVerticalBar => VerticalBarScope.of(context) != null;
+
+  Widget _clearButton() {
+    return ValueListenableBuilder<TagSearchQuery>(
+      valueListenable: _queryNotifier,
+      builder: (context, query, _) {
+        return (query.text?.isNotEmpty ?? false)
+            ? IconButton(
+                icon: const Icon(Icons.clear_rounded),
+                onPressed: _searchController.clear,
+              )
+            : const SizedBox.shrink();
+      },
+    );
+  }
+
+  Widget _filterButton() {
+    return ValueListenableBuilder<TagSearchQuery>(
+      valueListenable: _queryNotifier,
+      builder: (context, query, _) => IconButton(
+        icon: Badge(
+          isLabelVisible: query.hasFilters,
+          child: const Icon(Icons.filter_list_rounded),
+        ),
+        tooltip: 'Filters',
+        onPressed: _showFilters,
+      ),
+    );
+  }
+
+  Widget _helpButton() {
+    return IconButton(
+      icon: const Icon(Icons.help_outline_rounded),
+      tooltip: 'Help',
+      onPressed: _showHelp,
     );
   }
 
