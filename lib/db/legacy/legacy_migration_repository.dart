@@ -3,11 +3,7 @@ import 'dart:convert';
 import 'package:sqflite/sqflite.dart';
 
 class LegacyMigrationRepository {
-  LegacyMigrationRepository({
-    required Database legacyDatabase,
-    required Database newDatabase,
-  }) : _legacyDatabase = legacyDatabase,
-       _newDatabase = newDatabase;
+  new({required this._legacyDatabase, required this._newDatabase});
 
   final Database _legacyDatabase;
   final Database _newDatabase;

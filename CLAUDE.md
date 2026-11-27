@@ -7,14 +7,17 @@ Tagly is a Flutter app for browsing, searching, and organizing barbershop tags. 
 ## Commands
 
 ```bash
+# Install the pinned Flutter SDK (see .fvmrc)
+fvm install
+
 # Run the app
-flutter run
+fvm flutter run
 
 # Run tests
-flutter test
+fvm flutter test
 
 # Regenerate Freezed/JSON code after model changes
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build
 ```
 
 ## Architecture

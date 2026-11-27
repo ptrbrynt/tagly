@@ -3,11 +3,11 @@ import 'dart:io';
 
 import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
@@ -73,7 +73,7 @@ Future<void> main() async {
 }
 
 class MainApp extends StatefulWidget {
-  const MainApp({super.key});
+  const new({super.key});
 
   @override
   State<MainApp> createState() => _MainAppState();
@@ -156,7 +156,10 @@ class _MainAppState extends State<MainApp> {
                 ),
               );
             }
-            return child!;
+            // extended_image and posthog_flutter still use
+            // package:flutter/material.dart and need the theme bridged.
+            // ignore: deprecated_member_use
+            return MaterialUiCompatibilityBridge(child: child!);
           },
         );
       },

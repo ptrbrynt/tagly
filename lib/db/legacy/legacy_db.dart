@@ -12,7 +12,7 @@ Future<Database> openLegacyDatabase({
   final dbFolder = await getApplicationDocumentsDirectory();
   final dbFile = join(dbFolder.path, 'tagly.sqlite');
 
-  return openDatabase(
+  return await openDatabase(
     path ?? dbFile,
     version: 3,
     singleInstance: singleInstance,

@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
@@ -20,7 +20,7 @@ import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ViewTagScreen extends StatefulWidget {
-  const ViewTagScreen({
+  const new({
     required this.tagId,
     required this.tagsRepository,
     required this.listsViewModel,
@@ -124,9 +124,8 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           if (!context.mounted) return;
 
           if (result case Failure(:final message)) {
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(message)));
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(message)));
           }
         },
       ),
@@ -136,7 +135,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
 
   Widget _tagMenu(BuildContext context, BarbershopTag tag) {
     return PositionOriginProvider(
-      builder: (context, rect) {
+      builder: (context, origin) {
         return MenuAnchor(
           builder: (context, controller, child) => IconButton(
             icon: const Icon(Icons.more_vert_rounded),
@@ -173,7 +172,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
                       ShareParams(
                         uri: tag.tagUri,
                         title: tag.title,
-                        sharePositionOrigin: rect,
+                        sharePositionOrigin: origin(),
                       ),
                     );
                   },
@@ -186,7 +185,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
                       ShareParams(
                         uri: tag.deepLink,
                         title: tag.title,
-                        sharePositionOrigin: rect,
+                        sharePositionOrigin: origin(),
                       ),
                     );
                   },
@@ -291,9 +290,8 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
 
     if (result case Failure(:final message)) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
       return;
     } else if (result case Ok(:final value)) {
       await _addTagToList(value);

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
@@ -9,7 +9,7 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class TagSearchBar extends StatefulWidget {
-  const TagSearchBar({required this.repository, super.key});
+  const new({required this.repository, super.key});
 
   final TagsRepository repository;
 

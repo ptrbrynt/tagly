@@ -16,7 +16,8 @@ void main() {
       });
 
       test('defaults available and count to 0 when attributes are absent', () {
-        const xml = '<tags stamp=""><tag><id>1</id><Title>T</Title></tag></tags>';
+        const xml =
+            '<tags stamp=""><tag><id>1</id><Title>T</Title></tag></tags>';
         final result = TagsXmlParser.parse(xml);
         expect(result.available, 0);
         expect(result.count, 0);
@@ -212,8 +213,10 @@ void main() {
       expect(tag1.downloaded, 19124);
       expect(tag1.lastUpdated, '2026-04-30 07:11:52');
       // Prefers the static SheetMusicAlt URL over the redirect URL.
-      expect(tag1.sheetMusicUrl,
-          'https://www.barbershoptags.com/tags/_Less_You_Listen.png');
+      expect(
+        tag1.sheetMusicUrl,
+        'https://www.barbershoptags.com/tags/_Less_You_Listen.png',
+      );
       expect(tag1.sheetMusicType, 'png');
       expect(tag1.notationUrl, isNull);
       expect(tag1.notationType, isNull);
@@ -230,8 +233,10 @@ void main() {
       // Tag 4 — has a NotationAlt, no audio parts.
       final tag4 = result.tags[3];
       expect(tag4.id, 3687);
-      expect(tag4.notationUrl,
-          'https://www.barbershoptags.com/tags/_Til_Him.musx');
+      expect(
+        tag4.notationUrl,
+        'https://www.barbershoptags.com/tags/_Til_Him.musx',
+      );
       expect(tag4.notationType, 'musx');
       expect(tag4.allPartsUrl, isNull);
       expect(tag4.bassUrl, isNull);
@@ -260,8 +265,10 @@ void main() {
       final video10 = tag10.videos.first;
       expect(video10.id, 1652);
       expect(video10.youtubeCode, isNull);
-      expect(video10.facebookUrl,
-          'https://www.facebook.com/100004369746986/videos/1607779236044386/?extid=ymDkDyWmCH0gpXNa');
+      expect(
+        video10.facebookUrl,
+        'https://www.facebook.com/100004369746986/videos/1607779236044386/?extid=ymDkDyWmCH0gpXNa',
+      );
       expect(video10.sungBy, 'Nick Nack Paddy Catt');
       expect(video10.posted, '2020-09-28');
     });

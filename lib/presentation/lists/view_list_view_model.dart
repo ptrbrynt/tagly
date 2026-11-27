@@ -6,8 +6,7 @@ import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 
 class ViewListViewModel extends ChangeNotifier {
-  ViewListViewModel({required this.listId, required TagsRepository repository})
-    : _repository = repository {
+  new({required this.listId, required this._repository}) {
     unawaited(load());
   }
 

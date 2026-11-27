@@ -28,15 +28,12 @@ enum SyncStatus {
 }
 
 class TagsRepository extends ChangeNotifier {
-  TagsRepository({
-    required SharedPreferences preferences,
-    required Database db,
-    required BarbershopTagsApi api,
-    required CacheManager cacheManager,
-  }) : _preferences = preferences,
-       _api = api,
-       _db = db,
-       _cacheManager = cacheManager;
+  new({
+    required this._preferences,
+    required this._db,
+    required this._api,
+    required this._cacheManager,
+  });
 
   final Database _db;
   final BarbershopTagsApi _api;

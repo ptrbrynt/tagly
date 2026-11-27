@@ -39,10 +39,7 @@ void main() {
     );
 
     test('migrate() creates a list for each my_lists row', () async {
-      await legacyDb.insert('my_lists', {
-        'name': 'Favourites',
-        'tags': '[]',
-      });
+      await legacyDb.insert('my_lists', {'name': 'Favourites', 'tags': '[]'});
       await legacyDb.insert('my_lists', {
         'name': 'Competition Set',
         'tags': '[]',
@@ -92,10 +89,7 @@ void main() {
         );
 
         expect(listTags, hasLength(2));
-        expect(
-          listTags.map((r) => r['tag_id']),
-          containsAll([1482, 7131]),
-        );
+        expect(listTags.map((r) => r['tag_id']), containsAll([1482, 7131]));
       },
     );
 
@@ -140,10 +134,7 @@ void main() {
         whereArgs: [listBId],
       );
 
-      expect(
-        listATags.map((r) => r['tag_id']),
-        containsAll([1482, 7131]),
-      );
+      expect(listATags.map((r) => r['tag_id']), containsAll([1482, 7131]));
       expect(listBTags.map((r) => r['tag_id']), containsAll([7346]));
     });
   });

@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
@@ -11,16 +11,14 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 import 'package:tagly/presentation/utils/failure_card.dart';
 
 class ListsScreen extends StatelessWidget {
-  const ListsScreen({required this.viewModel, super.key});
+  const new({required this.viewModel, super.key});
 
   final ListsViewModel viewModel;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Lists'),
-      ),
+      appBar: AppBar(title: const Text('Lists')),
       floatingActionButton: FloatingActionButton.extended(
         label: const Text('Create List'),
         icon: const Icon(Icons.playlist_add),
@@ -63,8 +61,7 @@ class ListsScreen extends StatelessWidget {
         final confirmResult = await showOkCancelAlertDialog(
           context: context,
           title: 'Delete List?',
-          message:
-              '''Are you sure you want to delete this list? This cannot be undone!''',
+          message: '''Are you sure you want to delete this list? This cannot be undone!''',
           isDestructiveAction: true,
         );
 
@@ -74,9 +71,8 @@ class ListsScreen extends StatelessWidget {
         final result = await viewModel.deleteList(list.id);
         if (!context.mounted) return;
         if (result case Failure(:final message)) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(message)));
         }
       },
       child: ListTile(
@@ -109,9 +105,8 @@ class ListsScreen extends StatelessWidget {
     if (!context.mounted) return;
 
     if (result case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     }
   }
 }

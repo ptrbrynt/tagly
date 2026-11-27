@@ -2,16 +2,12 @@ import 'dart:async';
 import 'dart:io' as io;
 
 import 'package:extended_image/extended_image.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:material_ui/material_ui.dart';
 
 class SheetMusicViewer extends StatefulWidget {
-  const SheetMusicViewer({
-    required this.url,
-    required this.cacheManager,
-    super.key,
-  });
+  const new({required this.url, required this.cacheManager, super.key});
 
   final String url;
   final CacheManager cacheManager;
@@ -69,7 +65,7 @@ class _SheetMusicViewerState extends State<SheetMusicViewer> {
 }
 
 class _SheetMusicError extends StatelessWidget {
-  const _SheetMusicError({required this.onRetry});
+  const new({required this.onRetry});
 
   final VoidCallback onRetry;
 

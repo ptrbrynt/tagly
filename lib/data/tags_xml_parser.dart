@@ -4,7 +4,7 @@ import 'package:xml/xml.dart';
 
 /// Parsed representation of the top-level [<tags>] response envelope.
 class TagsResponse {
-  const TagsResponse({
+  const new({
     required this.available,
     required this.count,
     required this.stamp,
@@ -25,7 +25,7 @@ class TagsResponse {
 
 /// Parses the barbershoptags.com XML API response into [TagsResponse].
 abstract final class TagsXmlParser {
-  TagsXmlParser._();
+  new _();
 
   /// Parse a raw XML [source] string into a [TagsResponse].
   static TagsResponse parse(String source) {
