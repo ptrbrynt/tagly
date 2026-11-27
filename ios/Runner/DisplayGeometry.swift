@@ -54,7 +54,8 @@ enum DisplayGeometry {
     // iOS 27.2 reports from the inset the system adds for the vertical bar:
     // 12pt in from its inner side and 24pt in from the display edge, which
     // centres it on the camera and status bar, and clear of the occlusion
-    // regions above and below.
+    // regions above and below. With no camera above it, the column keeps the
+    // same 24pt from the top of the display, clear of the rounded corner.
     let bounds = view.bounds
     let insets = view.safeAreaInsets
     let inset = edge == .left ? insets.left : insets.right
@@ -65,7 +66,8 @@ enum DisplayGeometry {
       width: inset,
       height: bounds.height - insets.bottom
     )
-    var top = strip.minY
+    let displayEdgeMargin: CGFloat = 24
+    var top = strip.minY + displayEdgeMargin
     var bottom = strip.maxY
     for region in view.reservedRegions(kind: .occlusion) where region.frame.intersects(strip) {
       if region.frame.midY < strip.midY {
@@ -74,8 +76,9 @@ enum DisplayGeometry {
         bottom = min(bottom, region.frame.minY)
       }
     }
-    let x = edge == .left ? strip.minX + 24 : strip.minX + 12
-    return CGRect(x: x, y: top, width: inset - 36, height: max(0, bottom - top))
+    let x = edge == .left ? strip.minX + displayEdgeMargin : strip.minX + 12
+    return CGRect(
+      x: x, y: top, width: inset - displayEdgeMargin - 12, height: max(0, bottom - top))
   }
 
   @available(iOS 27.1, *)

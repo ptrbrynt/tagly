@@ -103,9 +103,7 @@ void main() {
       expect(tester.getCenter(find.byType(BackButton)).dx, 903);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
-    testWidgets('keeps body state when the bar comes and goes', (
-      tester,
-    ) async {
+    testWidgets('keeps body state when the bar comes and goes', (tester) async {
       tester.view
         ..physicalSize = _window
         ..devicePixelRatio = 1;
@@ -116,10 +114,8 @@ void main() {
         MaterialApp(
           home: ValueListenableBuilder(
             valueListenable: bar,
-            builder: (context, verticalBar, child) => VerticalBarScope(
-              verticalBar: verticalBar,
-              child: child!,
-            ),
+            builder: (context, verticalBar, child) =>
+                VerticalBarScope(verticalBar: verticalBar, child: child!),
             child: const VerticalBarScaffold(
               title: Text('Search'),
               body: TextField(),
