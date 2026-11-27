@@ -53,13 +53,18 @@ class _TagSearchBarState extends State<TagSearchBar> {
 
       // While the system's vertical bar shows, the search view's buttons
       // move into its column, as the app's other bars do, and only the field
-      // and its clear button stay at the top.
-      viewLeading: _inVerticalBar
-          ? SizedBox(width: cornerPadding(context).left)
-          : null,
+      // and its clear button stay at the top. The search view keeps the
+      // widgets it opened with, so each decides when it builds, as the bar
+      // comes and goes with the device opening and closing.
+      viewLeading: Builder(
+        builder: (context) => _inVerticalBar(context)
+            ? SizedBox(width: cornerPadding(context).left)
+            : const BackButton(),
+      ),
       viewTrailing: [
         _clearButton(),
-        if (!_inVerticalBar) ...[_filterButton(), _helpButton()],
+        _outsideVerticalBar(_filterButton()),
+        _outsideVerticalBar(_helpButton()),
       ],
       viewBuilder: (suggestions) => VerticalBarControls(
         groups: [
@@ -94,7 +99,13 @@ class _TagSearchBarState extends State<TagSearchBar> {
     );
   }
 
-  bool get _inVerticalBar => VerticalBarScope.of(context) != null;
+  static bool _inVerticalBar(BuildContext context) =>
+      VerticalBarScope.of(context) != null;
+
+  static Widget _outsideVerticalBar(Widget child) => Builder(
+    builder: (context) =>
+        _inVerticalBar(context) ? const SizedBox.shrink() : child,
+  );
 
   Widget _clearButton() {
     return ValueListenableBuilder<TagSearchQuery>(
