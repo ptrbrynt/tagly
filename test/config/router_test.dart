@@ -10,6 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:tagly/data/fold_repository.dart';
+import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/collections/tag_collection_screen.dart';
 import 'package:tagly/presentation/favorites/favorites_screen.dart';
 import 'package:tagly/presentation/lists/view_list_screen.dart';
@@ -31,6 +33,7 @@ void main() {
     late Database db;
     late List<SingleChildWidget> providers;
     late int listId;
+    late StreamController<Object?> foldEvents;
     final tagId = fakeTag.id;
 
     setUp(() async {
@@ -45,6 +48,9 @@ void main() {
       listId = await db.insert('lists', {'name': 'Mine'});
       await db.insert('list_tags', {'list_id': listId, 'tag_id': tagId});
 
+      foldEvents = StreamController<Object?>.broadcast();
+      addTearDown(foldEvents.close);
+
       final cacheManager = MockCacheManager();
       when(() => cacheManager.getSingleFile(any()))
           .thenAnswer((_) => Completer<File>().future);
@@ -54,6 +60,9 @@ void main() {
         overrides: [
           Provider<CacheManager>.value(value: cacheManager),
           Provider<SharePlus>.value(value: SharePlus.instance),
+          ChangeNotifierProvider(
+            create: (_) => FoldRepository(regionEvents: foldEvents.stream),
+          ),
         ],
       );
     });
@@ -217,6 +226,39 @@ void main() {
           .position
           .pixels;
       expect(after, before);
+    });
+
+    testWidgets('moves the player below a tabletop fold and keeps it', (
+      tester,
+    ) async {
+      await tester.runAsync(
+        () => db.update(
+          'tags',
+          {'all_parts_url': 'https://example.com/all.mp3'},
+          where: 'id = ?',
+          whereArgs: [tagId],
+        ),
+      );
+      const portrait = Size(669, 951);
+      await pumpApp(tester, portrait, '/favorites/tags/$tagId');
+      final player = find.byType(LearningTrackPlayer);
+      final playerState = tester.state(player);
+      expect(tester.getBottomLeft(player).dy, greaterThan(900));
+
+      foldEvents.add([
+        {'left': 0, 'top': 455, 'width': 669, 'height': 40, 'active': true},
+      ]);
+      await _settle(tester);
+      expect(tester.state(player), same(playerState));
+      expect(tester.getTopLeft(player).dy, greaterThan(495));
+      expect(tester.getBottomLeft(player).dy, lessThan(900));
+
+      foldEvents.add([
+        {'left': 0, 'top': 455, 'width': 669, 'height': 40, 'active': false},
+      ]);
+      await _settle(tester);
+      expect(tester.state(player), same(playerState));
+      expect(tester.getBottomLeft(player).dy, greaterThan(900));
     });
 
     testWidgets('keeps collection filters in the tag URL', (tester) async {

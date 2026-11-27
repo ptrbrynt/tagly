@@ -213,6 +213,7 @@ Widget _viewTagScreen(
     cacheManager: context.read(),
     listsViewModel: context.read(),
     sharePlus: context.read(),
+    foldRepository: context.read(),
     onShowDetails: onShowDetails,
     showsBackButton: showsBackButton,
   );

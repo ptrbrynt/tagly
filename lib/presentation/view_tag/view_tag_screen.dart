@@ -5,6 +5,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:tagly/data/fold_repository.dart';
 import 'package:tagly/data/tags_repository.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
@@ -15,6 +16,7 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/view_tag/sheet_music_viewer.dart';
+import 'package:tagly/presentation/view_tag/tabletop_column.dart';
 import 'package:tagly/presentation/view_tag/view_tag_view_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -25,6 +27,7 @@ class ViewTagScreen extends StatefulWidget {
     required this.listsViewModel,
     required this.cacheManager,
     required this.sharePlus,
+    required this.foldRepository,
     required this.onShowDetails,
     this.showsBackButton = true,
     super.key,
@@ -35,6 +38,7 @@ class ViewTagScreen extends StatefulWidget {
   final ListsViewModel listsViewModel;
   final CacheManager cacheManager;
   final SharePlus sharePlus;
+  final FoldRepository foldRepository;
   final VoidCallback onShowDetails;
   final bool showsBackButton;
 
@@ -44,6 +48,12 @@ class ViewTagScreen extends StatefulWidget {
 
 class _ViewTagScreenState extends State<ViewTagScreen> {
   late final ViewTagViewModel _viewModel;
+  late final Listenable _changes;
+
+  // Keep the sheet music and the player (and its audio) alive when they move
+  // into and out of the tabletop layout.
+  final GlobalKey _sheetMusicKey = GlobalKey();
+  final GlobalKey _tracksPlayerKey = GlobalKey();
 
   @override
   void initState() {
@@ -52,6 +62,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
       repository: widget.tagsRepository,
       tagId: widget.tagId,
     );
+    _changes = Listenable.merge([_viewModel, widget.foldRepository]);
   }
 
   @override
@@ -63,7 +74,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
-      listenable: _viewModel,
+      listenable: _changes,
       builder: (context, _) {
         return Scaffold(
           appBar: AppBar(
@@ -79,41 +90,55 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           body: switch (_viewModel.result) {
             null => const Center(child: CircularProgressIndicator.adaptive()),
             Failure(:final message) => Center(child: Text(message)),
-            Ok(:final value) => switch (value.sheetMusicUrl) {
-              null => const SizedBox.shrink(),
-              final url => SafeArea(
-                top: false,
-                bottom: false,
-                child: SizedBox.expand(
-                  child: SheetMusicViewer(
-                    url: url,
-                    cacheManager: widget.cacheManager,
-                  ),
-                ),
-              ),
-            },
-          },
-          bottomNavigationBar: switch (_viewModel.result) {
-            Ok(:final value) => _tracksPlayer(context, value),
-            _ => null,
+            Ok(:final value) => TabletopColumn(
+              fold: widget.foldRepository.activeFold,
+              content: _sheetMusic(value),
+              controls: value.learningTracks.isEmpty
+                  ? null
+                  : ({required isTabletop}) =>
+                        _tracksPlayer(context, value, isTabletop: isTabletop),
+            ),
           },
         );
       },
     );
   }
 
-  Widget? _tracksPlayer(BuildContext context, BarbershopTag value) {
-    if (value.learningTracks.isEmpty) return null;
-    return ColoredBox(
-      color: Theme.of(context).colorScheme.surfaceContainer,
-      child: SafeArea(
-        child: Padding(
-          padding: const .all(16),
-          child: LearningTrackPlayer(
-            tracks: value.learningTracks,
+  Widget _sheetMusic(BarbershopTag value) {
+    return switch (value.sheetMusicUrl) {
+      null => const SizedBox.shrink(),
+      final url => SafeArea(
+        top: false,
+        bottom: false,
+        child: SizedBox.expand(
+          child: SheetMusicViewer(
+            key: _sheetMusicKey,
+            url: url,
             cacheManager: widget.cacheManager,
           ),
         ),
+      ),
+    };
+  }
+
+  Widget _tracksPlayer(
+    BuildContext context,
+    BarbershopTag value, {
+    required bool isTabletop,
+  }) {
+    final player = Padding(
+      padding: const .all(16),
+      child: LearningTrackPlayer(
+        key: _tracksPlayerKey,
+        tracks: value.learningTracks,
+        cacheManager: widget.cacheManager,
+      ),
+    );
+    return ColoredBox(
+      color: Theme.of(context).colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: isTabletop ? Center(child: player) : player,
       ),
     );
   }
