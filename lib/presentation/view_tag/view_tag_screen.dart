@@ -13,6 +13,7 @@ import 'package:tagly/presentation/audio_player/learning_track_player.dart';
 import 'package:tagly/presentation/lists/add_to_list_button.dart';
 import 'package:tagly/presentation/lists/lists_view_model.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/position_origin_provider.dart';
 import 'package:tagly/presentation/utils/tagly_icon.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
@@ -126,7 +127,9 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     required bool isTabletop,
   }) {
     final player = Padding(
-      padding: const .all(16),
+      padding: isShortWindow(context)
+          ? const .symmetric(horizontal: 16, vertical: 4)
+          : const .all(16),
       child: LearningTrackPlayer(
         key: _tracksPlayerKey,
         tracks: value.learningTracks,

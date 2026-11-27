@@ -64,10 +64,15 @@ void main() {
       expect(find.byType(VerticalDivider), findsOneWidget);
     });
 
-    testWidgets('stays stacked on a narrow landscape window', (tester) async {
-      await pumpPlayer(tester, const Size(500, 300));
+    testWidgets('keeps to one row in a short, narrow window', (tester) async {
+      // The outer display in landscape, less the vertical bar.
+      await pumpPlayer(tester, const Size(560, 466));
 
-      expect(find.byType(VerticalDivider), findsNothing);
+      expect(find.byType(VerticalDivider), findsOneWidget);
+      expect(
+        tester.getCenter(find.byType(DropdownButton<String>)).dy,
+        moreOrLessEquals(tester.getCenter(find.byType(AudioPlayerWidget)).dy),
+      );
     });
   });
 }

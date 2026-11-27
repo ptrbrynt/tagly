@@ -13,6 +13,14 @@ bool fitsTwoPanes(BuildContext context) {
   return size.width >= listDetailMinWidth && size.width > size.height;
 }
 
+/// Windows shorter than this, such as the outer display in landscape or a
+/// window with Picture in Picture pinned above it, get compact controls so
+/// content keeps most of the height.
+const shortWindowMaxHeight = 520.0;
+
+bool isShortWindow(BuildContext context) =>
+    MediaQuery.sizeOf(context).height < shortWindowMaxHeight;
+
 class ListDetailLayout extends StatefulWidget {
   const new({
     required this.list,

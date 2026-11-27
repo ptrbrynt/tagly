@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/audio_player/audio_player_widget.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
 
 const _rowLayoutMinWidth = 600.0;
 
@@ -37,9 +38,12 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
 
   @override
   Widget build(BuildContext context) {
+    final isShort = isShortWindow(context);
     return LayoutBuilder(
       builder: (context, constraints) {
-        if (constraints.maxWidth < _rowLayoutMinWidth) {
+        // A short window can't spare a second row, so the picker sits beside
+        // the player however narrow the window is.
+        if (constraints.maxWidth < _rowLayoutMinWidth && !isShort) {
           return Column(
             mainAxisSize: .min,
             crossAxisAlignment: .stretch,
@@ -54,7 +58,7 @@ class _LearningTrackPlayerState extends State<LearningTrackPlayer> {
           child: Row(
             children: [
               _trackPicker(),
-              const VerticalDivider(width: 40),
+              VerticalDivider(width: isShort ? 24 : 40),
               Expanded(child: _audioPlayer()),
             ],
           ),
