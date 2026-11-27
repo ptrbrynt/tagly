@@ -6,8 +6,7 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 
 class ListsViewModel extends ChangeNotifier {
-  ListsViewModel({required ListsRepository repository})
-    : _repository = repository {
+  new({required this._repository}) {
     unawaited(load());
   }
 

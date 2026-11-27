@@ -5,8 +5,7 @@ part 'barbershop_tag_video.g.dart';
 
 @freezed
 abstract class BarbershopTagVideo with _$BarbershopTagVideo {
-
-  const factory BarbershopTagVideo({
+  const factory({
     required int id,
     required int tagId,
     String? description,
@@ -19,25 +18,24 @@ abstract class BarbershopTagVideo with _$BarbershopTagVideo {
     String? sungWebsite,
     String? posted,
   }) = _BarbershopTagVideo;
-  const BarbershopTagVideo._();
+  const new _();
 
-  factory BarbershopTagVideo.fromJson(Map<String, dynamic> json) =>
+  factory fromJson(Map<String, dynamic> json) =>
       _$BarbershopTagVideoFromJson(json);
 
-  factory BarbershopTagVideo.fromMap(Map<String, dynamic> map) =>
-      BarbershopTagVideo(
-        id: map['id'] as int,
-        tagId: map['tag_id'] as int,
-        description: map['description'] as String?,
-        sungKeyMode: map['sung_key_mode'] as String?,
-        sungKeyTonic: map['sung_key_tonic'] as String?,
-        isMultitrack: (map['is_multitrack'] as int? ?? 0) == 1,
-        youtubeCode: map['youtube_code'] as String?,
-        facebookUrl: map['facebook_url'] as String?,
-        sungBy: map['sung_by'] as String?,
-        sungWebsite: map['sung_website'] as String?,
-        posted: map['posted'] as String?,
-      );
+  factory fromMap(Map<String, dynamic> map) => BarbershopTagVideo(
+    id: map['id'] as int,
+    tagId: map['tag_id'] as int,
+    description: map['description'] as String?,
+    sungKeyMode: map['sung_key_mode'] as String?,
+    sungKeyTonic: map['sung_key_tonic'] as String?,
+    isMultitrack: (map['is_multitrack'] as int? ?? 0) == 1,
+    youtubeCode: map['youtube_code'] as String?,
+    facebookUrl: map['facebook_url'] as String?,
+    sungBy: map['sung_by'] as String?,
+    sungWebsite: map['sung_website'] as String?,
+    posted: map['posted'] as String?,
+  );
 
   Map<String, dynamic> toMap() => {
     'id': id,

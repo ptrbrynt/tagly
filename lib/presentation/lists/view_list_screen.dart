@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/domain/barbershop_tag.dart';
 import 'package:tagly/domain/result.dart';
 import 'package:tagly/presentation/lists/view_list_view_model.dart';
@@ -11,11 +11,7 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class ViewListScreen extends StatelessWidget {
-  const ViewListScreen({
-    required this.listName,
-    required this.viewModel,
-    super.key,
-  });
+  const new({required this.listName, required this.viewModel, super.key});
 
   final String listName;
   final ViewListViewModel viewModel;
@@ -77,9 +73,8 @@ class ViewListScreen extends StatelessWidget {
     final result = await viewModel.removeTagFromList(tagId);
     if (!context.mounted) return;
     if (result case Failure(:final message)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(

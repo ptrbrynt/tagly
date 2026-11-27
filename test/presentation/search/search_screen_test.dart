@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 import 'package:sqflite/sqflite.dart';
@@ -42,6 +42,10 @@ void main() {
       });
 
       await tester.pumpAndSettle();
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 300)),
+      );
+      await tester.pumpAndSettle();
 
       expect(find.text("'Til I Hear You Sing"), findsWidgets);
       expect(find.text('#4696'), findsOne);
@@ -58,11 +62,7 @@ Future<void> pumpSearchScreen(
       providers: providers,
       child: Builder(
         builder: (context) {
-          return TestApp(
-            child: SearchScreen(
-              repository: context.read(),
-            ),
-          );
+          return TestApp(child: SearchScreen(repository: context.read()));
         },
       ),
     ),

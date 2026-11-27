@@ -1,7 +1,7 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class DismissibleBackground extends StatelessWidget {
-  const DismissibleBackground({
+  const new({
     required this.iconAlignment,
     required this.backgroundColor,
     required this.foregroundColor,
@@ -9,21 +9,15 @@ class DismissibleBackground extends StatelessWidget {
     super.key,
   });
 
-  DismissibleBackground.deleteForever(
-    BuildContext context,
-    this.iconAlignment, {
-    super.key,
-  }) : backgroundColor = Theme.of(context).colorScheme.error,
-       foregroundColor = Theme.of(context).colorScheme.onError,
-       icon = Icons.delete_forever_rounded;
+  new deleteForever(BuildContext context, this.iconAlignment, {super.key})
+    : backgroundColor = Theme.of(context).colorScheme.error,
+      foregroundColor = Theme.of(context).colorScheme.onError,
+      icon = Icons.delete_forever_rounded;
 
-  DismissibleBackground.remove(
-    BuildContext context,
-    this.iconAlignment, {
-    super.key,
-  }) : backgroundColor = Theme.of(context).colorScheme.tertiaryContainer,
-       foregroundColor = Theme.of(context).colorScheme.onTertiaryContainer,
-       icon = Icons.remove_rounded;
+  new remove(BuildContext context, this.iconAlignment, {super.key})
+    : backgroundColor = Theme.of(context).colorScheme.tertiaryContainer,
+      foregroundColor = Theme.of(context).colorScheme.onTertiaryContainer,
+      icon = Icons.remove_rounded;
 
   final Alignment iconAlignment;
   final Color backgroundColor;

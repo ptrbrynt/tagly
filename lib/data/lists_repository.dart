@@ -3,7 +3,7 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_list.dart';
 
 class ListsRepository {
-  ListsRepository({required Database db}) : _db = db;
+  new({required this._db});
 
   final Database _db;
 

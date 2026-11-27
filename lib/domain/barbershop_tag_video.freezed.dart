@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'barbershop_tag_video.dart';
@@ -9,6 +9,7 @@ part of 'barbershop_tag_video.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $BarbershopTagVideoCopyWith<BarbershopTagVideo> get copyWith => _$BarbershopTagV
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BarbershopTagVideo&&(identical(other.id, id) || other.id == id)&&(identical(other.tagId, tagId) || other.tagId == tagId)&&(identical(other.description, description) || other.description == description)&&(identical(other.sungKeyMode, sungKeyMode) || other.sungKeyMode == sungKeyMode)&&(identical(other.sungKeyTonic, sungKeyTonic) || other.sungKeyTonic == sungKeyTonic)&&(identical(other.isMultitrack, isMultitrack) || other.isMultitrack == isMultitrack)&&(identical(other.youtubeCode, youtubeCode) || other.youtubeCode == youtubeCode)&&(identical(other.facebookUrl, facebookUrl) || other.facebookUrl == facebookUrl)&&(identical(other.sungBy, sungBy) || other.sungBy == sungBy)&&(identical(other.sungWebsite, sungWebsite) || other.sungWebsite == sungWebsite)&&(identical(other.posted, posted) || other.posted == posted));
+  final _this = this as BarbershopTagVideo;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BarbershopTagVideo&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.tagId, _this.tagId) || other.tagId == _this.tagId)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.sungKeyMode, _this.sungKeyMode) || other.sungKeyMode == _this.sungKeyMode)&&(identical(other.sungKeyTonic, _this.sungKeyTonic) || other.sungKeyTonic == _this.sungKeyTonic)&&(identical(other.isMultitrack, _this.isMultitrack) || other.isMultitrack == _this.isMultitrack)&&(identical(other.youtubeCode, _this.youtubeCode) || other.youtubeCode == _this.youtubeCode)&&(identical(other.facebookUrl, _this.facebookUrl) || other.facebookUrl == _this.facebookUrl)&&(identical(other.sungBy, _this.sungBy) || other.sungBy == _this.sungBy)&&(identical(other.sungWebsite, _this.sungWebsite) || other.sungWebsite == _this.sungWebsite)&&(identical(other.posted, _this.posted) || other.posted == _this.posted));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,tagId,description,sungKeyMode,sungKeyTonic,isMultitrack,youtubeCode,facebookUrl,sungBy,sungWebsite,posted);
+int get hashCode {
+  final _this = this as BarbershopTagVideo;
+  return Object.hash(runtimeType,_this.id,_this.tagId,_this.description,_this.sungKeyMode,_this.sungKeyTonic,_this.isMultitrack,_this.youtubeCode,_this.facebookUrl,_this.sungBy,_this.sungWebsite,_this.posted);
+}
 
 @override
 String toString() {
-  return 'BarbershopTagVideo(id: $id, tagId: $tagId, description: $description, sungKeyMode: $sungKeyMode, sungKeyTonic: $sungKeyTonic, isMultitrack: $isMultitrack, youtubeCode: $youtubeCode, facebookUrl: $facebookUrl, sungBy: $sungBy, sungWebsite: $sungWebsite, posted: $posted)';
+  final _this = this as BarbershopTagVideo;
+  return 'BarbershopTagVideo(id: ${_this.id}, tagId: ${_this.tagId}, description: ${_this.description}, sungKeyMode: ${_this.sungKeyMode}, sungKeyTonic: ${_this.sungKeyTonic}, isMultitrack: ${_this.isMultitrack}, youtubeCode: ${_this.youtubeCode}, facebookUrl: ${_this.facebookUrl}, sungBy: ${_this.sungBy}, sungWebsite: ${_this.sungWebsite}, posted: ${_this.posted})';
 }
 
 
@@ -66,7 +72,7 @@ class _$BarbershopTagVideoCopyWithImpl<$Res>
 /// Create a copy of BarbershopTagVideo
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? tagId = null,Object? description = freezed,Object? sungKeyMode = freezed,Object? sungKeyTonic = freezed,Object? isMultitrack = null,Object? youtubeCode = freezed,Object? facebookUrl = freezed,Object? sungBy = freezed,Object? sungWebsite = freezed,Object? posted = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(BarbershopTagVideo(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,tagId: null == tagId ? _self.tagId : tagId // ignore: cast_nullable_to_non_nullable
 as int,description: freezed == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
@@ -247,16 +253,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BarbershopTagVideo&&(identical(other.id, id) || other.id == id)&&(identical(other.tagId, tagId) || other.tagId == tagId)&&(identical(other.description, description) || other.description == description)&&(identical(other.sungKeyMode, sungKeyMode) || other.sungKeyMode == sungKeyMode)&&(identical(other.sungKeyTonic, sungKeyTonic) || other.sungKeyTonic == sungKeyTonic)&&(identical(other.isMultitrack, isMultitrack) || other.isMultitrack == isMultitrack)&&(identical(other.youtubeCode, youtubeCode) || other.youtubeCode == youtubeCode)&&(identical(other.facebookUrl, facebookUrl) || other.facebookUrl == facebookUrl)&&(identical(other.sungBy, sungBy) || other.sungBy == sungBy)&&(identical(other.sungWebsite, sungWebsite) || other.sungWebsite == sungWebsite)&&(identical(other.posted, posted) || other.posted == posted));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BarbershopTagVideo&&(identical(other.id, id) || other.id == id)&&(identical(other.tagId, tagId) || other.tagId == tagId)&&(identical(other.description, description) || other.description == description)&&(identical(other.sungKeyMode, sungKeyMode) || other.sungKeyMode == sungKeyMode)&&(identical(other.sungKeyTonic, sungKeyTonic) || other.sungKeyTonic == sungKeyTonic)&&(identical(other.isMultitrack, isMultitrack) || other.isMultitrack == isMultitrack)&&(identical(other.youtubeCode, youtubeCode) || other.youtubeCode == youtubeCode)&&(identical(other.facebookUrl, facebookUrl) || other.facebookUrl == facebookUrl)&&(identical(other.sungBy, sungBy) || other.sungBy == sungBy)&&(identical(other.sungWebsite, sungWebsite) || other.sungWebsite == sungWebsite)&&(identical(other.posted, posted) || other.posted == posted));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,tagId,description,sungKeyMode,sungKeyTonic,isMultitrack,youtubeCode,facebookUrl,sungBy,sungWebsite,posted);
+int get hashCode {
+    return Object.hash(runtimeType,id,tagId,description,sungKeyMode,sungKeyTonic,isMultitrack,youtubeCode,facebookUrl,sungBy,sungWebsite,posted);
+}
 
 @override
 String toString() {
-  return 'BarbershopTagVideo(id: $id, tagId: $tagId, description: $description, sungKeyMode: $sungKeyMode, sungKeyTonic: $sungKeyTonic, isMultitrack: $isMultitrack, youtubeCode: $youtubeCode, facebookUrl: $facebookUrl, sungBy: $sungBy, sungWebsite: $sungWebsite, posted: $posted)';
+    return 'BarbershopTagVideo(id: $id, tagId: $tagId, description: $description, sungKeyMode: $sungKeyMode, sungKeyTonic: $sungKeyTonic, isMultitrack: $isMultitrack, youtubeCode: $youtubeCode, facebookUrl: $facebookUrl, sungBy: $sungBy, sungWebsite: $sungWebsite, posted: $posted)';
 }
 
 

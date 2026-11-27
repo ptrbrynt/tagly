@@ -1,14 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:tagly/presentation/audio_player/audio_player_widget.dart';
 
 class LearningTrackPlayer extends StatefulWidget {
-  const LearningTrackPlayer({
-    required this.tracks,
-    required this.cacheManager,
-    super.key,
-  });
+  const new({required this.tracks, required this.cacheManager, super.key});
 
   final Map<String, String> tracks;
   final CacheManager cacheManager;

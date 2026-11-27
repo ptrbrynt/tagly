@@ -35,9 +35,7 @@ List<SingleChildWidget> get appProviders => [
       preferences: context.read(),
     ),
   ),
-  Provider(
-    create: (context) => ListsRepository(db: context.read()),
-  ),
+  Provider(create: (context) => ListsRepository(db: context.read())),
   ChangeNotifierProvider(
     create: (context) => SettingsRepository(
       cacheManager: context.read(),

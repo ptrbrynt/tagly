@@ -1,8 +1,8 @@
 // ignore_for_file: public_member_api_docs
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class HelpStep {
-  const HelpStep({
+  const new({
     required this.icon,
     required this.title,
     required this.description,
@@ -14,10 +14,7 @@ class HelpStep {
 }
 
 class HelpSheet extends StatelessWidget {
-  const HelpSheet._({
-    required this.steps,
-    required this.title,
-  });
+  const new _({required this.steps, required this.title});
 
   static Future<void> show({
     required BuildContext context,
@@ -29,10 +26,7 @@ class HelpSheet extends StatelessWidget {
       useSafeArea: true,
       isScrollControlled: true,
       builder: (context) {
-        return HelpSheet._(
-          steps: steps,
-          title: title,
-        );
+        return HelpSheet._(steps: steps, title: title);
       },
     );
   }
@@ -59,13 +53,13 @@ class HelpSheet extends StatelessWidget {
 }
 
 class _HelpStepWidget extends StatelessWidget {
-  const _HelpStepWidget({
+  const new({
     required this.icon,
     required this.title,
     required this.description,
   });
 
-  factory _HelpStepWidget.fromStep(HelpStep step) => _HelpStepWidget(
+  factory fromStep(HelpStep step) => _HelpStepWidget(
     icon: step.icon,
     title: step.title,
     description: step.description,

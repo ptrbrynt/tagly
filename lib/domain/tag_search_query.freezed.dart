@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'tag_search_query.dart';
@@ -9,6 +9,7 @@ part of 'tag_search_query.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $TagSearchQueryCopyWith<TagSearchQuery> get copyWith => _$TagSearchQueryCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.voicings, voicings)&&const DeepCollectionEquality().equals(other.numParts, numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic));
+  final _this = this as TagSearchQuery;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is TagSearchQuery&&(identical(other.text, _this.text) || other.text == _this.text)&&const DeepCollectionEquality().equals(other.voicings, _this.voicings)&&const DeepCollectionEquality().equals(other.numParts, _this.numParts)&&(identical(other.sortOrder, _this.sortOrder) || other.sortOrder == _this.sortOrder)&&(identical(other.limit, _this.limit) || other.limit == _this.limit)&&(identical(other.isClassic, _this.isClassic) || other.isClassic == _this.isClassic));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(voicings),const DeepCollectionEquality().hash(numParts),sortOrder,limit,isClassic);
+int get hashCode {
+  final _this = this as TagSearchQuery;
+  return Object.hash(runtimeType,_this.text,const DeepCollectionEquality().hash(_this.voicings),const DeepCollectionEquality().hash(_this.numParts),_this.sortOrder,_this.limit,_this.isClassic);
+}
 
 @override
 String toString() {
-  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit, isClassic: $isClassic)';
+  final _this = this as TagSearchQuery;
+  return 'TagSearchQuery(text: ${_this.text}, voicings: ${_this.voicings}, numParts: ${_this.numParts}, sortOrder: ${_this.sortOrder}, limit: ${_this.limit}, isClassic: ${_this.isClassic})';
 }
 
 
@@ -63,7 +69,7 @@ class _$TagSearchQueryCopyWithImpl<$Res>
 /// Create a copy of TagSearchQuery
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? text = freezed,Object? voicings = freezed,Object? numParts = freezed,Object? sortOrder = null,Object? limit = freezed,Object? isClassic = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(TagSearchQuery(
 text: freezed == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String?,voicings: freezed == voicings ? _self.voicings : voicings // ignore: cast_nullable_to_non_nullable
 as List<String>?,numParts: freezed == numParts ? _self.numParts : numParts // ignore: cast_nullable_to_non_nullable
@@ -211,7 +217,7 @@ return $default(_that.text,_that.voicings,_that.numParts,_that.sortOrder,_that.l
 
 
 class _TagSearchQuery extends TagSearchQuery {
-  const _TagSearchQuery({this.text, final  List<String>? voicings, final  List<int>? numParts, this.sortOrder = TagSortOrder.downloadsDesc, this.limit, this.isClassic}): _voicings = voicings,_numParts = numParts,super._();
+  const _TagSearchQuery({this.text,  List<String>? voicings,  List<int>? numParts, this.sortOrder = TagSearchQuery.defaultSortOrder, this.limit, this.isClassic}): _voicings = voicings,_numParts = numParts,super._();
   
 
 @override final  String? text;
@@ -247,16 +253,18 @@ _$TagSearchQueryCopyWith<_TagSearchQuery> get copyWith => __$TagSearchQueryCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other._voicings, _voicings)&&const DeepCollectionEquality().equals(other._numParts, _numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _TagSearchQuery&&(identical(other.text, text) || other.text == text)&&const DeepCollectionEquality().equals(other.voicings, _voicings)&&const DeepCollectionEquality().equals(other.numParts, _numParts)&&(identical(other.sortOrder, sortOrder) || other.sortOrder == sortOrder)&&(identical(other.limit, limit) || other.limit == limit)&&(identical(other.isClassic, isClassic) || other.isClassic == isClassic));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_voicings),const DeepCollectionEquality().hash(_numParts),sortOrder,limit,isClassic);
+int get hashCode {
+    return Object.hash(runtimeType,text,const DeepCollectionEquality().hash(_voicings),const DeepCollectionEquality().hash(_numParts),sortOrder,limit,isClassic);
+}
 
 @override
 String toString() {
-  return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit, isClassic: $isClassic)';
+    return 'TagSearchQuery(text: $text, voicings: $voicings, numParts: $numParts, sortOrder: $sortOrder, limit: $limit, isClassic: $isClassic)';
 }
 
 
