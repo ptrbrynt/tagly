@@ -42,10 +42,7 @@ void main() {
       });
 
       await tester.pumpAndSettle();
-      await tester.runAsync(
-        () => Future<void>.delayed(const Duration(milliseconds: 300)),
-      );
-      await tester.pumpAndSettle();
+      await _pumpUntilFound(tester, find.text("'Til I Hear You Sing"));
 
       expect(find.text("'Til I Hear You Sing"), findsWidgets);
       expect(find.text('#4696'), findsOne);
@@ -67,4 +64,18 @@ Future<void> pumpSearchScreen(
       ),
     ),
   );
+}
+
+Future<void> _pumpUntilFound(
+  WidgetTester tester,
+  Finder finder, {
+  Duration timeout = const Duration(seconds: 10),
+}) async {
+  final stopwatch = Stopwatch()..start();
+  while (finder.evaluate().isEmpty && stopwatch.elapsed < timeout) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 20)),
+    );
+    await tester.pump();
+  }
 }
