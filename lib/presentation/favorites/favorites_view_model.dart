@@ -7,6 +7,7 @@ import 'package:tagly/domain/result.dart';
 
 class FavoritesViewModel extends ChangeNotifier {
   new({required this._repository}) {
+    _repository.addListener(_reload);
     unawaited(load());
   }
 
@@ -16,15 +17,26 @@ class FavoritesViewModel extends ChangeNotifier {
   Result<List<BarbershopTag>>? get result => _result;
 
   Future<void> load() async {
-    _result = await _repository.getFavorites();
+    final result = await _repository.getFavorites();
+    if (_isDisposed) return;
+    _result = result;
     notifyListeners();
   }
 
-  Future<Result<void>> addToFavorites(int tagId) {
-    return _repository.addToFavorites(tagId).whenComplete(load);
-  }
+  bool _isDisposed = false;
 
-  Future<Result<void>> removeFromFavorites(int tagId) {
-    return _repository.removeFromFavorites(tagId).whenComplete(load);
+  void _reload() => unawaited(load());
+
+  Future<Result<void>> addToFavorites(int tagId) =>
+      _repository.addToFavorites(tagId);
+
+  Future<Result<void>> removeFromFavorites(int tagId) =>
+      _repository.removeFromFavorites(tagId);
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _repository.removeListener(_reload);
+    super.dispose();
   }
 }

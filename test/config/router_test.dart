@@ -1,0 +1,210 @@
+import 'dart:async';
+
+import 'package:flutter_cache_manager/file.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:sqflite/sqflite.dart';
+import 'package:tagly/presentation/collections/tag_collection_screen.dart';
+import 'package:tagly/presentation/favorites/favorites_screen.dart';
+import 'package:tagly/presentation/lists/view_list_screen.dart';
+import 'package:tagly/presentation/search/search_screen.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
+import 'package:tagly/presentation/utils/tag_list_tile.dart';
+import 'package:tagly/presentation/view_tag/view_tag_screen.dart';
+
+import '../helpers/fake_cache_manager.dart';
+import '../helpers/fake_tags.dart';
+import '../helpers/test_db.dart';
+import '../helpers/test_providers.dart';
+
+const _wide = Size(951, 669);
+const _narrow = Size(466, 678);
+
+void main() {
+  group('list and tag split', () {
+    late Database db;
+    late List<SingleChildWidget> providers;
+    late int listId;
+    final tagId = fakeTag.id;
+
+    setUp(() async {
+      db = await openTestDb();
+      await seedTestDb(db);
+      await db.update(
+        'tags',
+        {'is_favorite': 1},
+        where: 'id = ?',
+        whereArgs: [tagId],
+      );
+      listId = await db.insert('lists', {'name': 'Mine'});
+      await db.insert('list_tags', {'list_id': listId, 'tag_id': tagId});
+
+      final cacheManager = MockCacheManager();
+      when(() => cacheManager.getSingleFile(any()))
+          .thenAnswer((_) => Completer<File>().future);
+
+      providers = await getTestProviders(
+        db: db,
+        overrides: [
+          Provider<CacheManager>.value(value: cacheManager),
+          Provider<SharePlus>.value(value: SharePlus.instance),
+        ],
+      );
+    });
+
+    tearDown(() async {
+      await db.close();
+    });
+
+    Future<GoRouter> pumpApp(
+      WidgetTester tester,
+      Size size,
+      String location,
+    ) async {
+      tester.view
+        ..physicalSize = size
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      late GoRouter router;
+      await tester.pumpWidget(
+        MultiProvider(
+          providers: providers,
+          child: Builder(
+            builder: (context) {
+              router = context.read();
+              return MaterialApp.router(routerConfig: router);
+            },
+          ),
+        ),
+      );
+      router.go(location);
+      await _settle(tester);
+      return router;
+    }
+
+    testWidgets('shows the list beside the selected tag when wide', (
+      tester,
+    ) async {
+      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+
+      expect(find.byType(FavoritesScreen), findsOneWidget);
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(
+        tester.widget<TagListTile>(find.byType(TagListTile)).selected,
+        true,
+      );
+    });
+
+    testWidgets('shows a placeholder beside the list when nothing is chosen', (
+      tester,
+    ) async {
+      await pumpApp(tester, _wide, '/favorites');
+
+      expect(find.byType(FavoritesScreen), findsOneWidget);
+      expect(find.byType(NoTagSelected), findsOneWidget);
+    });
+
+    testWidgets('shows only the tag when narrow', (tester) async {
+      await pumpApp(tester, _narrow, '/favorites/tags/$tagId');
+
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(find.byType(FavoritesScreen), findsNothing);
+    });
+
+    testWidgets('keeps the open tag when the window narrows and widens', (
+      tester,
+    ) async {
+      final router = await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+      final wideState = tester.state(find.byType(ViewTagScreen));
+
+      tester.view.physicalSize = _narrow;
+      await _settle(tester);
+      expect(tester.state(find.byType(ViewTagScreen)), same(wideState));
+      expect(find.byType(FavoritesScreen), findsNothing);
+
+      tester.view.physicalSize = _wide;
+      await _settle(tester);
+      expect(tester.state(find.byType(ViewTagScreen)), same(wideState));
+      expect(find.byType(FavoritesScreen), findsOneWidget);
+      expect(router.state.uri.path, '/favorites/tags/$tagId');
+    });
+
+    testWidgets('opens a tag from the list when narrow', (tester) async {
+      final router = await pumpApp(tester, _narrow, '/favorites');
+
+      await tester.tap(find.byType(TagListTile));
+      await _settle(tester);
+
+      expect(router.state.uri.path, '/favorites/tags/$tagId');
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+    });
+
+    testWidgets('goes home from the list when narrow', (tester) async {
+      final router = await pumpApp(tester, _narrow, '/favorites');
+
+      await tester.tap(find.byType(BackButton));
+      await _settle(tester);
+
+      expect(router.state.uri.path, '/');
+      expect(find.byType(SearchScreen), findsOneWidget);
+    });
+
+    testWidgets('updates the list when the tag pane removes a favorite', (
+      tester,
+    ) async {
+      await pumpApp(tester, _wide, '/favorites/tags/$tagId');
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(ViewTagScreen),
+          matching: find.byIcon(Icons.favorite_rounded),
+        ),
+      );
+      await _settle(tester);
+
+      expect(find.byType(TagListTile), findsNothing);
+    });
+
+    testWidgets('keeps collection filters in the tag URL', (tester) async {
+      final router = await pumpApp(
+        tester,
+        _wide,
+        '/collection?title=Popular&sortOrder=downloadsDesc',
+      );
+
+      await tester.tap(find.byType(TagListTile).first);
+      await _settle(tester);
+
+      expect(router.state.uri.path, startsWith('/collection/tags/'));
+      expect(router.state.uri.queryParameters, {
+        'title': 'Popular',
+        'sortOrder': 'downloadsDesc',
+      });
+      expect(find.byType(TagCollectionScreen), findsOneWidget);
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+    });
+
+    testWidgets('shows a list beside its tag when wide', (tester) async {
+      await pumpApp(tester, _wide, '/lists/$listId/tags/$tagId?name=Mine');
+
+      expect(find.byType(ViewListScreen), findsOneWidget);
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(find.text('Mine'), findsOneWidget);
+    });
+  });
+}
+
+Future<void> _settle(WidgetTester tester) async {
+  for (var i = 0; i < 10; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 20)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}

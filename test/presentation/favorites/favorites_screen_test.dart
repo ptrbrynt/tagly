@@ -105,8 +105,13 @@ Future<void> pumpFavoritesScreen(
     MultiProvider(
       providers: providers,
       child: Builder(
-        builder: (context) =>
-            TestApp(child: FavoritesScreen(viewModel: context.read())),
+        builder: (context) => TestApp(
+          child: FavoritesScreen(
+            viewModel: context.read(),
+            onTagSelected: (_) {},
+            onBack: () {},
+          ),
+        ),
       ),
     ),
   );

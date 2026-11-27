@@ -11,15 +11,29 @@ import 'package:tagly/presentation/utils/help_sheet.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class ViewListScreen extends StatelessWidget {
-  const new({required this.listName, required this.viewModel, super.key});
+  const new({
+    required this.listName,
+    required this.viewModel,
+    required this.onTagSelected,
+    required this.onBack,
+    this.selectedTagId,
+    super.key,
+  });
 
   final String listName;
   final ViewListViewModel viewModel;
 
+  final ValueChanged<int> onTagSelected;
+  final VoidCallback onBack;
+  final int? selectedTagId;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(listName)),
+      appBar: AppBar(
+        leading: BackButton(onPressed: onBack),
+        title: Text(listName),
+      ),
       body: ListenableBuilder(
         listenable: viewModel,
         builder: (context, _) {
@@ -65,7 +79,11 @@ class ViewListScreen extends StatelessWidget {
       onDismissed: (_) async {
         await _removeTagFromList(context, tag.id);
       },
-      child: TagListTile(tag: tag),
+      child: TagListTile(
+        tag: tag,
+        selected: tag.id == selectedTagId,
+        onTap: () => onTagSelected(tag.id),
+      ),
     );
   }
 

@@ -1,5 +1,4 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:posthog_flutter/posthog_flutter.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +14,7 @@ import 'package:tagly/presentation/lists/lists_view_model.dart';
 
 List<SingleChildWidget> get productionProviders => [
   Provider(create: (context) => Dio()..interceptors.add(LogInterceptor())),
-  Provider<List<NavigatorObserver>>(create: (_) => [PosthogObserver()]),
+  Provider<NavigatorObserversFactory>.value(value: () => [PosthogObserver()]),
   Provider<CacheManager>(
     create: (_) => DefaultCacheManager(),
     dispose: (context, value) => value.dispose(),

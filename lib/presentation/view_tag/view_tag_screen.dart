@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:tagly/data/tags_repository.dart';
@@ -26,6 +25,7 @@ class ViewTagScreen extends StatefulWidget {
     required this.listsViewModel,
     required this.cacheManager,
     required this.sharePlus,
+    required this.onShowDetails,
     super.key,
   });
 
@@ -34,6 +34,7 @@ class ViewTagScreen extends StatefulWidget {
   final ListsViewModel listsViewModel;
   final CacheManager cacheManager;
   final SharePlus sharePlus;
+  final VoidCallback onShowDetails;
 
   @override
   State<ViewTagScreen> createState() => _ViewTagScreenState();
@@ -148,9 +149,7 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
           menuChildren: [
             MenuItemButton(
               leadingIcon: const Icon(Icons.info_outline_rounded),
-              onPressed: () {
-                context.go('tag/details?id=${tag.id}');
-              },
+              onPressed: widget.onShowDetails,
               child: const Text('Tag Details'),
             ),
             ListenableBuilder(

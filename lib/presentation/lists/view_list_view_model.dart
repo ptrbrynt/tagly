@@ -7,6 +7,7 @@ import 'package:tagly/domain/result.dart';
 
 class ViewListViewModel extends ChangeNotifier {
   new({required this.listId, required this._repository}) {
+    _repository.addListener(_reload);
     unawaited(load());
   }
 
@@ -17,14 +18,26 @@ class ViewListViewModel extends ChangeNotifier {
   Result<List<BarbershopTag>>? get result => _result;
 
   Future<void> load() async {
-    _result = await _repository.getTagsForList(listId);
+    final result = await _repository.getTagsForList(listId);
+    if (_isDisposed) return;
+    _result = result;
     notifyListeners();
   }
 
-  Future<Result<void>> addTagToList(int tagId) =>
-      _repository.addTagToList(tagId: tagId, listId: listId).whenComplete(load);
+  bool _isDisposed = false;
 
-  Future<Result<void>> removeTagFromList(int tagId) => _repository
-      .removeTagFromList(tagId: tagId, listId: listId)
-      .whenComplete(load);
+  void _reload() => unawaited(load());
+
+  Future<Result<void>> addTagToList(int tagId) =>
+      _repository.addTagToList(tagId: tagId, listId: listId);
+
+  Future<Result<void>> removeTagFromList(int tagId) =>
+      _repository.removeTagFromList(tagId: tagId, listId: listId);
+
+  @override
+  void dispose() {
+    _isDisposed = true;
+    _repository.removeListener(_reload);
+    super.dispose();
+  }
 }
