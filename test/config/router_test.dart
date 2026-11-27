@@ -341,6 +341,45 @@ void main() {
       expect(find.byType(ViewTagScreen), findsOneWidget);
     });
 
+    Future<void> searchAndOpenResult(WidgetTester tester) async {
+      await tester.tap(find.byType(SearchBar));
+      await _settle(tester);
+      await tester.enterText(find.byType(TextField).last, '$tagId');
+      await _settle(tester);
+      await tester.tap(find.byType(TagListTile).last);
+      await _settle(tester);
+    }
+
+    testWidgets('opens a search result beside the results when wide', (
+      tester,
+    ) async {
+      final router = await pumpApp(tester, _wide, '/');
+
+      await searchAndOpenResult(tester);
+
+      expect(router.state.uri.path, '/collection/tags/$tagId');
+      expect(router.state.uri.queryParameters['text'], '$tagId');
+      expect(router.state.uri.queryParameters['title'], '“$tagId”');
+      expect(find.byType(TagCollectionScreen), findsOneWidget);
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(
+        tester.widget<TagListTile>(find.byType(TagListTile)).selected,
+        true,
+      );
+    });
+
+    testWidgets('opens a search result over the results when narrow', (
+      tester,
+    ) async {
+      final router = await pumpApp(tester, _narrow, '/');
+
+      await searchAndOpenResult(tester);
+
+      expect(router.state.uri.toString(), '/tag?id=$tagId');
+      expect(find.byType(ViewTagScreen), findsOneWidget);
+      expect(find.byType(TagCollectionScreen), findsNothing);
+    });
+
     testWidgets('shows a list beside its tag when wide', (tester) async {
       await pumpApp(tester, _wide, '/lists/$listId/tags/$tagId?name=Mine');
 

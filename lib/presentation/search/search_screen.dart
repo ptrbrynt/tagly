@@ -7,9 +7,16 @@ import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/vertical_bar_controls.dart';
 
 class SearchScreen extends StatelessWidget {
-  const new({required this.repository, super.key});
+  const new({
+    required this.repository,
+    required this.onTagSelected,
+    required this.onSearchResultSelected,
+    super.key,
+  });
 
   final TagsRepository repository;
+  final ValueChanged<int> onTagSelected;
+  final void Function(TagSearchQuery query, int tagId) onSearchResultSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +55,11 @@ class SearchScreen extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 24),
-                        TagSearchBar(repository: repository),
+                        TagSearchBar(
+                          repository: repository,
+                          onTagSelected: onTagSelected,
+                          onResultSelected: onSearchResultSelected,
+                        ),
                         const SizedBox(height: 32),
                         _Sections(
                           collections: _collectionsSection(context),

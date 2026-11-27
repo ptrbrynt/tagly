@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +30,15 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
     GoRoute(
       path: '/',
       builder: (context, _) {
-        return SearchScreen(repository: context.watch());
+        return SearchScreen(
+          repository: context.watch(),
+          onTagSelected: (tagId) => unawaited(context.push('/tag?id=$tagId')),
+          onSearchResultSelected: (query, tagId) => context.go(
+            '/collection/tags/$tagId'
+            '?title=${Uri.encodeQueryComponent(_searchResultsTitle(query))}'
+            '&${query.asQueryParameters()}',
+          ),
+        );
       },
       routes: [
         GoRoute(
@@ -231,6 +241,11 @@ Widget _tagDetailsScreen(int tagId) {
     ),
   );
 }
+
+String _searchResultsTitle(TagSearchQuery query) => switch (query.text) {
+  final String text when text.isNotEmpty => '“$text”',
+  _ => 'Search Results',
+};
 
 int? _selectedTagId(GoRouterState state) =>
     int.tryParse(state.pathParameters['tagId'] ?? '');

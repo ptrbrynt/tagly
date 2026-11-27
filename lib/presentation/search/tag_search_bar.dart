@@ -6,12 +6,25 @@ import 'package:tagly/domain/result.dart';
 import 'package:tagly/domain/tag_search_query.dart';
 import 'package:tagly/presentation/search/search_filters_sheet.dart';
 import 'package:tagly/presentation/utils/help_sheet.dart';
+import 'package:tagly/presentation/utils/list_detail_layout.dart';
 import 'package:tagly/presentation/utils/tag_list_tile.dart';
 
 class TagSearchBar extends StatefulWidget {
-  const new({required this.repository, super.key});
+  const new({
+    required this.repository,
+    required this.onTagSelected,
+    required this.onResultSelected,
+    super.key,
+  });
 
   final TagsRepository repository;
+
+  /// Opens a tag over the search results, which stay open beneath it.
+  final ValueChanged<int> onTagSelected;
+
+  /// Opens a tag beside the results of [TagSearchQuery], on windows wide
+  /// enough for two panes. The search view closes first.
+  final void Function(TagSearchQuery query, int tagId) onResultSelected;
 
   @override
   State<TagSearchBar> createState() => _TagSearchBarState();
@@ -72,10 +85,23 @@ class _TagSearchBarState extends State<TagSearchBar> {
 
         return switch (result) {
           Failure() => const [],
-          Ok(:final value) => [for (final tag in value) TagListTile(tag: tag)],
+          Ok(:final value) => [
+            for (final tag in value)
+              TagListTile(tag: tag, onTap: () => _open(tag.id)),
+          ],
         };
       },
     );
+  }
+
+  void _open(int tagId) {
+    if (!fitsTwoPanes(context)) {
+      widget.onTagSelected(tagId);
+      return;
+    }
+    final query = _queryNotifier.value;
+    _searchController.closeView(_searchController.text);
+    widget.onResultSelected(query, tagId);
   }
 
   Future<void> _showFilters() async {

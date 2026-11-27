@@ -101,7 +101,13 @@ Future<void> pumpSearchScreen(
       providers: providers,
       child: Builder(
         builder: (context) {
-          return TestApp(child: SearchScreen(repository: context.read()));
+          return TestApp(
+            child: SearchScreen(
+              repository: context.read(),
+              onTagSelected: (_) {},
+              onSearchResultSelected: (_, _) {},
+            ),
+          );
         },
       ),
     ),
