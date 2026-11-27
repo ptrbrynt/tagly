@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show DisplayFeature, DisplayFeatureState, DisplayFeatureType;
 
 import 'package:flutter_cache_manager/file.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
@@ -378,6 +379,43 @@ void main() {
       expect(router.state.uri.toString(), '/tag?id=$tagId');
       expect(find.byType(ViewTagScreen), findsOneWidget);
       expect(find.byType(TagCollectionScreen), findsNothing);
+    });
+
+    testWidgets('opens the tag menu clear of the vertical bar when folded', (
+      tester,
+    ) async {
+      tester.view
+        ..padding = const FakeViewPadding(right: 84)
+        ..displayFeatures = [
+          const DisplayFeature(
+            bounds: Rect.fromLTRB(455.5, 0, 495.5, 669),
+            type: DisplayFeatureType.fold,
+            state: DisplayFeatureState.postureHalfOpened,
+          ),
+        ];
+      addTearDown(tester.view.resetPadding);
+      addTearDown(tester.view.resetDisplayFeatures);
+      await pumpApp(
+        tester,
+        _wide,
+        '/favorites/tags/$tagId',
+        verticalBar: const VerticalBar(
+          edge: VerticalBarEdge.right,
+          controls: ScreenRect(left: 879, top: 124, width: 48, height: 511),
+        ),
+      );
+
+      await tester.tap(find.byIcon(Icons.more_vert_rounded));
+      await _settle(tester);
+
+      final menu = tester.getRect(
+        find.ancestor(
+          of: find.text('Tag Details'),
+          matching: find.byType(MenuItemButton),
+        ),
+      );
+      expect(menu.left, greaterThanOrEqualTo(495.5));
+      expect(menu.right, lessThanOrEqualTo(_wide.width - 84));
     });
 
     testWidgets('moves the search view buttons into the vertical bar', (

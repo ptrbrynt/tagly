@@ -172,6 +172,11 @@ class _ViewTagScreenState extends State<ViewTagScreen> {
     return PositionOriginProvider(
       builder: (context, origin) {
         return MenuAnchor(
+          // In the split view this screen sits in a pane with its own
+          // overlay. Flutter places menus there by mixing pane coordinates
+          // with window ones for the fold, which runs the menu under the
+          // vertical bar. The root overlay uses window coordinates throughout.
+          useRootOverlay: true,
           builder: (context, controller, child) => IconButton(
             icon: const Icon(Icons.more_vert_rounded),
             onPressed: controller.open,
