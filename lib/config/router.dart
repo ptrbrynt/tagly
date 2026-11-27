@@ -72,7 +72,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           routes: [
             GoRoute(
               path: 'collection',
-              builder: (context, state) => showsListAndDetail(context)
+              builder: (context, state) => fitsTwoPanes(context)
                   ? const NoTagSelected()
                   : ListPane(child: _collectionScreen(context, state)),
               routes: [_tagInListRoute()],
@@ -88,7 +88,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
           routes: [
             GoRoute(
               path: 'favorites',
-              builder: (context, state) => showsListAndDetail(context)
+              builder: (context, state) => fitsTwoPanes(context)
                   ? const NoTagSelected()
                   : ListPane(child: _favoritesScreen(context, state)),
               routes: [_tagInListRoute()],
@@ -122,7 +122,7 @@ GoRouter getRouter(NavigatorObserversFactory observers) => GoRouter(
               routes: [
                 GoRoute(
                   path: ':id',
-                  builder: (context, state) => showsListAndDetail(context)
+                  builder: (context, state) => fitsTwoPanes(context)
                       ? const NoTagSelected()
                       : ListPane(child: _viewListScreen(context, state)),
                   routes: [_tagInListRoute()],
@@ -155,7 +155,7 @@ GoRoute _tagInListRoute() => GoRoute(
     child: _viewTagScreen(
       context,
       _selectedTagId(state)!,
-      showsBackButton: !showsListAndDetail(context),
+      showsBackButton: !fitsTwoPanes(context),
       onShowDetails: () =>
           context.go(_withQuery('${state.matchedLocation}/details', state)),
     ),

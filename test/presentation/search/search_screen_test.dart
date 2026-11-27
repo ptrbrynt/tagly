@@ -62,6 +62,20 @@ void main() {
       expect(popular.dx, greaterThan(favorites.dx));
     });
 
+    testWidgets('stacks browse below collections when upright', (tester) async {
+      tester.view
+        ..physicalSize = const Size(669, 951)
+        ..devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await pumpSearchScreen(tester, providers);
+      await tester.pump();
+
+      final favorites = tester.getTopLeft(find.text('Favorites'));
+      final popular = tester.getTopLeft(find.text('Popular Tags'));
+      expect(popular.dy, greaterThan(favorites.dy));
+      expect(popular.dx, favorites.dx);
+    });
+
     testWidgets('stacks browse below collections when narrow', (tester) async {
       tester.view
         ..physicalSize = const Size(466, 900)

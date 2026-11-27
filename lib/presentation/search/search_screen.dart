@@ -131,7 +131,7 @@ class SearchScreen extends StatelessWidget {
   }
 }
 
-/// Side by side on wide windows, so the fold falls between the two sections.
+/// Side by side on wide landscape windows, so the fold falls between them.
 class _Sections extends StatelessWidget {
   const new({required this.collections, required this.browse});
 
@@ -140,23 +140,19 @@ class _Sections extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        if (constraints.maxWidth < listDetailMinWidth) {
-          return Column(
-            crossAxisAlignment: .stretch,
-            children: [collections, const SizedBox(height: 32), browse],
-          );
-        }
-        return Row(
-          crossAxisAlignment: .start,
-          children: [
-            Expanded(child: collections),
-            const SizedBox(width: 24),
-            Expanded(child: browse),
-          ],
-        );
-      },
+    if (!fitsTwoPanes(context)) {
+      return Column(
+        crossAxisAlignment: .stretch,
+        children: [collections, const SizedBox(height: 32), browse],
+      );
+    }
+    return Row(
+      crossAxisAlignment: .start,
+      children: [
+        Expanded(child: collections),
+        const SizedBox(width: 24),
+        Expanded(child: browse),
+      ],
     );
   }
 }

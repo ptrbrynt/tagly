@@ -3,8 +3,13 @@ import 'package:tagly/presentation/utils/empty_state_card.dart';
 
 const listDetailMinWidth = 600.0;
 
-bool showsListAndDetail(BuildContext context) =>
-    MediaQuery.sizeOf(context).width >= listDetailMinWidth;
+/// Whether to lay content out side by side: only in a wide, landscape-shaped
+/// window. Tall windows, such as the inner display held upright, show one pane
+/// or column at a time.
+bool fitsTwoPanes(BuildContext context) {
+  final size = MediaQuery.sizeOf(context);
+  return size.width >= listDetailMinWidth && size.width > size.height;
+}
 
 class ListDetailLayout extends StatefulWidget {
   const new({required this.list, required this.detail, super.key});
@@ -25,7 +30,7 @@ class _ListDetailLayoutState extends State<ListDetailLayout> {
   }
 
   Widget _layout(BuildContext context) {
-    if (!showsListAndDetail(context)) return widget.detail;
+    if (!fitsTwoPanes(context)) return widget.detail;
     // Each pane gets its own messenger so a snackbar appears only in the pane
     // that raised it, instead of being duplicated in both. Each pane also
     // drops the inset on the edge it shares with the other pane.
